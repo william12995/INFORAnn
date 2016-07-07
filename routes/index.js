@@ -1,4 +1,5 @@
-﻿
+﻿var mongoose = require('mongoose');
+var Todo = mongoose.model('Todo');
 /*
  * GET home page.
  */
