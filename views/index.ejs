@@ -1,7 +1,24 @@
 ﻿<% layout( 'layout' ) -%>
 <section class="wrapper spotlight style1">
     <div class="inner">
-        
+        <table>
+        		<thead>
+        			<tr>
+        				<td>標題</td>
+        				<td>日期</td>
+        				<td>發佈者</td>
+        				<td>觀看數</td>
+        			</tr>
+        		</thead>
+        		<% data.forEach( function(dt) {%>
+        			<tr>
+        				<td><a herf="/content/<%= dt.ann_id %>"><%= dt.title %></a></td>
+        				<td><%= dt.update %></td>
+        				<td><%= dt.author %></td>
+        				<td><%= dt.views %></td>
+        			</tr>
+        		<% }); %>
+        </table>
     </div>
 </section>
 
