@@ -10,7 +10,8 @@ var Ann = new Schema(
         create : Date,
         update : Date,
         visible : Boolean,
-        views : Number
+        views : Number,
+        ontop : Boolean
     }
 )
 
