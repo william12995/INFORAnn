@@ -1,0 +1,22 @@
+﻿<% layout( 'layout' ) -%>
+<div class="wrapper">
+    <div class="inner">
+        <form class="form-signin" role="form" method="post" action="login">
+            <div class="row uniform">
+                <div class="4u$ 12u$(xsmall)">
+                    <label for="username">管理者名稱</label>
+                    <input type="text" name="username" id="username" required/>
+                    <label for="password">密碼</label>
+                    <input type="password" name="password" id="password" required/>
+                </div>
+                <div class="12u$">
+                    <input type="checkbox" name="remember" id="remember" />
+                    <label for="remember">記住我</label>
+                </div>
+                <div class="12u$">                
+                    <input type="submit" name="login" value="登入" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

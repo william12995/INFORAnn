@@ -1,3 +1,3 @@
 ﻿exports.admin = function (req, res) {
-    res.render('admin', { title: 'Express' });
+    res.render('login', { title: 'Admin Login' });
 };

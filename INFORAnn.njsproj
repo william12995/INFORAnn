@@ -90,6 +90,7 @@
     <Content Include="README.md" />
     <Content Include="views\index.ejs" />
     <Content Include="views\layout.ejs" />
+    <Content Include="views\login.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\css\" />
