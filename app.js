@@ -4,6 +4,8 @@
  */
 require('./db');
 var express = require('express');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 var routes = require('./routes');
 var admin = require('./routes/admin');
 var http = require('http');
@@ -11,6 +13,7 @@ var path = require('path');
 var engine = require('ejs-locals');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var Admin = mongoose.model('Admin');
 
 var app = express();
 
@@ -19,6 +22,7 @@ app.set('port', process.env.PORT || 3030);
 app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(express.cookieParser());
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -26,6 +30,23 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
+Admin.findOne({name : "root"}).exec(function(err,result)
+{
+	if(!result)
+	{
+		new Admin(
+		{
+        		name : "root",
+        		password : "",
+        		level : 4
+		}).save(function(err, r)
+		{
+			if(err)console.log(err);
+		});
+		console.log('root initialized.');
+	}
+});
 
 // development only
 if ('development' == app.get('env')) {

@@ -3,8 +3,7 @@ var Schema = mongoose.Schema;
 
 var Ann = new Schema(
     {
-        ann_id : Schema.Types.ObjectId,
-        admin_id : Schema.Types.ObjectId,
+        admin_id : String,
         author : String,
         title : String,
         istextcontent : Boolean,
@@ -19,7 +18,6 @@ var Ann = new Schema(
 
 var Admin = new Schema(
     {
-        admin_id : Schema.Types.ObjectId,
         name : String,
         password : String,
         level : Number
@@ -29,7 +27,7 @@ var Admin = new Schema(
 var Session = new Schema(
     {
         cookie_id : String,
-        admin_id : Schema.Types.ObjectId,
+        admin_id : String,
         expire : Date
     }
 )
