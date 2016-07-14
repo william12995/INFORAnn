@@ -28,8 +28,15 @@
         </header>
 
         <!-- Menu -->
-        <%- partial( 'menu' ) %>
-
+        <% if( menu == 0 ) { %>
+            <%- partial( 'menu' ) %>
+        <% } else if( menu == 1 || menu == 2 ) { %>
+            <%- partial( 'admin1menu' ) %>
+        <% } else if( menu == 3 || menu >= 4 ) { %>
+            <%- partial( 'admin3menu' ) %>
+        <% } else { %>
+            <%- partial( 'menu' ) %>
+        <% } %>
         <!-- Banner -->
 
         <!--<section id="banner">

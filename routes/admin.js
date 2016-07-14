@@ -6,43 +6,31 @@ var Ann = mongoose.model('Ann');
 var utils = require('../utils');
 
 exports.admin = function (req, res) {
-    var tologin = true;
-    if(req.cookies.session)
-    {+
-        Session.
-        findOne({cookie_id : req.cookies.session}).
-        exec(function(err,result)
-        {
-            console.log(result);
-            if(!result)
-            {
-                console.log('CookieError');
-                return;
+    levelfind(req, function (err, tologin) {
+        if (err) {
+            console.log(err);
+        }
+        if (req.cookies.session) {
+            if (tologin > 0) {
+                res.render('admin', { title: 'Admin', menu: tologin });
             }
-            if(result.expire < Date.now())
-            {
-                result.remove(function(err,result)
-                {
-                    if( err ) return next( err );
-                });
-                console.log('CookieExpired');
-                return;
-            }
-            tologin = false;
-            res.render('admin', { title: 'Admin' });
-        });
-    }
-    if(tologin == false)
-    {
-        res.redirect('/login');
-    } 
+        }
+        if (tologin == 0) {
+            res.redirect('/login');
+        }
+    });
+    
     //res.render('login', { title: 'Admin Login' });
 };
 
-exports.login = function (req, res)
-{
-    res.render('login', { title: 'Admin Login'});
-}
+exports.login = function (req, res) {
+    levelfind(req, function (err, tologin) {
+        if (tologin > 0) {
+            res.redirect('/admin');
+        }
+        res.render('login', { title: 'Admin Login', menu: tologin });
+    });
+};
 
 exports.login_proc = function (req, res) 
 {
@@ -89,7 +77,7 @@ exports.login_proc = function (req, res)
             res.cookie('session',sessionid,{ expires: 0});
             new Session ({
                 cookie_id : sessionid,
-                admin_id : user.admin_id,
+                admin_id : user._id,
                 expire : new Date(Date.now() + 1*60*60*1000)
             }).save(function ( err, ls, count ){
                 if( err ) return next( err );
@@ -98,4 +86,32 @@ exports.login_proc = function (req, res)
         res.redirect('/admin');
     });
 };
+
+exports.levelfind = levelfind;
+function levelfind(req, callback) {
+    Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
+        if (err) {
+            callback(err, null);
+        }
+        console.log(result);
+        if (!result) {
+            console.log('CookieError');
+            callback(err, 0);
+        }
+        if (result.expire < Date.now()) {
+            result.remove(function (err, result) {
+                if (err) return next(err);
+            });
+            console.log('CookieExpired');
+            callback(err, 0);
+        }
+        Admin.
+        findById(result.admin_id, function (err, user) {
+            if (!user) {
+                return;
+            }
+            callback(err, user.level);
+        });
+    });
+}
 
