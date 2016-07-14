@@ -5,8 +5,9 @@ var Ann = mongoose.model('Ann');
  * GET home page.
  */
 
-exports.index = function (req, res) {
-    var reqdata = querystring.parse(req.url.query);
+exports.index = function (req, res, next) 
+{
+    var qudata = querystring.parse(req.url.query);
 	Ann.
     find({ visible : true }).
     sort( '-update' ).
