@@ -34,7 +34,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 Admin.findOne({name : "root"}).exec(function(err,result)
 {
 	if(!result)
-	{
+    {
+        console.log("[WARN]can't find admin account \"root\"!");
+        console.log("[WARN]will auto create a passwordless root account.");
 		new Admin(
 		{
         		name : "root",
@@ -43,8 +45,8 @@ Admin.findOne({name : "root"}).exec(function(err,result)
 		}).save(function(err, r)
 		{
 			if(err)console.log(err);
-		});
-		console.log('root initialized.');
+        });
+		console.log('[INFO]root initialized!');
 	}
 });
 
@@ -58,7 +60,8 @@ app.get('/index', routes.index);
 app.get('/admin', admin.admin);
 app.get('/login', admin.login);
 app.post('/login', admin.login_proc);
+app.get('/logout', admin.logout);
 
 http.createServer(app).listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
+    console.log('[INFO]Express server listening on port ' + app.get('port'));
 });

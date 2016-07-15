@@ -8,7 +8,7 @@ var utils = require('../utils');
 exports.admin = function (req, res) {
     levelfind(req, function (err, tologin) {
         if (err) {
-            console.log(err);
+            console.log('[ERROR]' + err);
         }
         if (req.cookies.session) {
             if (tologin > 0) {
@@ -19,8 +19,6 @@ exports.admin = function (req, res) {
             res.redirect('/login');
         }
     });
-    
-    //res.render('login', { title: 'Admin Login' });
 };
 
 exports.login = function (req, res) {
@@ -44,19 +42,18 @@ exports.login_proc = function (req, res)
     findOne({ name : username}).
     exec( function( err, user )
     {
-        if(err){console.log(err)};
+        if(err){console.log('[ERROR]' + err)};
         if(!user)
         {
-            console.log(user);
             res.locals.error = '使用者不存在';
-            console.log('user '+username+' is not exist!');
+            console.log('[WARN]user '+username+' is not exist!');
             res.redirect('/login');
             return;
         }
         if(pwdhash != user.password && user.password != "")
         {
             res.locals.error = '密碼錯誤';
-            console.log('password for '+username+' error!');
+            console.log('[WARN]password for '+username+' error!');
             res.redirect('/login');
             return;
         }
@@ -69,7 +66,8 @@ exports.login_proc = function (req, res)
                 admin_id : user._id,
                 expire : new Date(Date.now() + 14*24*60*60*1000)
             }).save(function ( err, ls, count ){
-                if( err ) return next( err );
+                if (err) return next(err);
+                res.redirect('/admin');
             });
         }
         else
@@ -80,12 +78,30 @@ exports.login_proc = function (req, res)
                 admin_id : user._id,
                 expire : new Date(Date.now() + 1*60*60*1000)
             }).save(function ( err, ls, count ){
-                if( err ) return next( err );
+                if (err) return next(err);
+                res.redirect('/admin');
             });
         }
-        res.redirect('/admin');
     });
 };
+
+exports.logout = function (req, res) {
+    Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
+        if (err) {
+            next(err);
+        }
+        if (!result) {
+            console.log('[WARN]user cookie not found');
+        } else {
+            result.remove(function (err, result) {
+                if (err) return next(err);
+            });
+        }
+        res.clearCookie('session');
+        res.redirect('/login');
+    });
+};
+
 
 exports.levelfind = levelfind;
 function levelfind(req, callback) {
@@ -93,9 +109,9 @@ function levelfind(req, callback) {
         if (err) {
             callback(err, null);
         }
-        console.log(result);
+        //console.log(result);
         if (!result) {
-            console.log('CookieError');
+            console.log('[INFO]user cookie not found');
             callback(null, 0);
             return;
         }
@@ -103,7 +119,7 @@ function levelfind(req, callback) {
             result.remove(function (err, result) {
                 if (err) return next(err);
             });
-            console.log('CookieExpired');
+            console.log('[WRAN]user cookie expired');
             callback(null, 0);
             return;
         }
