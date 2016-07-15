@@ -96,18 +96,21 @@ function levelfind(req, callback) {
         console.log(result);
         if (!result) {
             console.log('CookieError');
-            callback(err, 0);
+            callback(null, 0);
+            return;
         }
         if (result.expire < Date.now()) {
             result.remove(function (err, result) {
                 if (err) return next(err);
             });
             console.log('CookieExpired');
-            callback(err, 0);
+            callback(null, 0);
+            return;
         }
         Admin.
         findById(result.admin_id, function (err, user) {
             if (!user) {
+                callback(null, 0);
                 return;
             }
             callback(err, user.level);
