@@ -60,6 +60,8 @@ app.get('/index', routes.index);
 app.get('/admin', admin.admin);
 app.get('/login', admin.login);
 app.post('/login', admin.login_proc);
+app.get('/chpwd', admin.chpwd);
+app.post('/chpwd', admin.chpwd_proc);
 app.get('/logout', admin.logout);
 
 http.createServer(app).listen(app.get('port'), function () {

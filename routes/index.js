@@ -13,7 +13,7 @@ exports.index = function (req, res, next)
     find({ visible : true }).
     sort( '-update' ).
     exec(function (err, anns) {
-        admin.levelfind(req, function (err, tologin) {
+        admin.levelfind(req, function (err, tologin, name) {
             if (err) return next(err);
 
             res.render('index', {

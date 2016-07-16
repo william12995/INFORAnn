@@ -92,6 +92,7 @@
     <Content Include="views\admin.ejs" />
     <Content Include="views\admin1menu.ejs" />
     <Content Include="views\admin3menu.ejs" />
+    <Content Include="views\chpwd.ejs" />
     <Content Include="views\index.ejs" />
     <Content Include="views\layout.ejs" />
     <Content Include="views\login.ejs" />

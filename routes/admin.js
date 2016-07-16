@@ -6,7 +6,7 @@ var Ann = mongoose.model('Ann');
 var utils = require('../utils');
 
 exports.admin = function (req, res) {
-    levelfind(req, function (err, tologin) {
+    levelfind(req, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
         }
@@ -22,7 +22,7 @@ exports.admin = function (req, res) {
 };
 
 exports.login = function (req, res) {
-    levelfind(req, function (err, tologin) {
+    levelfind(req, function (err, tologin, name) {
         if (tologin > 0) {
             res.redirect('/admin');
         }
@@ -58,7 +58,7 @@ exports.login_proc = function (req, res)
             return;
         }
         var sessionid = utils.uid(32);
-        if(remember)
+        if(remember == 'on')
         {
             res.cookie('session',sessionid,{ expires: new Date(Date.now() + 14*24*60*60*1000)});
             new Session ({
@@ -102,6 +102,69 @@ exports.logout = function (req, res) {
     });
 };
 
+exports.chpwd = function (req, res) {
+    levelfind(req, function (err, tologin, name) {
+        if (err) {
+            console.log('[ERROR]' + err);
+        }
+        if (tologin == 0) {
+            res.redirect('/login');
+        }
+        res.render('chpwd', { title: 'Change Admin Password', menu: tologin });
+    });
+}
+
+exports.chpwd_proc = function (req, res) {
+    var oldpwd = req.body['oldpwd'];
+    var newpwd = req.body['newpwd'];
+    var comfirmpwd = req.body['comfirmpwd'];
+    var oldsha512 = crypto.createHash('sha512');
+    var oldhash = oldsha512.update(oldpwd).digest('hex');
+    var newsha512 = crypto.createHash('sha512');
+    var newhash = newsha512.update(newpwd).digest('hex');
+
+    levelfind(req, function (err, tologin, name) {
+        if (err) {
+            console.log('[ERROR]' + err);
+        }
+        if (tologin == 0) {
+            res.redirect('/login');
+        }
+
+        Admin.
+        findOne({ name: name }).
+        exec(function (err, user) {
+            if (err){console.log('[ERROR]' + err)};
+            if (!user)
+            {
+                res.locals.error = '使用者不存在';
+                console.log('[WARN]user '+name+' is not exist!');
+                res.redirect('/login');
+                return;
+            }
+            if (oldhash != user.password && user.password != "")
+            {
+                res.locals.error = '密碼錯誤';
+                console.log('[WARN]password for '+name+' error!');
+                res.redirect('/chpwd');
+                return;
+            }
+
+            if (newpwd != comfirmpwd) {
+                res.locals.error = '密碼不一致';
+                console.log('[WARN]passwords for ' + name + ' are not same!');
+                res.redirect('/chpwd');
+                return;
+            }
+
+            user.password = newhash;
+            user.save(function (err, user, count) {
+                if (err) { console.log('[ERROR]' + err) };
+                res.redirect('/');
+            });
+        });
+    });
+}
 
 exports.levelfind = levelfind;
 function levelfind(req, callback) {
@@ -129,7 +192,8 @@ function levelfind(req, callback) {
                 callback(null, 0);
                 return;
             }
-            callback(err, user.level);
+            callback(err, user.level, user.name);
+            return;
         });
     });
 }
