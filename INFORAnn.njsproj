@@ -32,6 +32,9 @@
   <ItemGroup>
     <Compile Include="app.js" />
     <Compile Include="utils.js" />
+    <Content Include="public\icons\add-tool.svg" />
+    <Content Include="public\icons\note-interface-symbol.svg" />
+    <Content Include="public\icons\rubbish-bin.svg" />
     <Content Include="public\js\ie\html5shiv.js" />
     <Content Include="public\js\ie\respond.min.js" />
     <Content Include="public\js\jquery.min.js" />
@@ -92,6 +95,7 @@
     <Content Include="views\admin.ejs" />
     <Content Include="views\admin1menu.ejs" />
     <Content Include="views\admin3menu.ejs" />
+    <Content Include="views\annform.ejs" />
     <Content Include="views\chpwd.ejs" />
     <Content Include="views\index.ejs" />
     <Content Include="views\layout.ejs" />
@@ -102,6 +106,7 @@
     <Folder Include="public\css\" />
     <Folder Include="public\css\images\" />
     <Folder Include="public\fonts\" />
+    <Folder Include="public\icons\" />
     <Folder Include="public\js\" />
     <Folder Include="public\js\ie\" />
     <Folder Include="public\sass\" />

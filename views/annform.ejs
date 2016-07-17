@@ -1,0 +1,25 @@
+﻿<% layout( 'layout' ) -%>
+<div class="wrapper spotlight style3">
+    <div class="inner" style="display:block; text-align:start">
+        <form class="form-ann" role="form" method="post">
+            <div class="row uniform">
+                <div class="12u$">
+                    <label for="title">標題</label>
+                    <input type="text" name="title" id="title" value="<%= ann.title %>" /><br />
+
+                    <input type="checkbox" name="istextcontent" id="istextcontent" value=<%= ann.istextcontent %> />
+                    <label for="istextcontent">純文字模式</label><br />
+
+                    <label for="content">內容</label><br />
+                    <textarea rows="30" name="content" id="content"><%= ann.content %></textarea>
+
+                    <input type="checkbox" name="visible" id="visible" value=<%= ann.visible %> />
+                    <label for="visible">可視</label><br />
+
+                    <input type="checkbox" name="ontop" id="ontop" value=<%= ann.ontop %> />
+                    <label for="ontop">置頂</label><br />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

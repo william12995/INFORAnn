@@ -3,7 +3,6 @@ var Schema = mongoose.Schema;
 
 var Ann = new Schema(
     {
-        admin_id : String,
         author : String,
         title : String,
         istextcontent : Boolean,

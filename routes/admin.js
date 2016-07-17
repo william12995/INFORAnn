@@ -9,17 +9,50 @@ exports.admin = function (req, res) {
     levelfind(req, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
-        }
-        if (req.cookies.session) {
-            if (tologin > 0) {
-                res.render('admin', { title: 'Admin', menu: tologin });
-            }
-        }
+        }       
         if (tologin == 0) {
             res.redirect('/login');
+            return;
+        }
+        if (tologin == 1) {
+            Ann.find({ author: name }).sort('-update').exec(annsfind);
+        }
+        else if (tologin >= 2) {
+            Ann.find().sort('-update').exec(annsfind);
+        }
+        return;
+        function annsfind(err, anns) {
+            if (err) return next(err);
+            res.render('admin', { title: 'Admin', menu: tologin, data:anns });
         }
     });
 };
+
+exports.annnew = function (req, res) {
+    levelfind(req, function (err, tologin, name) {
+        if (err) {
+            console.log('[ERROR]' + err);
+        }
+        if (tologin == 0) {
+            res.redirect('/login');
+            return;
+        }
+        var empty = new Ann(
+            {
+                author: '',
+                title: '',
+                istextcontent: false,
+                content: '',
+                create: Date.now(),
+                update: Date.now(),
+                visible: true,
+                views: 0,
+                ontop: false
+            });
+        res.render('annform', { title: 'Add New Announcement', menu: tologin, ann: empty });
+        return;
+    });
+}
 
 exports.login = function (req, res) {
     levelfind(req, function (err, tologin, name) {
