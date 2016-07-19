@@ -127,6 +127,7 @@
     <Folder Include="typings\globals\ejs-locals\" />
     <Folder Include="typings\globals\ejs\" />
     <Folder Include="typings\globals\express\" />
+    <Folder Include="typings\globals\moment\" />
     <Folder Include="typings\globals\mongoose\" />
     <Folder Include="typings\globals\node\" />
     <Folder Include="typings\globals\stylus\" />
@@ -138,6 +139,7 @@
     <TypeScriptCompile Include="typings\globals\ejs-locals\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\ejs\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\express\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\moment\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\mongoose\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
     <TypeScriptCompile Include="typings\globals\stylus\index.d.ts" />

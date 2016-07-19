@@ -6,7 +6,8 @@
             <!--<a href="/annnew" class="button"><img src="/icons/add-tool.svg" style="border-bottom: none" /></a>-->
             <a href="/annnew" style="border-bottom: none"><input class="button" type="image" src="/icons/add-tool.svg" name="add" id="add" style="padding:10px" /></a>
             <!--<button type="submit"><img src="/icons/add-tool.svg" style="border-bottom: none" /><br/>Add</button>-->
-            <div class="table-wrapper">
+            <!--<div class="table-wrapper">-->
+            <div>
                 <table>
                     <thead>
                         <tr>
@@ -18,16 +19,18 @@
                             <td>刪除</td>
                         </tr>
                     </thead>
-                    <% data.forEach( function(dt) {%>
-                    <tr>
-                        <td><a herf="/content/<%= dt._id %>"><%= dt.title %></a></td>
-                        <td><%= dt.update %></td>
-                        <td><%= dt.author %></td>
-                        <td><%= dt.views %></td>
-                        <td><a herf="/annedit/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" style="padding:10px" /></a></td>
-                        <td><a herf="/anndelete/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px" /></a></td>
-                    </tr>
-                    <% }); %>
+                    <tbody>
+                        <% data.forEach( function(dt) {%>
+                        <tr>
+                            <td><a herf="/content/<%= dt._id %>"><%= dt.title %></a></td>
+                            <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
+                            <td><%= dt.author %></td>
+                            <td><%= dt.views %></td>
+                            <td><a herf="/annedit/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" style="padding:10px" /></a></td>
+                            <td><a herf="/anndelete/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px" /></a></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
                 </table>
             </div>
         </section>

@@ -7,17 +7,19 @@
                     <label for="title">標題</label>
                     <input type="text" name="title" id="title" value="<%= ann.title %>" /><br />
 
-                    <input type="checkbox" name="istextcontent" id="istextcontent" value=<%= ann.istextcontent %> />
-                    <label for="istextcontent">純文字模式</label><br />
+                    <input type="checkbox" name="istextcontent" id="istextcontent" <% if(ann.istextcontent==false) { %> checked <% } %> />
+                    <label for="istextcontent">HTML模式</label><br />
 
                     <label for="content">內容</label><br />
                     <textarea rows="30" name="content" id="content"><%= ann.content %></textarea>
 
-                    <input type="checkbox" name="visible" id="visible" value=<%= ann.visible %> />
+                    <input type="checkbox" name="visible" id="visible" <% if(ann.visible==true) { %> checked <% } %> />
                     <label for="visible">可視</label><br />
 
-                    <input type="checkbox" name="ontop" id="ontop" value=<%= ann.ontop %> />
+                    <input type="checkbox" name="ontop" id="ontop" <% if(ann.ontop==true) { %> checked <% } %> />
                     <label for="ontop">置頂</label><br />
+
+                    <input type="submit" name="ok" id="ok" value="完成" />
                 </div>
             </div>
         </form>

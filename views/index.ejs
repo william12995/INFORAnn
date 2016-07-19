@@ -13,7 +13,8 @@
         	<% data.forEach( function(dt) {%>
         		<tr>
         			<td><a herf="/content/<%= dt._id %>"><%= dt.title %></a></td>
-        			<td><%= dt.update %></td>
+        			<!--<td><%= dt.update %></td>-->
+                    <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
         			<td><%= dt.author %></td>
         			<td><%= dt.views %></td>
         		</tr>

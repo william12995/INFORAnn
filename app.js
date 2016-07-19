@@ -59,6 +59,7 @@ app.get('/', routes.index);
 app.get('/index', routes.index);
 app.get('/admin', admin.admin);
 app.get('/annnew', admin.annnew);
+app.post('/annnew', admin.annnew_proc);
 app.get('/login', admin.login);
 app.post('/login', admin.login_proc);
 app.get('/chpwd', admin.chpwd);

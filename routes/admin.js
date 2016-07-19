@@ -1,5 +1,6 @@
 ﻿var crypto = require('crypto');
 var mongoose = require('mongoose');
+var moment = require('moment');
 var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
 var Ann = mongoose.model('Ann');
@@ -9,7 +10,7 @@ exports.admin = function (req, res) {
     levelfind(req, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
-        }       
+        }
         if (tologin == 0) {
             res.redirect('/login');
             return;
@@ -23,7 +24,7 @@ exports.admin = function (req, res) {
         return;
         function annsfind(err, anns) {
             if (err) return next(err);
-            res.render('admin', { title: 'Admin', menu: tologin, data:anns });
+            res.render('admin', { moment: moment, title: 'Admin', menu: tologin, data: anns });
         }
     });
 };
@@ -51,6 +52,33 @@ exports.annnew = function (req, res) {
             });
         res.render('annform', { title: 'Add New Announcement', menu: tologin, ann: empty });
         return;
+    });
+}
+
+exports.annnew_proc = function (req, res) {
+    levelfind(req, function (err, tologin, name) {
+        if (err) {
+            console.log('[ERROR]' + err);
+        }
+        if (tologin == 0) {
+            res.redirect('/login');
+            return;
+        }
+
+        new Ann({
+            author: name,
+            title: req.body['title'],
+            istextcontent: req.body['istextcontent'] == 'on',
+            content: req.body['content'],
+            create: Date.now(),
+            update: Date.now(),
+            visible: req.body['visible'] == 'on',
+            views: 0,
+            ontop: req.body['ontop'] == 'on'
+        }).save(function (err, ls, count) {
+            if (err) return next(err);
+            res.redirect('/admin');
+        });
     });
 }
 
@@ -200,8 +228,9 @@ exports.chpwd_proc = function (req, res) {
 }
 
 exports.levelfind = levelfind;
-function levelfind(req, callback) {
+function levelfind(req, callback, refuse) {
     Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
+        refuse = refuse || false;
         if (err) {
             callback(err, null);
         }
