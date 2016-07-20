@@ -11,10 +11,7 @@ exports.admin = function (req, res) {
         if (err) {
             console.log('[ERROR]' + err);
         }
-        if (tologin == 0) {
-            res.redirect('/login');
-            return;
-        }
+
         if (tologin == 1) {
             Ann.find({ author: name }).sort('-update').exec(annsfind);
         }
@@ -26,17 +23,13 @@ exports.admin = function (req, res) {
             if (err) return next(err);
             res.render('admin', { moment: moment, title: 'Admin', menu: tologin, data: anns });
         }
-    });
+    }, true);
 };
 
 exports.annnew = function (req, res) {
     levelfind(req, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
-        }
-        if (tologin == 0) {
-            res.redirect('/login');
-            return;
         }
         var empty = new Ann(
             {
@@ -52,7 +45,7 @@ exports.annnew = function (req, res) {
             });
         res.render('annform', { title: 'Add New Announcement', menu: tologin, ann: empty });
         return;
-    });
+    },true);
 }
 
 exports.annnew_proc = function (req, res) {
@@ -68,7 +61,7 @@ exports.annnew_proc = function (req, res) {
         new Ann({
             author: name,
             title: req.body['title'],
-            istextcontent: req.body['istextcontent'] == 'on',
+            istextcontent: req.body['istextcontent'] != 'on',
             content: req.body['content'],
             create: Date.now(),
             update: Date.now(),
@@ -81,6 +74,44 @@ exports.annnew_proc = function (req, res) {
         });
     });
 }
+
+exports.annedit = function (req, res) {
+    levelfind(req, function (err, tologin, name) {
+        editper(req, res, req.params.id, function (ann) {
+            res.render('annform', { title: 'Edit Announcement', menu: tologin, ann: ann });
+        });
+    }, true);
+};
+
+exports.annedit_proc = function (req, res) {
+    levelfind(req, function (err, tologin, name) {
+        editper(req, res, req.params.id, function (ann) {
+            ann.title = req.body['title'];
+            ann.istextcontent = req.body['istextcontent'] != 'on';
+            ann.content = req.body['content'];
+            ann.update = Date.now();
+            ann.visible = req.body['visible'] == 'on';
+            ann.ontop = req.body['ontop'] == 'on';
+            ann.save(function (err, ls, count) {
+                if (err) return next(err);
+                res.redirect('/admin');
+            });
+        });
+    }, true);
+};
+
+exports.anndelete = function (req, res) {
+    levelfind(req, function (err, tologin, name) {
+        editper(req, res, req.params.id, function (ann) {
+            ann.remove(function (err, ann) {
+                if (err) {
+                    console.log('[ERROR]' + err);
+                }
+                res.redirect('/admin');
+            });
+        });
+    }, true);
+};
 
 exports.login = function (req, res) {
     levelfind(req, function (err, tologin, name) {
@@ -237,6 +268,10 @@ function levelfind(req, callback, refuse) {
         //console.log(result);
         if (!result) {
             console.log('[INFO]user cookie not found');
+            if (refuse == true) {
+                res.redirect('/login');
+                return;
+            }
             callback(null, 0);
             return;
         }
@@ -245,17 +280,43 @@ function levelfind(req, callback, refuse) {
                 if (err) return next(err);
             });
             console.log('[WRAN]user cookie expired');
+            if (refuse == true) {
+                res.redirect('/login');
+                return;
+            }
             callback(null, 0);
             return;
         }
         Admin.
         findById(result.admin_id, function (err, user) {
             if (!user) {
+                if (refuse == true) {
+                    res.redirect('/login');
+                    return;
+                }
                 callback(null, 0);
                 return;
             }
             callback(err, user.level, user.name);
             return;
+        });
+    });
+}
+
+function editper(req, res, id, callback) {
+    levelfind(req, function (err, tologin, name) {
+        Ann.findById(id, function (err, ann) {
+            Admin.findOne({ name: ann.author }, function (err, author) {
+                if (author.level > tologin) {
+                    res.redirect('/admin');
+                    return;
+                }
+                if (tologin == 1 && name != author.name) {
+                    res.redirect('/admin');
+                    return;
+                }
+                callback(ann);
+            });
         });
     });
 }

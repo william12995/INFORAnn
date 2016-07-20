@@ -11,10 +11,7 @@ var moment = require('moment');
 exports.index = function (req, res, next) 
 {
     var qudata = querystring.parse(req.url.query);
-	Ann.
-    find({ visible : true }).
-    sort( '-update' ).
-    exec(function (err, anns) {
+	Ann.find({ visible: true }).sort( '-ontop').sort( '-update' ).exec(function (err, anns) {
         admin.levelfind(req, function (err, tologin, name) {
             if (err) return next(err);
 
