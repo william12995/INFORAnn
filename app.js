@@ -23,6 +23,7 @@ app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.cookieParser());
+app.use(express.session({ secret: 'S4gznk%^MdGfxAEXT?N*WcD5tD!w@BC+' }));
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 Admin.findOne({name : "root"}).exec(function(err,result)
 {

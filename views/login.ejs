@@ -1,6 +1,25 @@
 ﻿<% layout( 'layout' ) -%>
 <div class="wrapper">
     <div class="inner">
+        <!-- ModalBoxArea -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="boxclose">×</span>
+                    <h1 class="modal-title">登入失敗</h1>
+                </div>
+                <div class="modal-body">
+                    <h3 class="modal-text"><%= errmsg %></h3>
+                </div>
+            </div>
+        </div>
+        <script src="/js/ModalBox.js"></script>
+        <% if(errmsg) { %>
+        <script type="text/javascript">
+                show();
+        </script>
+        <% } %>
+        <!-- ModalBoxEnd -->
         <form class="form-signin" role="form" method="post" action="login">
             <div class="row uniform">
                 <div class="4u$ 12u$(xsmall)">
@@ -13,7 +32,7 @@
                     <input type="checkbox" name="remember" id="remember" />
                     <label for="remember">記住我</label>
                 </div>
-                <div class="12u$">                
+                <div class="12u$">
                     <input type="submit" name="login" value="登入" />
                 </div>
             </div>

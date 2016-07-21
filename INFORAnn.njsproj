@@ -31,7 +31,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Content Include="public\js\ModalBox.js" />
     <Compile Include="utils.js" />
+    <Content Include="public\css\ModalBox.css" />
     <Content Include="public\icons\add-tool.svg" />
     <Content Include="public\icons\note-interface-symbol.svg" />
     <Content Include="public\icons\rubbish-bin.svg" />

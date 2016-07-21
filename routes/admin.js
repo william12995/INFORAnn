@@ -118,7 +118,8 @@ exports.login = function (req, res) {
         if (tologin > 0) {
             res.redirect('/admin');
         }
-        res.render('login', { title: 'Admin Login', menu: tologin });
+        res.render('login', { title: 'Admin Login', menu: tologin, errmsg: req.session.error });
+        req.session.error = null;
     });
 };
 
@@ -137,14 +138,14 @@ exports.login_proc = function (req, res)
         if(err){console.log('[ERROR]' + err)};
         if(!user)
         {
-            res.locals.error = '使用者不存在';
+            req.session.error = '使用者不存在';
             console.log('[WARN]user '+username+' is not exist!');
             res.redirect('/login');
             return;
         }
         if(pwdhash != user.password && user.password != "")
         {
-            res.locals.error = '密碼錯誤';
+            req.session.error = '密碼錯誤';
             console.log('[WARN]password for '+username+' error!');
             res.redirect('/login');
             return;
@@ -229,21 +230,21 @@ exports.chpwd_proc = function (req, res) {
             if (err){console.log('[ERROR]' + err)};
             if (!user)
             {
-                res.locals.error = '使用者不存在';
+                req.session.error = '使用者不存在';
                 console.log('[WARN]user '+name+' is not exist!');
                 res.redirect('/login');
                 return;
             }
             if (oldhash != user.password && user.password != "")
             {
-                res.locals.error = '密碼錯誤';
+                req.session.error = '密碼錯誤';
                 console.log('[WARN]password for '+name+' error!');
                 res.redirect('/chpwd');
                 return;
             }
 
             if (newpwd != comfirmpwd) {
-                res.locals.error = '密碼不一致';
+                req.session.error = '密碼不一致';
                 console.log('[WARN]passwords for ' + name + ' are not same!');
                 res.redirect('/chpwd');
                 return;
