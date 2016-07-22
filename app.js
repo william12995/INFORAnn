@@ -59,6 +59,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/index', routes.index);
+app.get('/content/:id', routes.content);
 app.get('/admin', admin.admin);
 app.get('/annnew', admin.annnew);
 app.post('/annnew', admin.annnew_proc);

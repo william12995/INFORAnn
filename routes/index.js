@@ -25,3 +25,19 @@ exports.index = function (req, res, next)
     });
     //res.render('index', { title: 'INFOR Ann System' ,data: {}});
 };
+
+exports.content = function (req, res) {
+    Ann.findById(req.params.id, function (err, ann) {
+        admin.levelfind(req, function (err, tologin, name) {
+            if (err) return next(err);
+            ann.views++;
+            ann.save(function (err, ann, count) {
+                if (err) console.log('[ERROR]' + err) ;
+            });
+            res.render('content', {
+                moment: moment, title: ann.title +' - INFOR Ann System', ann: ann, menu: tologin
+            });
+            
+        });
+    });
+}

@@ -1,0 +1,19 @@
+﻿<% layout( 'layout' ) -%>
+<section class="wrapper spotlight style2">
+    <div class="inner" style="display:block; text-align:start">
+        <h1 class="major" style="font-size:24px"><%= ann.title %></h1>
+        <ul class="infolist">
+            <li>發布者：<%= ann.author %></li>
+            <li>更新日期：<%= moment(ann.update).format('YYYY-MM-DD HH:mm:ss') %></li>
+            <li>建立日期：<%= moment(ann.create).format('YYYY-MM-DD HH:mm:ss') %></li>
+            <li>觀看數：<%= ann.views %></li>
+        </ul>
+        <div class="uniform">
+            <% if(ann.istextcontent == true) { %>
+                <p><%- ann.content.replace(/\n/g, '<br />') %></p>
+            <% } else { %>
+                <%- ann.content %>
+            <% } %>
+        </div>
+    </div>
+</section>
