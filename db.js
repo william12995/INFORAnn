@@ -28,7 +28,8 @@ var Session = new Schema(
     {
         cookie_id : String,
         admin_id : String,
-        expire : Date
+        expire : Date,
+        keep : Boolean
     }
 )
 

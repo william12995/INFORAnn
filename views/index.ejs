@@ -4,6 +4,7 @@
         <table>
         	<thead>
         		<tr>
+                    <td>置頂</td>
         			<td>標題</td>
         			<td>日期</td>
         			<td>發佈者</td>
@@ -11,7 +12,8 @@
         		</tr>
         	</thead>
         	<% data.forEach( function(dt) {%>
-        		<tr>
+        		<tr <% if(dt.ontop == true){ %> style="background-color: rgba(255, 255, 255, 0.25);" <% } %> >
+                    <td><% if(dt.ontop == true){ %> <img src="/icons/up-arrow-filled-angle.svg" style="width: 19px" /> <% } %></td>
         			<td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
         			<!--<td><%= dt.update %></td>-->
                     <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>

@@ -157,7 +157,8 @@ exports.login_proc = function (req, res)
             new Session ({
                 cookie_id : sessionid,
                 admin_id : user._id,
-                expire : new Date(Date.now() + 14*24*60*60*1000)
+                expire : new Date(Date.now() + 14*24*60*60*1000),
+                keep : true
             }).save(function ( err, ls, count ){
                 if (err) return next(err);
                 res.redirect('/admin');
@@ -169,7 +170,8 @@ exports.login_proc = function (req, res)
             new Session ({
                 cookie_id : sessionid,
                 admin_id : user._id,
-                expire : new Date(Date.now() + 1*60*60*1000)
+                expire : new Date(Date.now() + 1*60*60*1000),
+                keep : false
             }).save(function ( err, ls, count ){
                 if (err) return next(err);
                 res.redirect('/admin');
@@ -299,6 +301,13 @@ function levelfind(req, callback, refuse) {
                 callback(null, 0);
                 return;
             }
+            if(result.keep == true) {
+                result.expire = new Date(Date.now() + 14*24*60*60*1000);
+                result.save();
+            } else {
+                result.expire = new Date(Date.now() + 1*60*60*1000);
+                result.save();
+            }//Add Keeping
             callback(err, user.level, user.name);
             return;
         });
