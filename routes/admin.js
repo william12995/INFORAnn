@@ -284,6 +284,7 @@ function levelfind(req, callback, refuse) {
                 if (err) return next(err);
             });
             console.log('[WRAN]user cookie expired');
+            req.session.error = "Cookie資訊已過期，請重新登入。";
             if (refuse == true) {
                 res.redirect('/login');
                 return;
