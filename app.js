@@ -41,7 +41,8 @@ Admin.findOne({name : "root"}).exec(function(err,result)
         console.log("[WARN]will auto create a passwordless root account.");
 		new Admin(
 		{
-        		name : "root",
+                name: "root",
+                nick: "",
         		password : "",
         		level : 4
 		}).save(function(err, r)
@@ -66,6 +67,7 @@ app.post('/annnew', admin.annnew_proc);
 app.get('/annedit/:id', admin.annedit);
 app.post('/annedit/:id', admin.annedit_proc);
 app.get('/anndelete/:id', admin.anndelete);
+app.get('/usradm', admin.usradm);
 app.get('/login', admin.login);
 app.post('/login', admin.login_proc);
 app.get('/chpwd', admin.chpwd);

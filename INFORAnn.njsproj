@@ -5,6 +5,9 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>INFORAnn</Name>
     <RootNamespace>INFORAnn</RootNamespace>
+    <ScriptArguments>
+    </ScriptArguments>
+    <Environment>development</Environment>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -21,7 +24,7 @@
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <ProjectView>ShowAllFiles</ProjectView>
     <NodejsPort>3030</NodejsPort>
-    <StartWebBrowser>true</StartWebBrowser>
+    <StartWebBrowser>True</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Content Include="public\css\Custom.css" />
     <Content Include="public\js\ModalBox.js" />
     <Compile Include="utils.js" />
     <Content Include="public\css\ModalBox.css" />
@@ -104,6 +108,7 @@
     <Content Include="views\layout.ejs" />
     <Content Include="views\login.ejs" />
     <Content Include="views\menu.ejs" />
+    <Content Include="views\usradm.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\css\" />

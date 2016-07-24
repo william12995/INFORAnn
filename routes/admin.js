@@ -113,6 +113,25 @@ exports.anndelete = function (req, res) {
     }, true);
 };
 
+exports.usradm = function (req, res) {
+    levelfind(req, function (err, tologin, name) {
+        if (tologin <= 2) {
+            res.redirect('/admin');
+        }
+        if (tologin == 3) {
+            Admin.find({
+                level: { $lte: 3 }
+            }, admfind);
+        } else if (tologin >= 4) {
+            Admin.find({}, admfind);
+        }
+        function admfind(err, users) {
+            if (err) return next(err);
+            res.render('usradm', { moment: moment, title: 'UserManage', menu: tologin, data: users });
+        }
+    }, true);
+};
+
 exports.login = function (req, res) {
     levelfind(req, function (err, tologin, name) {
         if (tologin > 0) {

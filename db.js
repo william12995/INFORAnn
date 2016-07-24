@@ -18,7 +18,11 @@ var Ann = new Schema(
 
 var Admin = new Schema(
     {
-        name : String,
+        name: String,
+        nick: String,
+        //TODO:AddLastLogin
+        //TODO:AddEnable
+        //TODO:AddDeleteable
         password : String,
         level : Number
     }
