@@ -24,7 +24,7 @@
                         <tr>
                             <td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
                             <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
-                            <td><%= dt.author %></td>
+                            <td><%= dt.populate('author').nick %></td>
                             <td><%= dt.views %></td>
                             <td><a href="/annedit/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" style="padding:10px;height:40px" /></a></td>
                             <td><a href="/anndelete/<%= dt._id %>" onclick="return confirm('你確定要刪除此公告嗎？')" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px;height:40px" /></a></td>

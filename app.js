@@ -41,8 +41,11 @@ Admin.findOne({name : "root"}).exec(function(err,result)
         console.log("[WARN]will auto create a passwordless root account.");
 		new Admin(
 		{
-                name: "root",
-                nick: "",
+                name : "root",
+                nick: "System Admin",
+                LastLogin : Date.now(),
+                enable : true,
+                system : true,
         		password : "",
         		level : 4
 		}).save(function(err, r)

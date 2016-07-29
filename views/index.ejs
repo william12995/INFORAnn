@@ -17,7 +17,7 @@
         			<td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
         			<!--<td><%= dt.update %></td>-->
                     <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
-        			<td><%= dt.author %></td>
+        			<td><%= dt.populate('author').nick %></td>
         			<td><%= dt.views %></td>
         		</tr>
         	<% }); %>

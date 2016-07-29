@@ -4,7 +4,7 @@ var utils = require('./utils');
 
 var Ann = new Schema(
     {
-        author : String,
+        author: { type: Schema.Types.ObjectId, ref : 'Admin' },
         title : String,
         istextcontent : Boolean,
         content : String,
@@ -20,9 +20,9 @@ var Admin = new Schema(
     {
         name: String,
         nick: String,
-        //TODO:AddLastLogin
-        //TODO:AddEnable
-        //TODO:AddDeleteable
+        LastLogin : Date,
+        enable : Boolean,
+        system : Boolean,
         password : String,
         level : Number
     }

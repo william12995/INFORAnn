@@ -35,7 +35,7 @@ exports.annnew = function (req, res) {
             {
                 author: '',
                 title: '',
-                istextcontent: false,
+                istextcontent: true,
                 content: '',
                 create: Date.now(),
                 update: Date.now(),
@@ -49,7 +49,7 @@ exports.annnew = function (req, res) {
 }
 
 exports.annnew_proc = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, function (err, tologin, name, user) {
         if (err) {
             console.log('[ERROR]' + err);
         }
@@ -59,7 +59,7 @@ exports.annnew_proc = function (req, res) {
         }
 
         new Ann({
-            author: name,
+            author: user._id,
             title: req.body['title'],
             istextcontent: req.body['istextcontent'] != 'on',
             content: req.body['content'],
@@ -162,6 +162,12 @@ exports.login_proc = function (req, res)
             res.redirect('/login');
             return;
         }
+        if (user.enable == false) {
+            req.session.error = '使用者被停用';
+            console.log('[WARN]user ' + username + ' is disabled!');
+            res.redirect('/login');
+            return;
+        }
         if(pwdhash != user.password && user.password != "")
         {
             req.session.error = '密碼錯誤';
@@ -170,6 +176,8 @@ exports.login_proc = function (req, res)
             return;
         }
         var sessionid = utils.uid(32);
+        user.LastLogin = Date.now();
+        user.save();
         if(remember == 'on')
         {
             res.cookie('session',sessionid,{ expires: new Date(Date.now() + 14*24*60*60*1000)});
@@ -328,7 +336,7 @@ function levelfind(req, callback, refuse) {
                 result.expire = new Date(Date.now() + 1*60*60*1000);
                 result.save();
             }//Add Keeping
-            callback(err, user.level, user.name);
+            callback(err, user.level, user.name, user);
             return;
         });
     });
@@ -337,7 +345,7 @@ function levelfind(req, callback, refuse) {
 function editper(req, res, id, callback) {
     levelfind(req, function (err, tologin, name) {
         Ann.findById(id, function (err, ann) {
-            Admin.findOne({ name: ann.author }, function (err, author) {
+            ann.populate('author').exec(function (err, author) {
                 if (author.level > tologin) {
                     res.redirect('/admin');
                     return;

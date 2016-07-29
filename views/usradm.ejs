@@ -11,6 +11,8 @@
                             <th>使用者帳號</th>
                             <th>暱稱</th>
                             <th>權限</th>
+                            <th>啟用</th>
+                            <th>上次登入</th>
                             <th>編輯</th>
                             <th>刪除</th>
                         </tr>
@@ -21,8 +23,14 @@
                             <td><%= dt.name %></td>
                             <td><%= dt.nick %></td>
                             <td><%= dt.level %></td>
+                            <% if(dt.enable == true){ %>
+                                <td style="color:lightgreen">是</td>
+                            <% }else{ %>
+                                <td style="color:red">否</td>
+                            <% } %>
+                            <td><%= moment(dt.LastLogin).format('YYYY-MM-DD HH:mm:ss') %></td>
                             <td><a href="/usredit/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" style="padding:10px;height:40px" /></a></td>
-                            <td><a href="/usrdel/<%= dt._id %>" onclick="return confirm('你確定要刪除此使用者嗎？')" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px;height:40px" /></a></td>
+                            <td><% if(dt.system == false){ %><a href="/usrdel/<%= dt._id %>" onclick="return confirm('你確定要刪除此使用者嗎？')" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px;height:40px" /></a><% } %></td>
                         </tr>
                         <% }); %>
                     </tbody>
