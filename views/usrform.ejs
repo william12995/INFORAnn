@@ -1,0 +1,38 @@
+﻿<% layout( 'layout' ) -%>
+<div class="wrapper">
+    <div class="inner">
+        <section>
+            <h1 class="major"><%= head %></h1>
+            <form class="form-ann" role="form" method="post">
+                <div class="row uniform">
+                    <div class="6u 12u$(small)">
+                        <label for="name">帳號名稱</label>
+                        <input type="text" name="name" id="name" value="<%= usr.name %>" required <% if(usr.system == true){ %> readonly <% } %> />
+                    </div>
+                    <div class="6u$ 12u$(small)">
+                        <label for="nick">帳號暱稱</label>
+                        <input type="text" name="nick" id="nick" value="<%= usr.nick %>" />
+                    </div>
+                    <div class="6u 12u$(small)">
+                        <label for="level">權限</label>
+                        <select name="level" id="level" <% if(usr.system == true){ %> disabled <% } %> >
+                            <option value=1 <% if(usr.level == 1){ %> selected <% } %> >基本管理員</option>
+                            <option value=2 <% if(usr.level == 2){ %> selected <% } %> >公告管理員</option>
+                            <option value=3 <% if(usr.level == 3){ %> selected <% } %> >用戶管理員</option>
+                            <% if(operator.level >= 4){ %>
+                            <option value=4 <% if(usr.level == 4){ %> selected <% } %> >系統管理員</option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="6u$ 12u$(small)">
+                        <input type="checkbox" name="enable" id="enable" <% if(usr.system == true){ %> readonly <% } %> <% if(usr.enable == true){ %> checked <% } %> />
+                        <label for="enable">啟用帳號</label>
+                    </div>
+                    <div class="12u$">
+                        <input type="submit" name="ok" id="ok" value="儲存" />
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

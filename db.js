@@ -4,7 +4,8 @@ var utils = require('./utils');
 
 var Ann = new Schema(
     {
-        author: { type: Schema.Types.ObjectId, ref : 'Admin' },
+        author: { type: Schema.Types.ObjectId, ref: 'Admin' },
+        authorcache : String,
         title : String,
         istextcontent : Boolean,
         content : String,

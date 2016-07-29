@@ -3,7 +3,7 @@
     <div class="inner" style="display:block; text-align:start">
         <h1 class="major" style="font-size:24px"><%= ann.title %></h1>
         <ul class="infolist">
-            <li>發布者：<%= dt.populate('author').nick %></li>
+            <li>發布者：<%= ann.author.nick %></li>
             <li>更新日期：<%= moment(ann.update).format('YYYY-MM-DD HH:mm:ss') %></li>
             <li>建立日期：<%= moment(ann.create).format('YYYY-MM-DD HH:mm:ss') %></li>
             <li>觀看數：<%= ann.views %></li>

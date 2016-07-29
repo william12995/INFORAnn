@@ -1,6 +1,6 @@
 ﻿<% layout( 'layout' ) -%>
 <section class="wrapper spotlight style1">
-    <div class="inner">
+    <div class="inner" style="display:block; text-align:start">
         <table>
         	<thead>
         		<tr>
@@ -17,7 +17,7 @@
         			<td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
         			<!--<td><%= dt.update %></td>-->
                     <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
-        			<td><%= dt.populate('author').nick %></td>
+        			<td><%= dt.author.nick %></td>
         			<td><%= dt.views %></td>
         		</tr>
         	<% }); %>

@@ -7,20 +7,22 @@ var Ann = mongoose.model('Ann');
 var utils = require('../utils');
 
 exports.admin = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, function (err, tologin, name, user) {
         if (err) {
             console.log('[ERROR]' + err);
         }
 
         if (tologin == 1) {
-            Ann.find({ author: name }).sort('-update').exec(annsfind);
+            Ann.find({ author: user._id }).sort('-update').populate('author').exec(annsfind);
         }
         else if (tologin >= 2) {
-            Ann.find().sort('-update').exec(annsfind);
+            //Ann.find().sort('-update').populate('author').find({ 'author': { $elemMatch: { 'level': { $lte: tologin } } } }).exec(annsfind);
+            //TODO:Hide Edit&Del Button to ann can't edit.
+            Ann.find().sort('-update').populate('author').exec(annsfind);
         }
         return;
         function annsfind(err, anns) {
-            if (err) return next(err);
+            if (err) console.log('[ERROR]' + err);
             res.render('admin', { moment: moment, title: 'Admin', menu: tologin, data: anns });
         }
     }, true);
@@ -33,7 +35,7 @@ exports.annnew = function (req, res) {
         }
         var empty = new Ann(
             {
-                author: '',
+                author: null,
                 title: '',
                 istextcontent: true,
                 content: '',
@@ -60,6 +62,7 @@ exports.annnew_proc = function (req, res) {
 
         new Ann({
             author: user._id,
+            authorcache: "",
             title: req.body['title'],
             istextcontent: req.body['istextcontent'] != 'on',
             content: req.body['content'],
@@ -125,10 +128,111 @@ exports.usradm = function (req, res) {
         } else if (tologin >= 4) {
             Admin.find({}, admfind);
         }
+        //TODO:Add Chpwd Fuction
         function admfind(err, users) {
             if (err) return next(err);
             res.render('usradm', { moment: moment, title: 'UserManage', menu: tologin, data: users });
         }
+    }, true);
+};
+
+exports.usrnew = function (req, res) {
+    levelfind(req, function (err, tologin, name, user) {
+        if (tologin <= 2) {
+            res.redirect('/admin');
+        }
+        var empty = new Admin({
+            name: "",
+            nick: "",
+            LastLogin: null,
+            enable: true,
+            system: false,
+            password: "",
+            level: 1
+        });
+        res.render('usrform', { title: 'UserManage', head: "新增使用者", menu: tologin, usr: empty, operator: user });
+    }, true);
+};
+
+exports.usrnew_proc = function (req, res) {
+    levelfind(req, function (err, tologin, name, user) {
+        if (tologin <= 2) {
+            res.redirect('/admin');
+        }
+        //TODO:Detect same name user
+        new Admin({
+            name: req.body['name'],
+            nick: req.body['nick'],
+            LastLogin: Date.now(),
+            enable: req.body['enable'] == 'on',
+            system: false,
+            password: "",
+            level: req.body['level']
+        }).save(function (err, ls, count) {
+            if (err) return next(err);
+            res.redirect('/usradm');
+        });
+    }, true);
+};
+
+exports.usredit = function (req, res) {
+    levelfind(req, function (err, tologin, name, user) {
+        if (tologin <= 2) {
+            res.redirect('/admin');
+        }
+        Admin.findById(req.params.id, function (err, adm) {
+            if (tologin < adm.level) {
+                res.redirect('/usradm');
+                return;
+            }
+            res.render('usrform', { title: 'UserManage', head: "編輯使用者", menu: tologin, usr: adm, operator: user });
+        });
+    }, true);
+};
+
+exports.usredit_proc = function (req, res) {
+    levelfind(req, function (err, tologin, name, user) {
+        if (tologin <= 2) {
+            res.redirect('/admin');
+        }
+        Admin.findById(req.params.id, function (err, adm) {
+            if (tologin < adm.level) {
+                res.redirect('/usradm');
+                return;
+            }
+            if (adm.system == false) {
+                adm.name = req.body['name'];
+                adm.enable = req.body['enable'] == 'on';
+                adm.level = req.body['level'];
+            }
+            adm.nick = req.body['nick'];
+            adm.save(function (err, ls, count) {
+                if (err) return next(err);
+                res.redirect('/usradm');
+            });
+        });
+    }, true);
+};
+
+exports.usrdel = function (req, res) {
+    levelfind(req, function (err, tologin, name, user) {
+        if (tologin <= 2) {
+            res.redirect('/admin');
+        }
+        Admin.findById(req.params.id, function (err, adm) {
+            if (tologin < adm.level) {
+                res.redirect('/usradm');
+                return;
+            }
+            if (adm.system == true) {
+                res.redirect('/usradm');
+                return;
+            }
+            adm.remove(function (err, result) {
+                if (err) return next(err);
+            });
+            res.redirect('/usradm');
+        });
     }, true);
 };
 
@@ -345,12 +449,12 @@ function levelfind(req, callback, refuse) {
 function editper(req, res, id, callback) {
     levelfind(req, function (err, tologin, name) {
         Ann.findById(id, function (err, ann) {
-            ann.populate('author').exec(function (err, author) {
-                if (author.level > tologin) {
+            ann.populate('author', function (err, annp) {
+                if (annp.author.level > tologin) {
                     res.redirect('/admin');
                     return;
                 }
-                if (tologin == 1 && name != author.name) {
+                if (tologin == 1 && name != annp.author.name) {
                     res.redirect('/admin');
                     return;
                 }

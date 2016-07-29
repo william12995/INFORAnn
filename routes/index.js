@@ -11,10 +11,9 @@ var moment = require('moment');
 exports.index = function (req, res, next) 
 {
     var qudata = querystring.parse(req.url.query);
-	Ann.find({ visible: true }).sort( '-ontop').sort( '-update' ).exec(function (err, anns) {
+    Ann.find({ visible: true }).sort('-ontop').sort('-update').populate('author').exec(function (err, anns) {
         admin.levelfind(req, function (err, tologin, name) {
             if (err) return next(err);
-
             res.render('index', {
                 moment: moment,
                 title: 'INFOR Ann System',
@@ -27,7 +26,7 @@ exports.index = function (req, res, next)
 };
 
 exports.content = function (req, res) {
-    Ann.findById(req.params.id, function (err, ann) {
+    Ann.findById(req.params.id).populate('author').exec(function (err, ann) {
         admin.levelfind(req, function (err, tologin, name) {
             if (err) return next(err);
             ann.views++;
