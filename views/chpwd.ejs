@@ -1,25 +1,7 @@
 ﻿<% layout( 'layout' ) -%>
 <div class="wrapper">
     <div class="inner">
-        <!-- ModalBoxArea -->
-        <div id="modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span class="boxclose">×</span>
-                    <h1 class="modal-title">密碼設定失敗</h1>
-                </div>
-                <div class="modal-body">
-                    <h3 class="modal-text"><%= errmsg %></h3>
-                </div>
-            </div>
-        </div>
-        <script src="/js/ModalBox.js"></script>
-        <% if(errmsg) { %>
-        <script type="text/javascript">
-                show();
-        </script>
-        <% } %>
-        <!-- ModalBoxEnd -->
+        <%- partial( 'ModalBox' ) %>
         <form class="form-chpwd" role="form" method="post" action="chpwd">
             <div class="row uniform">
                 <div class="4u$ 12u$(xsmall)">

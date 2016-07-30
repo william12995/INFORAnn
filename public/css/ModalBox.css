@@ -19,7 +19,7 @@
     float: right;
     font-size: 28px;
     font-weight: bold;
-    line-height: normal;
+    line-height: 1em;
 }
 
 .boxclose:hover,
@@ -29,10 +29,12 @@
     cursor: pointer;
 }
 /* Modal Header */
-.modal-header {
+.modal-header-warn {
     padding: 16px;
     background-color: #CA611B;
     color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 /* Modal Body */
@@ -40,6 +42,8 @@
     text-align:center;
     padding: 16px;
     background-color: #2e3141;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 /* Modal Footer */
@@ -47,22 +51,26 @@
     padding: 16px;
     background-color: #5cb85c;
     color: white;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 /* Modal Content */
 .modal-content {
     position: relative;
     background-color: #fefefe;
+    margin-top: 56px;
     margin: auto;
     padding: 0;
     border: 1px solid #888;
+    border-radius: 10px;
     width: 80%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    animation: animatetop 0.4s;
-    /*-webkit-animation-name: animatetop;
+    /*animation: animatetop 0.4s;*/
+    -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
-    animation-duration: 0.4s*/
+    animation-duration: 0.4s
 }
 
 .modal-title{

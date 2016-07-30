@@ -1,0 +1,19 @@
+﻿<!-- ModalBoxArea -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header-warn">
+            <span class="boxclose">×</span>
+            <h1 class="modal-title">錯誤</h1>
+        </div>
+        <div class="modal-body">
+            <h3 class="modal-text"><%= errmsg %></h3>
+        </div>
+    </div>
+</div>
+<script src="/js/ModalBox.js"></script>
+<% if(errmsg) { %>
+    <script type="text/javascript">
+        show();
+    </script>
+<% } %>
+<!-- ModalBoxEnd -->

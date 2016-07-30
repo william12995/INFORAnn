@@ -139,6 +139,7 @@ exports.usradm = function (req, res) {
 exports.usrnew = function (req, res) {
     levelfind(req, function (err, tologin, name, user) {
         if (tologin <= 2) {
+            req.session.error = "權限不足";
             res.redirect('/admin');
         }
         var empty = new Admin({
@@ -157,20 +158,27 @@ exports.usrnew = function (req, res) {
 exports.usrnew_proc = function (req, res) {
     levelfind(req, function (err, tologin, name, user) {
         if (tologin <= 2) {
+            req.session.error = "權限不足";
             res.redirect('/admin');
         }
         //TODO:Detect same name user
-        new Admin({
-            name: req.body['name'],
-            nick: req.body['nick'],
-            LastLogin: Date.now(),
-            enable: req.body['enable'] == 'on',
-            system: false,
-            password: "",
-            level: req.body['level']
-        }).save(function (err, ls, count) {
-            if (err) return next(err);
-            res.redirect('/usradm');
+        Admin.findOne({ name: req.body['name'] }, function (err, same) {
+            if (same) {
+                req.session.error = "重複的使用者名稱";
+            } else {
+                new Admin({
+                    name: req.body['name'],
+                    nick: req.body['nick'],
+                    LastLogin: Date.now(),
+                    enable: req.body['enable'] == 'on',
+                    system: false,
+                    password: "",
+                    level: req.body['level']
+                }).save(function (err, ls, count) {
+                    if (err) return next(err);
+                    res.redirect('/usradm');
+                });
+            }
         });
     }, true);
 };
@@ -178,10 +186,12 @@ exports.usrnew_proc = function (req, res) {
 exports.usredit = function (req, res) {
     levelfind(req, function (err, tologin, name, user) {
         if (tologin <= 2) {
+            req.session.error = "權限不足";
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (tologin < adm.level) {
+                req.session.error = "權限不足";
                 res.redirect('/usradm');
                 return;
             }
@@ -193,15 +203,17 @@ exports.usredit = function (req, res) {
 exports.usredit_proc = function (req, res) {
     levelfind(req, function (err, tologin, name, user) {
         if (tologin <= 2) {
+            req.session.error = "權限不足";
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (tologin < adm.level) {
+                req.session.error = "權限不足";
                 res.redirect('/usradm');
                 return;
             }
             if (adm.system == false) {
-                adm.name = req.body['name'];
+                //adm.name = req.body['name'];
                 adm.enable = req.body['enable'] == 'on';
                 adm.level = req.body['level'];
             }
@@ -217,14 +229,17 @@ exports.usredit_proc = function (req, res) {
 exports.usrdel = function (req, res) {
     levelfind(req, function (err, tologin, name, user) {
         if (tologin <= 2) {
+            req.session.error = "權限不足";
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (tologin < adm.level) {
+                req.session.error = "權限不足";
                 res.redirect('/usradm');
                 return;
             }
             if (adm.system == true) {
+                req.session.error = "不可刪除系統帳戶";
                 res.redirect('/usradm');
                 return;
             }
@@ -415,7 +430,7 @@ function levelfind(req, callback, refuse) {
                 if (err) return next(err);
             });
             console.log('[WRAN]user cookie expired');
-            req.session.error = "Cookie資訊已過期，請重新登入。";
+            req.session.error = "登入資訊已過期，請重新登入。";
             if (refuse == true) {
                 res.redirect('/login');
                 return;
@@ -451,10 +466,12 @@ function editper(req, res, id, callback) {
         Ann.findById(id, function (err, ann) {
             ann.populate('author', function (err, annp) {
                 if (annp.author.level > tologin) {
+                    req.session.error = "權限不足";
                     res.redirect('/admin');
                     return;
                 }
                 if (tologin == 1 && name != annp.author.name) {
+                    req.session.error = "權限不足";
                     res.redirect('/admin');
                     return;
                 }
