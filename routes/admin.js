@@ -256,8 +256,7 @@ exports.login = function (req, res) {
         if (tologin > 0) {
             res.redirect('/admin');
         }
-        res.render('login', { title: 'Admin Login', menu: tologin, errmsg: req.session.error });
-        req.session.error = null;
+        res.render('login', { title: 'Admin Login', menu: tologin, session: req.session });
     });
 };
 
@@ -351,8 +350,7 @@ exports.chpwd = function (req, res) {
         if (tologin == 0) {
             res.redirect('/login');
         }
-        res.render('chpwd', { title: 'Change Admin Password', menu: tologin, errmsg: req.session.error });
-        req.session.error = null;
+        res.render('chpwd', { title: 'Change Admin Password', menu: tologin, session: req.session });
     });
 }
 

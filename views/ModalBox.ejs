@@ -2,18 +2,37 @@
 <div id="modal" class="modal">
     <div class="modal-content">
         <div class="modal-header-warn">
-            <span class="boxclose">×</span>
+            <span id="boxclose" class="boxclose">×</span>
             <h1 class="modal-title">錯誤</h1>
         </div>
         <div class="modal-body">
-            <h3 class="modal-text"><%= errmsg %></h3>
+            <h3 class="modal-text"><%= session.error %></h3>
+        </div>
+    </div>
+</div>
+
+<div id="modal2" class="modal noback">
+    <div class="modal-content">
+        <div class="modal-header-info">
+            <span id="boxclose2" class="boxclose">×</span>
+            <h1 class="modal-title">訊息</h1>
+        </div>
+        <div class="modal-body">
+            <h3 class="modal-text"><%= session.info %></h3>
         </div>
     </div>
 </div>
 <script src="/js/ModalBox.js"></script>
-<% if(errmsg) { %>
+<% if(session.error) { %>
     <script type="text/javascript">
         show();
     </script>
+    <% session.error = null; %>
+<% } else if(session.info) { %>
+    <script type="text/javascript">
+            show2();
+    </script>
+    <% session.info = null; %>
 <% } %>
+
 <!-- ModalBoxEnd -->
