@@ -23,7 +23,7 @@ exports.admin = function (req, res) {
         return;
         function annsfind(err, anns) {
             if (err) console.log('[ERROR]' + err);
-            res.render('admin', { moment: moment, title: 'Admin', menu: tologin, data: anns });
+            res.render('admin', { moment: moment, title: 'Admin', session: req.session, session: req.session, menu: tologin, data: anns });
         }
     }, true);
 };
@@ -45,7 +45,7 @@ exports.annnew = function (req, res) {
                 views: 0,
                 ontop: false
             });
-        res.render('annform', { title: 'Add New Announcement', menu: tologin, ann: empty });
+        res.render('annform', { title: 'Add New Announcement', session: req.session, menu: tologin, ann: empty });
         return;
     },true);
 }
@@ -81,7 +81,7 @@ exports.annnew_proc = function (req, res) {
 exports.annedit = function (req, res) {
     levelfind(req, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
-            res.render('annform', { title: 'Edit Announcement', menu: tologin, ann: ann });
+            res.render('annform', { title: 'Edit Announcement', session: req.session, menu: tologin, ann: ann });
         });
     }, true);
 };
@@ -131,7 +131,7 @@ exports.usradm = function (req, res) {
         //TODO:Add Chpwd Fuction
         function admfind(err, users) {
             if (err) console.log('[ERROR]' + err);
-            res.render('usradm', { moment: moment, title: 'UserManage', menu: tologin, data: users });
+            res.render('usradm', { moment: moment, title: 'UserManage', session: req.session, menu: tologin, data: users });
         }
     }, true);
 };
@@ -151,7 +151,7 @@ exports.usrnew = function (req, res) {
             password: "",
             level: 1
         });
-        res.render('usrform', { title: 'UserManage', head: "新增使用者", menu: tologin, usr: empty, operator: user });
+        res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: empty, operator: user });
     }, true);
 };
 
@@ -195,7 +195,7 @@ exports.usredit = function (req, res) {
                 res.redirect('/usradm');
                 return;
             }
-            res.render('usrform', { title: 'UserManage', head: "編輯使用者", menu: tologin, usr: adm, operator: user });
+            res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: tologin, usr: adm, operator: user });
         });
     }, true);
 };
@@ -255,6 +255,23 @@ exports.usrdel = function (req, res) {
         });
     }, true);
 };
+
+exports.usrpwd = function (req, res) {
+    levelfind(req, function (err, tologin, name, user) {
+        if (tologin <= 2) {
+            req.session.error = "權限不足";
+            res.redirect('/admin');
+        }
+        Admin.findById(req.params.id, function (err, adm) {
+            if (tologin < adm.level) {
+                req.session.error = "權限不足";
+                res.redirect('/usradm');
+                return;
+            }
+            res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: tologin, usr: adm, operator: user });
+        });
+    }, true);
+}
 
 exports.login = function (req, res) {
     levelfind(req, function (err, tologin, name) {
@@ -355,7 +372,7 @@ exports.chpwd = function (req, res) {
         if (tologin == 0) {
             res.redirect('/login');
         }
-        res.render('chpwd', { title: 'Change Admin Password', menu: tologin, session: req.session });
+        res.render('chpwd', { title: 'Change Admin Password', session: req.session, menu: tologin, session: req.session });
     });
 }
 

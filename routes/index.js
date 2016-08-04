@@ -17,6 +17,7 @@ exports.index = function (req, res, next)
             res.render('index', {
                 moment: moment,
                 title: 'INFOR Ann System',
+                session: req.session,
                 data: anns,
                 menu: tologin
             });
@@ -31,12 +32,9 @@ exports.content = function (req, res) {
             if (err) console.log('[ERROR]' + err);
             ann.views++;
             ann.save(function (err, ann, count) {
-                if (err) console.log('[ERROR]' + err) ;
+                if (err) console.log('[ERROR]' + err);
             });
-            res.render('content', {
-                moment: moment, title: ann.title +' - INFOR Ann System', ann: ann, menu: tologin
-            });
-            
+            res.render('content', {moment: moment, title: ann.title +' - INFOR Ann System', session: req.session, ann: ann, menu: tologin});
         });
     });
 }
