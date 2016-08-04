@@ -73,6 +73,7 @@ exports.annnew_proc = function (req, res) {
             ontop: req.body['ontop'] == 'on'
         }).save(function (err, ls, count) {
             if (err) console.log('[ERROR]' + err);
+            else req.session.info = "新增成功";
             res.redirect('/admin');
         });
     });
@@ -97,6 +98,7 @@ exports.annedit_proc = function (req, res) {
             ann.ontop = req.body['ontop'] == 'on';
             ann.save(function (err, ls, count) {
                 if (err) console.log('[ERROR]' + err);
+                else req.session.info = "儲存成功";
                 res.redirect('/admin');
             });
         });
@@ -107,9 +109,8 @@ exports.anndelete = function (req, res) {
     levelfind(req, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
             ann.remove(function (err, ann) {
-                if (err) {
-                    console.log('[ERROR]' + err);
-                }
+                if (err) console.log('[ERROR]' + err);
+                else req.session.info = "刪除成功";
                 res.redirect('/admin');
             });
         });
@@ -176,6 +177,7 @@ exports.usrnew_proc = function (req, res) {
                     level: req.body['level']
                 }).save(function (err, ls, count) {
                     if (err) console.log('[ERROR]' + err);
+                    else req.session.info = "新增成功";
                     res.redirect('/usradm');
                 });
             }
@@ -190,6 +192,13 @@ exports.usredit = function (req, res) {
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
+            if (!adm)
+            {
+                req.session.error = '使用者不存在';
+                console.log('[WARN]user ID: '+req.params.id+' is not exist!');
+                res.redirect('/usradm');
+                return;
+            }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
                 res.redirect('/usradm');
@@ -207,6 +216,13 @@ exports.usredit_proc = function (req, res) {
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
+            if (!adm)
+            {
+                req.session.error = '使用者不存在';
+                console.log('[WARN]user ID: '+req.params.id+' is not exist!');
+                res.redirect('/usradm');
+                return;
+            }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
                 res.redirect('/usradm');
@@ -220,6 +236,7 @@ exports.usredit_proc = function (req, res) {
             adm.nick = req.body['nick'];
             adm.save(function (err, ls, count) {
                 if (err) console.log('[ERROR]' + err);
+                else req.session.info = "儲存成功";
                 res.redirect('/usradm');
             });
         });
@@ -233,6 +250,13 @@ exports.usrdel = function (req, res) {
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
+            if (!adm)
+            {
+                req.session.error = '使用者不存在';
+                console.log('[WARN]user ID: '+req.params.id+' is not exist!');
+                res.redirect('/usradm');
+                return;
+            }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
                 res.redirect('/usradm');
@@ -250,6 +274,7 @@ exports.usrdel = function (req, res) {
             }
             adm.remove(function (err, result) {
                 if (err) console.log('[ERROR]' + err);
+                else req.session.info = "刪除成功";
             });
             res.redirect('/usradm');
         });
@@ -263,12 +288,58 @@ exports.usrpwd = function (req, res) {
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
+            if (!adm)
+            {
+                req.session.error = '使用者不存在';
+                console.log('[WARN]user ID: '+req.params.id+' is not exist!');
+                res.redirect('/usradm');
+                return;
+            }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
                 res.redirect('/usradm');
                 return;
             }
             res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: tologin, usr: adm, operator: user });
+        });
+    }, true);
+}
+
+exports.usrpwd_proc = function (req, res) {
+    levelfind(req, function (err, tologin, name, user) {
+        if (tologin <= 2) {
+            req.session.error = "權限不足";
+            res.redirect('/admin');
+        }
+        Admin.findById(req.params.id, function (err, adm) {
+            if (tologin < adm.level) {
+                req.session.error = "權限不足";
+                res.redirect('/usradm');
+                return;
+            }
+            if (!adm)
+            {
+                req.session.error = '使用者不存在';
+                console.log('[WARN]user ID: '+req.params.id+' is not exist!');
+                res.redirect('/usradm');
+                return;
+            }
+            var newpwd = req.body['newpwd'];
+            var comfirmpwd = req.body['comfirmpwd'];
+            var newhash = pwdhash(newpwd);
+
+            if (newpwd != comfirmpwd) {
+                req.session.error = '密碼不一致';
+                console.log('[WARN]passwords for ' + name + ' are not same!');
+                res.redirect('/usrpwd/'+req.params.id);
+                return;
+            }
+            user.password = newhash;
+            user.save(function (err, user, count) {
+                if (err) { console.log('[ERROR]' + err) };
+                else req.session.info = "密碼變更完成";
+                res.redirect('/usradm');
+            });
         });
     }, true);
 }
@@ -287,8 +358,7 @@ exports.login_proc = function (req, res)
     var username = req.body['username'];
     var password = req.body['password'];
     var remember = req.body['remember'];
-    var sha512 = crypto.createHash('sha512');
-    var pwdhash = sha512.update(password).digest('hex');
+    var passwdhash = pwdhash(password);
     
     Admin.
     findOne({ name : username}).
@@ -308,7 +378,7 @@ exports.login_proc = function (req, res)
             res.redirect('/login');
             return;
         }
-        if(pwdhash != user.password && user.password != "")
+        if(passwdhash != user.password && user.password != "")
         {
             req.session.error = '密碼錯誤';
             console.log('[WARN]password for '+username+' error!');
@@ -328,6 +398,7 @@ exports.login_proc = function (req, res)
                 keep : true
             }).save(function ( err, ls, count ){
                 if (err) console.log('[ERROR]' + err);
+                else req.session.info = "登入成功";
                 res.redirect('/admin');
             });
         }
@@ -341,6 +412,7 @@ exports.login_proc = function (req, res)
                 keep : false
             }).save(function ( err, ls, count ){
                 if (err) console.log('[ERROR]' + err);
+                else req.session.info = "登入成功";
                 res.redirect('/admin');
             });
         }
@@ -357,6 +429,7 @@ exports.logout = function (req, res) {
         } else {
             result.remove(function (err, result) {
                 if (err) console.log('[ERROR]' + err);
+                else req.session.info = "登出成功";
             });
         }
         res.clearCookie('session');
@@ -380,10 +453,8 @@ exports.chpwd_proc = function (req, res) {
     var oldpwd = req.body['oldpwd'];
     var newpwd = req.body['newpwd'];
     var comfirmpwd = req.body['comfirmpwd'];
-    var oldsha512 = crypto.createHash('sha512');
-    var oldhash = oldsha512.update(oldpwd).digest('hex');
-    var newsha512 = crypto.createHash('sha512');
-    var newhash = newsha512.update(newpwd).digest('hex');
+    var oldhash = pwdhash(oldpwd);
+    var newhash = pwdhash(newpwd);
 
     levelfind(req, function (err, tologin, name) {
         if (err) {
@@ -422,6 +493,7 @@ exports.chpwd_proc = function (req, res) {
             user.password = newhash;
             user.save(function (err, user, count) {
                 if (err) { console.log('[ERROR]' + err) };
+                else req.session.info = "密碼變更完成";
                 res.redirect('/');
             });
         });
@@ -485,6 +557,13 @@ function levelfind(req, callback, refuse) {
 function editper(req, res, id, callback) {
     levelfind(req, function (err, tologin, name) {
         Ann.findById(id, function (err, ann) {
+            if (!ann)
+            {
+                req.session.error = '公告不存在';
+                console.log('[WARN]ann ID: '+id+' is not exist!');
+                res.redirect('/admin');
+                return;
+            }
             ann.populate('author', function (err, annp) {
                 if (annp.author.level > tologin) {
                     req.session.error = "權限不足";
@@ -502,3 +581,8 @@ function editper(req, res, id, callback) {
     });
 }
 
+function pwdhash(password){
+    var sha512 = crypto.createHash('sha512');
+    var hash = sha512.update(password).digest('hex');
+    return hash;
+}
