@@ -72,7 +72,7 @@ exports.annnew_proc = function (req, res) {
             views: 0,
             ontop: req.body['ontop'] == 'on'
         }).save(function (err, ls, count) {
-            if (err) return next(err);
+            if (err) console.log('[ERROR]' + err);
             res.redirect('/admin');
         });
     });
@@ -96,7 +96,7 @@ exports.annedit_proc = function (req, res) {
             ann.visible = req.body['visible'] == 'on';
             ann.ontop = req.body['ontop'] == 'on';
             ann.save(function (err, ls, count) {
-                if (err) return next(err);
+                if (err) console.log('[ERROR]' + err);
                 res.redirect('/admin');
             });
         });
@@ -130,7 +130,7 @@ exports.usradm = function (req, res) {
         }
         //TODO:Add Chpwd Fuction
         function admfind(err, users) {
-            if (err) return next(err);
+            if (err) console.log('[ERROR]' + err);
             res.render('usradm', { moment: moment, title: 'UserManage', menu: tologin, data: users });
         }
     }, true);
@@ -175,7 +175,7 @@ exports.usrnew_proc = function (req, res) {
                     password: "",
                     level: req.body['level']
                 }).save(function (err, ls, count) {
-                    if (err) return next(err);
+                    if (err) console.log('[ERROR]' + err);
                     res.redirect('/usradm');
                 });
             }
@@ -219,7 +219,7 @@ exports.usredit_proc = function (req, res) {
             }
             adm.nick = req.body['nick'];
             adm.save(function (err, ls, count) {
-                if (err) return next(err);
+                if (err) console.log('[ERROR]' + err);
                 res.redirect('/usradm');
             });
         });
@@ -243,8 +243,13 @@ exports.usrdel = function (req, res) {
                 res.redirect('/usradm');
                 return;
             }
+            if (adm._id == user._id) {
+                req.session.error = "不可刪除自己";
+                res.redirect('/usradm');
+                return;
+            }
             adm.remove(function (err, result) {
-                if (err) return next(err);
+                if (err) console.log('[ERROR]' + err);
             });
             res.redirect('/usradm');
         });
@@ -305,7 +310,7 @@ exports.login_proc = function (req, res)
                 expire : new Date(Date.now() + 14*24*60*60*1000),
                 keep : true
             }).save(function ( err, ls, count ){
-                if (err) return next(err);
+                if (err) console.log('[ERROR]' + err);
                 res.redirect('/admin');
             });
         }
@@ -318,7 +323,7 @@ exports.login_proc = function (req, res)
                 expire : new Date(Date.now() + 1*60*60*1000),
                 keep : false
             }).save(function ( err, ls, count ){
-                if (err) return next(err);
+                if (err) console.log('[ERROR]' + err);
                 res.redirect('/admin');
             });
         }
@@ -334,7 +339,7 @@ exports.logout = function (req, res) {
             console.log('[WARN]user cookie not found');
         } else {
             result.remove(function (err, result) {
-                if (err) return next(err);
+                if (err) console.log('[ERROR]' + err);
             });
         }
         res.clearCookie('session');
@@ -425,7 +430,7 @@ function levelfind(req, callback, refuse) {
         }
         if (result.expire < Date.now()) {
             result.remove(function (err, result) {
-                if (err) return next(err);
+                if (err) console.log('[ERROR]' + err);
             });
             console.log('[WRAN]user cookie expired');
             req.session.error = "登入資訊已過期，請重新登入。";
@@ -440,6 +445,7 @@ function levelfind(req, callback, refuse) {
         findById(result.admin_id, function (err, user) {
             if (!user) {
                 if (refuse == true) {
+                    req.session.error = "使用者不存在。";
                     res.redirect('/login');
                     return;
                 }

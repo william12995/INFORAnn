@@ -13,7 +13,7 @@ exports.index = function (req, res, next)
     var qudata = querystring.parse(req.url.query);
     Ann.find({ visible: true }).sort('-ontop').sort('-update').populate('author').exec(function (err, anns) {
         admin.levelfind(req, function (err, tologin, name) {
-            if (err) return next(err);
+            if (err) console.log('[ERROR]' + err);
             res.render('index', {
                 moment: moment,
                 title: 'INFOR Ann System',
@@ -28,7 +28,7 @@ exports.index = function (req, res, next)
 exports.content = function (req, res) {
     Ann.findById(req.params.id).populate('author').exec(function (err, ann) {
         admin.levelfind(req, function (err, tologin, name) {
-            if (err) return next(err);
+            if (err) console.log('[ERROR]' + err);
             ann.views++;
             ann.save(function (err, ann, count) {
                 if (err) console.log('[ERROR]' + err) ;
