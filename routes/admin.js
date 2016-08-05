@@ -312,15 +312,15 @@ exports.usrpwd_proc = function (req, res) {
             res.redirect('/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
-            if (tologin < adm.level) {
-                req.session.error = "權限不足";
-                res.redirect('/usradm');
-                return;
-            }
             if (!adm)
             {
                 req.session.error = '使用者不存在';
                 console.log('[WARN]user ID: '+req.params.id+' is not exist!');
+                res.redirect('/usradm');
+                return;
+            }
+            if (tologin < adm.level) {
+                req.session.error = "權限不足";
                 res.redirect('/usradm');
                 return;
             }
@@ -532,6 +532,7 @@ function levelfind(req, callback, refuse) {
         }
         Admin.
         findById(result.admin_id, function (err, user) {
+            if (err) console.log('[ERROR]' + err);
             if (!user) {
                 if (refuse == true) {
                     req.session.error = "使用者不存在。";
