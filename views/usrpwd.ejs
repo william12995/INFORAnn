@@ -1,0 +1,21 @@
+<% layout( 'layout' ) -%>
+<div class="wrapper">
+    <div class="inner">
+        <section>
+            <h1 class="major"><%= head %></h1>
+            <form class="form-chpwd" role="form" method="post" action="chpwd">
+                <div class="row uniform">
+                    <div class="4u$ 12u$(xsmall)">
+                        <label for="newpwd">新密碼</label>
+                        <input type="password" name="newpwd" id="newpwd" />
+                        <label for="comfirmpwd">密碼確認</label>
+                        <input type="password" name="comfirmpwd" id="comfirmpwd" />
+                    </div>
+                    <div class="12u$">
+                        <input type="submit" name="ok" value="確認" />
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

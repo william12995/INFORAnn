@@ -77,6 +77,7 @@ app.get('/usredit/:id', admin.usredit);
 app.post('/usredit/:id', admin.usredit_proc);
 app.get('/usrdel/:id', admin.usrdel);
 app.get('/usrpwd/:id', admin.usrpwd);
+app.post('/usrpwd/:id', admin.usrpwd_proc);
 app.get('/login', admin.login);
 app.post('/login', admin.login_proc);
 app.get('/chpwd', admin.chpwd);
