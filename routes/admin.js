@@ -7,7 +7,7 @@ var Ann = mongoose.model('Ann');
 var utils = require('../utils');
 
 exports.admin = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (err) {
             console.log('[ERROR]' + err);
         }
@@ -29,7 +29,7 @@ exports.admin = function (req, res) {
 };
 
 exports.annnew = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
         }
@@ -51,7 +51,7 @@ exports.annnew = function (req, res) {
 }
 
 exports.annnew_proc = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (err) {
             console.log('[ERROR]' + err);
         }
@@ -80,7 +80,7 @@ exports.annnew_proc = function (req, res) {
 }
 
 exports.annedit = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
             res.render('annform', { title: 'Edit Announcement', session: req.session, menu: tologin, ann: ann });
         });
@@ -88,7 +88,7 @@ exports.annedit = function (req, res) {
 };
 
 exports.annedit_proc = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
             ann.title = req.body['title'];
             ann.istextcontent = req.body['istextcontent'] != 'on';
@@ -106,7 +106,7 @@ exports.annedit_proc = function (req, res) {
 };
 
 exports.anndelete = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
             ann.remove(function (err, ann) {
                 if (err) console.log('[ERROR]' + err);
@@ -118,7 +118,7 @@ exports.anndelete = function (req, res) {
 };
 
 exports.usradm = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         if (tologin <= 2) {
             res.redirect('/admin');
         }
@@ -138,7 +138,7 @@ exports.usradm = function (req, res) {
 };
 
 exports.usrnew = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
             res.redirect('/admin');
@@ -157,7 +157,7 @@ exports.usrnew = function (req, res) {
 };
 
 exports.usrnew_proc = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
             res.redirect('/admin');
@@ -186,7 +186,7 @@ exports.usrnew_proc = function (req, res) {
 };
 
 exports.usredit = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
             res.redirect('/admin');
@@ -210,7 +210,7 @@ exports.usredit = function (req, res) {
 };
 
 exports.usredit_proc = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
             res.redirect('/admin');
@@ -244,7 +244,7 @@ exports.usredit_proc = function (req, res) {
 };
 
 exports.usrdel = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
             res.redirect('/admin');
@@ -282,7 +282,7 @@ exports.usrdel = function (req, res) {
 };
 
 exports.usrpwd = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
             res.redirect('/admin');
@@ -306,7 +306,7 @@ exports.usrpwd = function (req, res) {
 }
 
 exports.usrpwd_proc = function (req, res) {
-    levelfind(req, function (err, tologin, name, user) {
+    levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
             res.redirect('/admin');
@@ -345,7 +345,7 @@ exports.usrpwd_proc = function (req, res) {
 }
 
 exports.login = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         if (tologin > 0) {
             res.redirect('/admin');
         }
@@ -438,7 +438,7 @@ exports.logout = function (req, res) {
 };
 
 exports.chpwd = function (req, res) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
         }
@@ -456,7 +456,7 @@ exports.chpwd_proc = function (req, res) {
     var oldhash = pwdhash(oldpwd);
     var newhash = pwdhash(newpwd);
 
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
         }
@@ -501,7 +501,7 @@ exports.chpwd_proc = function (req, res) {
 }
 
 exports.levelfind = levelfind;
-function levelfind(req, callback, refuse) {
+function levelfind(req, res, callback, refuse) {
     Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
         refuse = refuse || false;
         if (err) {
@@ -510,6 +510,7 @@ function levelfind(req, callback, refuse) {
         //console.log(result);
         if (!result) {
             console.log('[INFO]user cookie not found');
+            req.session.error = "請先登入！";
             if (refuse == true) {
                 res.redirect('/login');
                 return;
@@ -556,7 +557,7 @@ function levelfind(req, callback, refuse) {
 }
 
 function editper(req, res, id, callback) {
-    levelfind(req, function (err, tologin, name) {
+    levelfind(req, res, function (err, tologin, name) {
         Ann.findById(id, function (err, ann) {
             if (!ann)
             {
@@ -579,7 +580,7 @@ function editper(req, res, id, callback) {
                 callback(ann);
             });
         });
-    });
+    }, true);
 }
 
 function pwdhash(password){
