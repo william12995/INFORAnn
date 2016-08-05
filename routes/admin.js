@@ -166,6 +166,16 @@ exports.usrnew_proc = function (req, res) {
         Admin.findOne({ name: req.body['name'] }, function (err, same) {
             if (same) {
                 req.session.error = "重複的使用者名稱";
+                var ldata = new Admin({
+                    name: req.body['name'],
+                    nick: req.body['nick'],
+                    LastLogin: null,
+                    enable: req.body['enable'] == 'on',
+                    system: false,
+                    password: "",
+                    level: req.body['level']
+                });
+                res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: ldata, operator: user });
             } else {
                 new Admin({
                     name: req.body['name'],
@@ -267,7 +277,8 @@ exports.usrdel = function (req, res) {
                 res.redirect('/usradm');
                 return;
             }
-            if (adm._id == user._id) {
+            //if (adm._id == user._id) {
+            if (adm._id.equals(user._id)) {
                 req.session.error = "不可刪除自己";
                 res.redirect('/usradm');
                 return;
