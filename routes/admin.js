@@ -345,8 +345,8 @@ exports.usrpwd_proc = function (req, res) {
                 res.redirect('/usrpwd/'+req.params.id);
                 return;
             }
-            user.password = newhash;
-            user.save(function (err, user, count) {
+            adm.password = newhash;
+            adm.save(function (err, user, count) {
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "密碼變更完成";
                 res.redirect('/usradm');
