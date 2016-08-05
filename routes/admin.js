@@ -521,8 +521,8 @@ function levelfind(req, res, callback, refuse) {
         //console.log(result);
         if (!result) {
             console.log('[INFO]user cookie not found');
-            req.session.error = "請先登入！";
             if (refuse == true) {
+                req.session.error = "請先登入！";
                 res.redirect('/login');
                 return;
             }
@@ -534,8 +534,8 @@ function levelfind(req, res, callback, refuse) {
                 if (err) console.log('[ERROR]' + err);
             });
             console.log('[WRAN]user cookie expired');
-            req.session.error = "登入資訊已過期，請重新登入。";
             if (refuse == true) {
+                req.session.error = "登入資訊已過期，請重新登入。";
                 res.redirect('/login');
                 return;
             }
