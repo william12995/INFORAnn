@@ -152,7 +152,7 @@ exports.usrnew = function (req, res) {
             password: "",
             level: 1
         });
-        res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: empty, operator: user });
+        res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: empty, operator: user, lock: false });
     }, true);
 };
 
@@ -175,7 +175,7 @@ exports.usrnew_proc = function (req, res) {
                     password: "",
                     level: req.body['level']
                 });
-                res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: ldata, operator: user });
+                res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: ldata, operator: user, lock: false });
             } else {
                 new Admin({
                     name: req.body['name'],
@@ -214,7 +214,7 @@ exports.usredit = function (req, res) {
                 res.redirect('/usradm');
                 return;
             }
-            res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: tologin, usr: adm, operator: user });
+            res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: tologin, usr: adm, operator: user, lock: true });
         });
     }, true);
 };

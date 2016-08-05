@@ -7,7 +7,7 @@
                 <div class="row uniform">
                     <div class="6u 12u$(small)">
                         <label for="name">帳號名稱</label>
-                        <input type="text" name="name" id="name" value="<%= usr.name %>" required <% if(usr.system == true || usr.name != ""){ %> readonly <% } %> />
+                        <input type="text" name="name" id="name" value="<%= usr.name %>" required <% if(usr.system == true || lock == true){ %> readonly <% } %> />
                     </div>
                     <div class="6u$ 12u$(small)">
                         <label for="nick">帳號暱稱</label>
