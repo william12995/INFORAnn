@@ -35,6 +35,8 @@
   <ItemGroup>
     <Compile Include="app.js" />
     <Content Include="public\css\Custom.css" />
+    <Content Include="public\icons\key.svg" />
+    <Content Include="public\icons\up-arrow-filled-angle.svg" />
     <Content Include="public\js\ModalBox.js" />
     <Compile Include="utils.js" />
     <Content Include="public\css\ModalBox.css" />
@@ -111,6 +113,7 @@
     <Content Include="views\ModalBox.ejs" />
     <Content Include="views\usradm.ejs" />
     <Content Include="views\usrform.ejs" />
+    <Content Include="views\usrpwd.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\css\" />
