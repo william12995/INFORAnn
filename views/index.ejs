@@ -15,7 +15,6 @@
         		<tr <% if(dt.ontop == true){ %> style="background-color: rgba(255, 255, 255, 0.25);" <% } %> >
                     <td><% if(dt.ontop == true){ %> <img src="/icons/up-arrow-filled-angle.svg" style="width: 19px" /> <% } %></td>
         			<td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
-        			<!--<td><%= dt.update %></td>-->
                     <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
         			<td><%= dt.author.nick %></td>
         			<td><%= dt.views %></td>
@@ -25,14 +24,13 @@
     </div>
     <div class="inner" style="display:block; text-align:start">
         <ul class="pagelist">
-            <li><<</li>
-            <li><</li>
-            <li>1</li>
-            <li>2</li>
-            <li>3</li>
-            <li>4</li>
-            <li>></li>
-            <li>>></li>
+            <% if(page>1){ %><a class="r" href="?p=1"><li class="light"> << </li></a><% } %>
+            <% if(page>1){ %><a class="r" href="?p=<%= page-1 %>"><li class="light"> < </li></a><% } %>
+            <% for(var i=1;i<=tpage;i++){ %>
+                <a href="?p=<%= i %>"><li><%= i %></li></a>
+            <% } %>
+            <% if(page<tpage){ %><a class="r" href="?p=<%= page+1 %>"><li class="light"> > </li></a><% } %>
+            <% if(page<tpage){ %><a class="r" href="?p=<%= tpage %>"><li class="light"> >> </li></a><% } %>
         </ul>
     </div>
 </section>

@@ -14,11 +14,27 @@ exports.index = function (req, res, next)
     Ann.find({ visible: true }).sort('-ontop').sort('-update').populate('author').exec(function (err, anns) {
         admin.levelfind(req, res, function (err, tologin, name) {
             if (err) console.log('[ERROR]' + err);
+            var sanns = [];
+            var page = parseInt(req.query.p) || 1;
+            var totalpage = Math.ceil(anns.length / 10);
+            if(page < 1 || page > totalpage){
+                res.redirect("?p=1");
+                return;
+            }
+            var i = 0, c = 0;
+            for(i = (page-1)*10; i < anns.length; i++){
+                if(c >= 10) break;
+                sanns.push(anns[i]);
+                c++;
+            }
+
             res.render('index', {
-                moment: moment,
+                moment: moment, 
                 title: 'INFOR Ann System',
                 session: req.session,
-                data: anns,
+                data: sanns,
+                page: page,
+                tpage: totalpage,
                 menu: tologin
             });
         });
@@ -37,4 +53,4 @@ exports.content = function (req, res) {
             res.render('content', {moment: moment, title: ann.title +' - INFOR Ann System', session: req.session, ann: ann, menu: tologin});
         });
     });
-}
+};
