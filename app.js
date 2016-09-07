@@ -6,13 +6,18 @@ require('./db');
 var express = require('express');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var routes = require('./routes');
-var admin = require('./routes/admin');
 var http = require('http');
 var path = require('path');
 var engine = require('ejs-locals');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var debug = require('debug')('inforann:server');
+
+var routes = require('./routes');
+var admin = require('./routes/admin');
 var Admin = mongoose.model('Admin');
 
 var app = express();
