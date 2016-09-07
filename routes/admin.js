@@ -1,4 +1,6 @@
-﻿var crypto = require('crypto');
+﻿var express = require('express');
+var router = express.Router();
+var crypto = require('crypto');
 var mongoose = require('mongoose');
 var moment = require('moment');
 var Admin = mongoose.model('Admin');
@@ -6,7 +8,7 @@ var Session = mongoose.model('Session');
 var Ann = mongoose.model('Ann');
 var utils = require('../utils');
 
-exports.admin = function (req, res) {
+router.get('/admin', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (err) {
             console.log('[ERROR]' + err);
@@ -26,9 +28,9 @@ exports.admin = function (req, res) {
             res.render('admin', { moment: moment, title: 'Admin', session: req.session, session: req.session, menu: tologin, data: anns });
         }
     }, true);
-};
+});
 
-exports.annnew = function (req, res) {
+router.get('/annnew', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
@@ -48,9 +50,9 @@ exports.annnew = function (req, res) {
         res.render('annform', { title: 'Add New Announcement', session: req.session, menu: tologin, ann: empty });
         return;
     },true);
-}
+});
 
-exports.annnew_proc = function (req, res) {
+router.post('/annnew', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (err) {
             console.log('[ERROR]' + err);
@@ -77,17 +79,17 @@ exports.annnew_proc = function (req, res) {
             res.redirect('/admin');
         });
     });
-}
+});
 
-exports.annedit = function (req, res) {
+router.get('/annedit/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
             res.render('annform', { title: 'Edit Announcement', session: req.session, menu: tologin, ann: ann });
         });
     }, true);
-};
+});
 
-exports.annedit_proc = function (req, res) {
+router.post('/annedit/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
             ann.title = req.body['title'];
@@ -103,9 +105,9 @@ exports.annedit_proc = function (req, res) {
             });
         });
     }, true);
-};
+});
 
-exports.anndelete = function (req, res) {
+router.get('/anndelete/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         editper(req, res, req.params.id, function (ann) {
             ann.remove(function (err, ann) {
@@ -115,9 +117,9 @@ exports.anndelete = function (req, res) {
             });
         });
     }, true);
-};
+});
 
-exports.usradm = function (req, res) {
+router.get('/usradm', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         if (tologin <= 2) {
             res.redirect('/admin');
@@ -135,9 +137,9 @@ exports.usradm = function (req, res) {
             res.render('usradm', { moment: moment, title: 'UserManage', session: req.session, menu: tologin, data: users });
         }
     }, true);
-};
+});
 
-exports.usrnew = function (req, res) {
+router.get('/usrnew', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
@@ -154,9 +156,9 @@ exports.usrnew = function (req, res) {
         });
         res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: empty, operator: user, lock: false });
     }, true);
-};
+});
 
-exports.usrnew_proc = function (req, res) {
+router.post('/usrnew', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
@@ -193,9 +195,9 @@ exports.usrnew_proc = function (req, res) {
             }
         });
     }, true);
-};
+});
 
-exports.usredit = function (req, res) {
+router.get('/usredit/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
@@ -217,9 +219,9 @@ exports.usredit = function (req, res) {
             res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: tologin, usr: adm, operator: user, lock: true });
         });
     }, true);
-};
+});
 
-exports.usredit_proc = function (req, res) {
+router.post('/usredit/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
@@ -251,9 +253,9 @@ exports.usredit_proc = function (req, res) {
             });
         });
     }, true);
-};
+});
 
-exports.usrdel = function (req, res) {
+router.get('/usrdel/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
@@ -290,9 +292,9 @@ exports.usrdel = function (req, res) {
             res.redirect('/usradm');
         });
     }, true);
-};
+});
 
-exports.usrpwd = function (req, res) {
+router.get('/usrpwd/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
@@ -314,9 +316,9 @@ exports.usrpwd = function (req, res) {
             res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: tologin, usr: adm, operator: user });
         });
     }, true);
-}
+});
 
-exports.usrpwd_proc = function (req, res) {
+router.post('/usrpwd/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
@@ -353,18 +355,18 @@ exports.usrpwd_proc = function (req, res) {
             });
         });
     }, true);
-}
+});
 
-exports.login = function (req, res) {
+router.get('/login', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         if (tologin > 0) {
             res.redirect('/admin');
         }
         res.render('login', { title: 'Admin Login', menu: tologin, session: req.session });
     });
-};
+});
 
-exports.login_proc = function (req, res) 
+router.post('/login', function (req, res) 
 {
     var username = req.body['username'];
     var password = req.body['password'];
@@ -428,9 +430,9 @@ exports.login_proc = function (req, res)
             });
         }
     });
-};
+});
 
-exports.logout = function (req, res) {
+router.get('/logout', function (req, res) {
     Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
         if (err) {
             next(err);
@@ -446,9 +448,9 @@ exports.logout = function (req, res) {
         res.clearCookie('session');
         res.redirect('/login');
     });
-};
+});
 
-exports.chpwd = function (req, res) {
+router.get('/chpwd', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         if (err) {
             console.log('[ERROR]' + err);
@@ -458,9 +460,9 @@ exports.chpwd = function (req, res) {
         }
         res.render('chpwd', { title: 'Change Admin Password', session: req.session, menu: tologin, session: req.session });
     });
-}
+});
 
-exports.chpwd_proc = function (req, res) {
+router.post('/chpwd', function (req, res) {
     var oldpwd = req.body['oldpwd'];
     var newpwd = req.body['newpwd'];
     var comfirmpwd = req.body['comfirmpwd'];
@@ -509,9 +511,9 @@ exports.chpwd_proc = function (req, res) {
             });
         });
     });
-}
+});
 
-exports.levelfind = levelfind;
+//module.exports = levelfind;
 function levelfind(req, res, callback, refuse) {
     Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
         refuse = refuse || false;
@@ -599,3 +601,5 @@ function pwdhash(password){
     var hash = sha512.update(password).digest('hex');
     return hash;
 }
+
+module.exports = router;

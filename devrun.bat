@@ -1,3 +1,4 @@
 @echo off
-nodemon .\app.js
+set DEBUG=inforann:* 
+nodemon .\bin\www
 pause
