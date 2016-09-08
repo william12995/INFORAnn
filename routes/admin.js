@@ -58,7 +58,7 @@ router.post('/annnew', function (req, res) {
             console.log('[ERROR]' + err);
         }
         if (tologin == 0) {
-            res.redirect('/login');
+            res.redirect('/admin/login');
             return;
         }
 
@@ -76,7 +76,7 @@ router.post('/annnew', function (req, res) {
         }).save(function (err, ls, count) {
             if (err) console.log('[ERROR]' + err);
             else req.session.info = "新增成功";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         });
     });
 });
@@ -101,7 +101,7 @@ router.post('/annedit/:id', function (req, res) {
             ann.save(function (err, ls, count) {
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "儲存成功";
-                res.redirect('/admin');
+                res.redirect('/admin/admin');
             });
         });
     }, true);
@@ -113,7 +113,7 @@ router.get('/anndelete/:id', function (req, res) {
             ann.remove(function (err, ann) {
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "刪除成功";
-                res.redirect('/admin');
+                res.redirect('/admin/admin');
             });
         });
     }, true);
@@ -122,7 +122,7 @@ router.get('/anndelete/:id', function (req, res) {
 router.get('/usradm', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         if (tologin <= 2) {
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         if (tologin == 3) {
             Admin.find({
@@ -143,7 +143,7 @@ router.get('/usrnew', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         var empty = new Admin({
             name: "",
@@ -162,7 +162,7 @@ router.post('/usrnew', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         //TODO:Detect same name user
         Admin.findOne({ name: req.body['name'] }, function (err, same) {
@@ -190,7 +190,7 @@ router.post('/usrnew', function (req, res) {
                 }).save(function (err, ls, count) {
                     if (err) console.log('[ERROR]' + err);
                     else req.session.info = "新增成功";
-                    res.redirect('/usradm');
+                    res.redirect('/admin/usradm');
                 });
             }
         });
@@ -201,19 +201,19 @@ router.get('/usredit/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (!adm)
             {
                 req.session.error = '使用者不存在';
                 console.log('[WARN]user ID: '+req.params.id+' is not exist!');
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: tologin, usr: adm, operator: user, lock: true });
@@ -225,19 +225,19 @@ router.post('/usredit/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (!adm)
             {
                 req.session.error = '使用者不存在';
                 console.log('[WARN]user ID: '+req.params.id+' is not exist!');
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             if (adm.system == false) {
@@ -249,7 +249,7 @@ router.post('/usredit/:id', function (req, res) {
             adm.save(function (err, ls, count) {
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "儲存成功";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
             });
         });
     }, true);
@@ -259,37 +259,37 @@ router.get('/usrdel/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (!adm)
             {
                 req.session.error = '使用者不存在';
                 console.log('[WARN]user ID: '+req.params.id+' is not exist!');
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             if (adm.system == true) {
                 req.session.error = "不可刪除系統帳戶";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             //if (adm._id == user._id) {
             if (adm._id.equals(user._id)) {
                 req.session.error = "不可刪除自己";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             adm.remove(function (err, result) {
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "刪除成功";
             });
-            res.redirect('/usradm');
+            res.redirect('/admin/usradm');
         });
     }, true);
 });
@@ -298,19 +298,19 @@ router.get('/usrpwd/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (!adm)
             {
                 req.session.error = '使用者不存在';
                 console.log('[WARN]user ID: '+req.params.id+' is not exist!');
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: tologin, usr: adm, operator: user });
@@ -322,19 +322,19 @@ router.post('/usrpwd/:id', function (req, res) {
     levelfind(req, res, function (err, tologin, name, user) {
         if (tologin <= 2) {
             req.session.error = "權限不足";
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         Admin.findById(req.params.id, function (err, adm) {
             if (!adm)
             {
                 req.session.error = '使用者不存在';
                 console.log('[WARN]user ID: '+req.params.id+' is not exist!');
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             if (tologin < adm.level) {
                 req.session.error = "權限不足";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
                 return;
             }
             var newpwd = req.body['newpwd'];
@@ -344,14 +344,14 @@ router.post('/usrpwd/:id', function (req, res) {
             if (newpwd != comfirmpwd) {
                 req.session.error = '密碼不一致';
                 console.log('[WARN]passwords for ' + name + ' are not same!');
-                res.redirect('/usrpwd/'+req.params.id);
+                res.redirect('/admin/usrpwd/'+req.params.id);
                 return;
             }
             adm.password = newhash;
             adm.save(function (err, user, count) {
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "密碼變更完成";
-                res.redirect('/usradm');
+                res.redirect('/admin/usradm');
             });
         });
     }, true);
@@ -360,7 +360,7 @@ router.post('/usrpwd/:id', function (req, res) {
 router.get('/login', function (req, res) {
     levelfind(req, res, function (err, tologin, name) {
         if (tologin > 0) {
-            res.redirect('/admin');
+            res.redirect('/admin/admin');
         }
         res.render('login', { title: 'Admin Login', menu: tologin, session: req.session });
     });
@@ -372,7 +372,6 @@ router.post('/login', function (req, res)
     var password = req.body['password'];
     var remember = req.body['remember'];
     var passwdhash = pwdhash(password);
-    
     Admin.
     findOne({ name : username}).
     exec( function( err, user )
@@ -382,20 +381,20 @@ router.post('/login', function (req, res)
         {
             req.session.error = '使用者不存在';
             console.log('[WARN]user '+username+' is not exist!');
-            res.redirect('/login');
+            res.redirect('/admin/login');
             return;
         }
         if (user.enable == false) {
             req.session.error = '使用者被停用';
             console.log('[WARN]user ' + username + ' is disabled!');
-            res.redirect('/login');
+            res.redirect('/admin/login');
             return;
         }
         if(passwdhash != user.password && user.password != "")
         {
             req.session.error = '密碼錯誤';
             console.log('[WARN]password for '+username+' error!');
-            res.redirect('/login');
+            res.redirect('/admin/login');
             return;
         }
         var sessionid = utils.uid(32);
@@ -412,7 +411,7 @@ router.post('/login', function (req, res)
             }).save(function ( err, ls, count ){
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "登入成功";
-                res.redirect('/admin');
+                res.redirect('/admin/admin');
             });
         }
         else
@@ -426,7 +425,7 @@ router.post('/login', function (req, res)
             }).save(function ( err, ls, count ){
                 if (err) console.log('[ERROR]' + err);
                 else req.session.info = "登入成功";
-                res.redirect('/admin');
+                res.redirect('/admin/admin');
             });
         }
     });
@@ -446,7 +445,7 @@ router.get('/logout', function (req, res) {
             });
         }
         res.clearCookie('session');
-        res.redirect('/login');
+        res.redirect('/admin/login');
     });
 });
 
@@ -456,7 +455,7 @@ router.get('/chpwd', function (req, res) {
             console.log('[ERROR]' + err);
         }
         if (tologin == 0) {
-            res.redirect('/login');
+            res.redirect('/admin/login');
         }
         res.render('chpwd', { title: 'Change Admin Password', session: req.session, menu: tologin, session: req.session });
     });
@@ -474,7 +473,7 @@ router.post('/chpwd', function (req, res) {
             console.log('[ERROR]' + err);
         }
         if (tologin == 0) {
-            res.redirect('/login');
+            res.redirect('/admin/login');
         }
 
         Admin.
@@ -485,21 +484,21 @@ router.post('/chpwd', function (req, res) {
             {
                 req.session.error = '使用者不存在';
                 console.log('[WARN]user '+name+' is not exist!');
-                res.redirect('/login');
+                res.redirect('/admin/login');
                 return;
             }
             if (oldhash != user.password && user.password != "")
             {
                 req.session.error = '密碼錯誤';
                 console.log('[WARN]password for '+name+' error!');
-                res.redirect('/chpwd');
+                res.redirect('/admin/chpwd');
                 return;
             }
 
             if (newpwd != comfirmpwd) {
                 req.session.error = '密碼不一致';
                 console.log('[WARN]passwords for ' + name + ' are not same!');
-                res.redirect('/chpwd');
+                res.redirect('/admin/chpwd');
                 return;
             }
 
@@ -520,12 +519,11 @@ function levelfind(req, res, callback, refuse) {
         if (err) {
             callback(err, null);
         }
-        //console.log(result);
         if (!result) {
             console.log('[INFO]user cookie not found');
             if (refuse == true) {
                 req.session.error = "請先登入！";
-                res.redirect('/login');
+                res.redirect('/admin/login');
                 return;
             }
             callback(null, 0);
@@ -538,19 +536,20 @@ function levelfind(req, res, callback, refuse) {
             console.log('[WRAN]user cookie expired');
             if (refuse == true) {
                 req.session.error = "登入資訊已過期，請重新登入。";
-                res.redirect('/login');
+                res.redirect('/admin/login');
                 return;
             }
             callback(null, 0);
             return;
         }
+        console.log(result.admin_id);
         Admin.
         findById(result.admin_id, function (err, user) {
             if (err) console.log('[ERROR]' + err);
             if (!user) {
                 if (refuse == true) {
                     req.session.error = "使用者不存在。";
-                    res.redirect('/login');
+                    res.redirect('/admin/login');
                     return;
                 }
                 callback(null, 0);
@@ -576,18 +575,18 @@ function editper(req, res, id, callback) {
             {
                 req.session.error = '公告不存在';
                 console.log('[WARN]ann ID: '+id+' is not exist!');
-                res.redirect('/admin');
+                res.redirect('/admin/admin');
                 return;
             }
             ann.populate('author', function (err, annp) {
                 if (annp.author.level > tologin) {
                     req.session.error = "權限不足";
-                    res.redirect('/admin');
+                    res.redirect('/admin/admin');
                     return;
                 }
                 if (tologin == 1 && name != annp.author.name) {
                     req.session.error = "權限不足";
-                    res.redirect('/admin');
+                    res.redirect('/admin/admin');
                     return;
                 }
                 callback(ann);

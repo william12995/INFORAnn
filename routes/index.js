@@ -6,6 +6,7 @@ var Ann = mongoose.model('Ann');
 var admin = require('./admin');
 var moment = require('moment');
 var Session = mongoose.model('Session');
+var Admin = mongoose.model('Admin');
 
 /*
  * GET home page.
@@ -13,6 +14,7 @@ var Session = mongoose.model('Session');
 
 router.all('*', function(req, res, next)
 {
+    req.user = {};
     Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
         if (err) {
             console.log('[ERROR]' + err);
@@ -30,6 +32,8 @@ router.all('*', function(req, res, next)
             next();
             // return;
         }
+        console.log(result);
+        console.log(result.admin_id);
         Admin.
         findById(result.admin_id, function (err, user) {
             if (err) console.log('[ERROR]' + err);
@@ -44,7 +48,8 @@ router.all('*', function(req, res, next)
                 result.expire = new Date(Date.now() + 1*60*60*1000);
                 result.save();
             }
-            next(user);
+            req.user = user;
+            next();
             // return;
         });
     });
@@ -77,7 +82,7 @@ router.get('/', function (req, res, next)
             data: sanns,
             page: page,
             tpage: totalpage,
-            menu: user.level || 0
+            menu: req.user.level || 0
         });
     });
 });
@@ -90,7 +95,7 @@ router.get('/content/:id', function (user, req, res) {
             ann.save(function (err, ann, count) {
                 if (err) console.log('[ERROR]' + err);
             });
-            res.render('content', {moment: moment, title: ann.title +' - INFOR Ann System', session: req.session, ann: ann, menu: user.level || 0});
+            res.render('content', {moment: moment, title: ann.title +' - INFOR Ann System', session: req.session, ann: ann, menu: req.user.level || 0});
         });
     });
 });
