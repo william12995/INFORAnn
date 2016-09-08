@@ -9,114 +9,92 @@ var Ann = mongoose.model('Ann');
 var utils = require('../utils');
 
 router.get('/admin', function (req, res) {
-    levelfind(req, res, function (err, tologin, name, user) {
-        if (err) {
-            console.log('[ERROR]' + err);
-        }
-
-        if (tologin == 1) {
-            Ann.find({ author: user._id }).sort('-update').populate('author').exec(annsfind);
-        }
-        else if (tologin >= 2) {
-            //Ann.find().sort('-update').populate('author').find({ 'author': { $elemMatch: { 'level': { $lte: tologin } } } }).exec(annsfind);
-            //TODO:Hide Edit&Del Button to ann can't edit.
-            Ann.find().sort('-update').populate('author').exec(annsfind);
-        }
-        return;
-        function annsfind(err, anns) {
-            if (err) console.log('[ERROR]' + err);
-            res.render('admin', { moment: moment, title: 'Admin', session: req.session, session: req.session, menu: tologin, data: anns });
-        }
-    }, true);
+    if (req.user.level == 1) {
+        Ann.find({ author: user._id }).sort('-update').populate('author').exec(annsfind);
+    }
+    else if (req.user.level >= 2) {
+        //TODO:Hide Edit&Del Button to ann can't edit.
+        Ann.find().sort('-update').populate('author').exec(annsfind);
+    }
+    return;
+    function annsfind(err, anns) {
+        if (err) console.log('[ERROR]' + err);
+        res.render('admin', { moment: moment, title: 'Admin', session: req.session, session: req.session, menu: req.user.level, data: anns });
+    }
 });
 
 router.get('/annnew', function (req, res) {
-    levelfind(req, res, function (err, tologin, name) {
-        if (err) {
-            console.log('[ERROR]' + err);
-        }
-        var empty = new Ann(
-            {
-                author: null,
-                title: '',
-                istextcontent: true,
-                content: '',
-                create: Date.now(),
-                update: Date.now(),
-                visible: true,
-                views: 0,
-                ontop: false
-            });
-        res.render('annform', { title: 'Add New Announcement', session: req.session, menu: tologin, ann: empty });
-        return;
-    },true);
+    var empty = new Ann(
+        {
+            author: null,
+            title: '',
+            istextcontent: true,
+            content: '',
+            create: Date.now(),
+            update: Date.now(),
+            visible: true,
+            views: 0,
+            ontop: false
+        });
+    res.render('annform', { title: 'Add New Announcement', session: req.session, menu: req.user.level, ann: empty });
+    return;
 });
 
 router.post('/annnew', function (req, res) {
-    levelfind(req, res, function (err, tologin, name, user) {
-        if (err) {
-            console.log('[ERROR]' + err);
-        }
-        if (tologin == 0) {
-            res.redirect('/admin/login');
-            return;
-        }
+    if (req.user.level == 0) {
+        res.redirect('/admin/login');
+        return;
+    }
 
-        new Ann({
-            author: user._id,
-            authorcache: "",
-            title: req.body['title'],
-            istextcontent: req.body['istextcontent'] != 'on',
-            content: req.body['content'],
-            create: Date.now(),
-            update: Date.now(),
-            visible: req.body['visible'] == 'on',
-            views: 0,
-            ontop: req.body['ontop'] == 'on'
-        }).save(function (err, ls, count) {
+    new Ann({
+        author: req.user._id,
+        authorcache: "",
+        title: req.body['title'],
+        istextcontent: req.body['istextcontent'] != 'on',
+        content: req.body['content'],
+        create: Date.now(),
+        update: Date.now(),
+        visible: req.body['visible'] == 'on',
+        views: 0,
+        ontop: req.body['ontop'] == 'on'
+    }).save(function (err, ls, count) {
+        if (err) console.log('[ERROR]' + err);
+        else req.session.info = "新增成功";
+        res.redirect('/admin/admin');
+    });
+});
+
+router.get('/annedit/:id', function (req, res) {
+    console.log('[INFO]'+req.params.id);
+    editper(req, res, req.params.id, function (ann) {
+        res.render('annform', { title: 'Edit Announcement', session: req.session, menu: req.user.level, ann: ann });
+    });
+});
+
+router.post('/annedit/:id', function (req, res) {
+    editper(req, res, req.params.id, function (ann) {
+        ann.title = req.body['title'];
+        ann.istextcontent = req.body['istextcontent'] != 'on';
+        ann.content = req.body['content'];
+        ann.update = Date.now();
+        ann.visible = req.body['visible'] == 'on';
+        ann.ontop = req.body['ontop'] == 'on';
+        ann.save(function (err, ls, count) {
             if (err) console.log('[ERROR]' + err);
-            else req.session.info = "新增成功";
+            else req.session.info = "儲存成功";
             res.redirect('/admin/admin');
         });
     });
 });
 
-router.get('/annedit/:id', function (req, res) {
-    levelfind(req, res, function (err, tologin, name) {
-        editper(req, res, req.params.id, function (ann) {
-            res.render('annform', { title: 'Edit Announcement', session: req.session, menu: tologin, ann: ann });
-        });
-    }, true);
-});
-
-router.post('/annedit/:id', function (req, res) {
-    levelfind(req, res, function (err, tologin, name) {
-        editper(req, res, req.params.id, function (ann) {
-            ann.title = req.body['title'];
-            ann.istextcontent = req.body['istextcontent'] != 'on';
-            ann.content = req.body['content'];
-            ann.update = Date.now();
-            ann.visible = req.body['visible'] == 'on';
-            ann.ontop = req.body['ontop'] == 'on';
-            ann.save(function (err, ls, count) {
-                if (err) console.log('[ERROR]' + err);
-                else req.session.info = "儲存成功";
-                res.redirect('/admin/admin');
-            });
-        });
-    }, true);
-});
-
 router.get('/anndelete/:id', function (req, res) {
-    levelfind(req, res, function (err, tologin, name) {
-        editper(req, res, req.params.id, function (ann) {
-            ann.remove(function (err, ann) {
-                if (err) console.log('[ERROR]' + err);
-                else req.session.info = "刪除成功";
-                res.redirect('/admin/admin');
-            });
+    editper(req, res, req.params.id, function (ann) {
+        ann.remove(function (err, ann) {
+            if (err) console.log('[ERROR]' + err);
+            else req.session.info = "刪除成功";
+            res.redirect('/admin/admin');
         });
-    }, true);
+    });
 });
 
 router.get('/usradm', function (req, res) {
@@ -134,7 +112,7 @@ router.get('/usradm', function (req, res) {
         //TODO:Add Chpwd Fuction
         function admfind(err, users) {
             if (err) console.log('[ERROR]' + err);
-            res.render('usradm', { moment: moment, title: 'UserManage', session: req.session, menu: tologin, data: users });
+            res.render('usradm', { moment: moment, title: 'UserManage', session: req.session, menu: req.user.level, data: users });
         }
     }, true);
 });
@@ -154,7 +132,7 @@ router.get('/usrnew', function (req, res) {
             password: "",
             level: 1
         });
-        res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: empty, operator: user, lock: false });
+        res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: empty, operator: user, lock: false });
     }, true);
 });
 
@@ -177,7 +155,7 @@ router.post('/usrnew', function (req, res) {
                     password: "",
                     level: req.body['level']
                 });
-                res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: tologin, usr: ldata, operator: user, lock: false });
+                res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: ldata, operator: user, lock: false });
             } else {
                 new Admin({
                     name: req.body['name'],
@@ -216,7 +194,7 @@ router.get('/usredit/:id', function (req, res) {
                 res.redirect('/admin/usradm');
                 return;
             }
-            res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: tologin, usr: adm, operator: user, lock: true });
+            res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: req.user.level, usr: adm, operator: user, lock: true });
         });
     }, true);
 });
@@ -313,7 +291,7 @@ router.get('/usrpwd/:id', function (req, res) {
                 res.redirect('/admin/usradm');
                 return;
             }
-            res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: tologin, usr: adm, operator: user });
+            res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: req.user.level, usr: adm, operator: user });
         });
     }, true);
 });
@@ -362,7 +340,7 @@ router.get('/login', function (req, res) {
         if (tologin > 0) {
             res.redirect('/admin/admin');
         }
-        res.render('login', { title: 'Admin Login', menu: tologin, session: req.session });
+        res.render('login', { title: 'Admin Login', menu: req.user.level, session: req.session });
     });
 });
 
@@ -457,7 +435,7 @@ router.get('/chpwd', function (req, res) {
         if (tologin == 0) {
             res.redirect('/admin/login');
         }
-        res.render('chpwd', { title: 'Change Admin Password', session: req.session, menu: tologin, session: req.session });
+        res.render('chpwd', { title: 'Change Admin Password', session: req.session, menu: req.user.level, session: req.session });
     });
 });
 

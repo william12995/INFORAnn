@@ -87,16 +87,15 @@ router.get('/', function (req, res, next)
     });
 });
 
-router.get('/content/:id', function (user, req, res) {
+router.get('/content/:id', function (req, res) {
+    console.log('[INFO]'+req.params.id);
     Ann.findById(req.params.id).populate('author').exec(function (err, ann) {
-        admin.levelfind(req, res, function (err, tologin, name) {
+        if (err) console.log('[ERROR]' + err);
+        ann.views++;
+        ann.save(function (err, ann, count) {
             if (err) console.log('[ERROR]' + err);
-            ann.views++;
-            ann.save(function (err, ann, count) {
-                if (err) console.log('[ERROR]' + err);
-            });
-            res.render('content', {moment: moment, title: ann.title +' - INFOR Ann System', session: req.session, ann: ann, menu: req.user.level || 0});
         });
+        res.render('content', {moment: moment, title: ann.title +' - INFOR Ann System', session: req.session, ann: ann, menu: req.user.level || 0});
     });
 });
 
