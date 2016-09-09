@@ -6,32 +6,37 @@ require('./db');
 var express = require('express');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var routes = require('./routes');
-var admin = require('./routes/admin');
-var http = require('http');
 var path = require('path');
 var engine = require('ejs-locals');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var debug = require('debug')('inforann:server');
+
+var index = require('./routes');
+var admin = require('./routes/admin');
 var Admin = mongoose.model('Admin');
 
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 3030);
 app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(express.cookieParser());
-app.use(express.session({ secret: 'S4gznk%^MdGfxAEXT?N*WcD5tD!w@BC+' }));
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ 
+  secret: 'S4gznk%^MdGfxAEXT?N*WcD5tD!w@BC+' ,
+  resave:true,
+  saveUninitialized: true
+  //!!!!!IMPORTANT!!!!! *DO NOT* CHANGE THE STRING ABOVE!!!!! 
+}));
 
 Admin.findOne({name : "root"}).exec(function(err,result)
 {
@@ -56,34 +61,31 @@ Admin.findOne({name : "root"}).exec(function(err,result)
 	}
 });
 
-// development only
-if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
+app.use('/', index);
+app.use('/index', index);
+app.use('/admin', admin);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
 }
 
-app.get('/', routes.index);
-app.get('/index', routes.index);
-app.get('/content/:id', routes.content);
-app.get('/admin', admin.admin);
-app.get('/annnew', admin.annnew);
-app.post('/annnew', admin.annnew_proc);
-app.get('/annedit/:id', admin.annedit);
-app.post('/annedit/:id', admin.annedit_proc);
-app.get('/anndelete/:id', admin.anndelete);
-app.get('/usradm', admin.usradm);
-app.get('/usrnew', admin.usrnew);
-app.post('/usrnew', admin.usrnew_proc);
-app.get('/usredit/:id', admin.usredit);
-app.post('/usredit/:id', admin.usredit_proc);
-app.get('/usrdel/:id', admin.usrdel);
-app.get('/usrpwd/:id', admin.usrpwd);
-app.post('/usrpwd/:id', admin.usrpwd_proc);
-app.get('/login', admin.login);
-app.post('/login', admin.login_proc);
-app.get('/chpwd', admin.chpwd);
-app.post('/chpwd', admin.chpwd_proc);
-app.get('/logout', admin.logout);
+module.exports = app;
 
-http.createServer(app).listen(app.get('port'), function () {
-    console.log('[INFO]Express server listening on port ' + app.get('port'));
-});
+debug('app.js initialized.');

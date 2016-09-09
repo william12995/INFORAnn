@@ -4,7 +4,7 @@
         <section>
             <h1 class="major">公告管理</h1>
             <!--<a href="/annnew" class="button"><img src="/icons/add-tool.svg" style="border-bottom: none" /></a>-->
-            <a href="/annnew" style="border-bottom: none"><input class="button" type="image" src="/icons/add-tool.svg" name="add" id="add" style="padding:10px;height:40px" /></a>
+            <a href="/admin/annnew" style="border-bottom: none"><input class="button" type="image" src="/icons/add-tool.svg" name="add" id="add" style="padding:10px;height:40px" /></a>
             <!--<button type="submit"><img src="/icons/add-tool.svg" style="border-bottom: none" /><br/>Add</button>-->
             <!--<div class="table-wrapper">-->
             <div>
@@ -26,8 +26,8 @@
                             <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
                             <td><%= dt.author.nick %></td>
                             <td><%= dt.views %></td>
-                            <td><a href="/annedit/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" style="padding:10px;height:40px" /></a></td>
-                            <td><a href="/anndelete/<%= dt._id %>" onclick="return confirm('你確定要刪除此公告嗎？')" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px;height:40px" /></a></td>
+                            <td><a href="/admin/annedit/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" style="padding:10px;height:40px" /></a></td>
+                            <td><a href="/admin/anndelete/<%= dt._id %>" onclick="return confirm('你確定要刪除此公告嗎？')" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px;height:40px" /></a></td>
                         </tr>
                         <% }); %>
                     </tbody>
