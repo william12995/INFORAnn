@@ -14,7 +14,15 @@ var Admin = mongoose.model('Admin');
 
 router.all('*', function(req, res, next)
 {
-    req.user = {};
+    req.user = {
+        name: '',
+        nick: '',
+        LastLogin : null,
+        enable : false,
+        system : false,
+        password : '',
+        level : 0
+    };
     Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
         if (err) {
             console.log('[ERROR]' + err);
@@ -22,15 +30,15 @@ router.all('*', function(req, res, next)
         if (!result) {
             console.log('[INFO]user cookie not found');
             next();
-            // return;
         }
         if (result.expire < Date.now()) {
             result.remove(function (err, result) {
                 if (err) console.log('[ERROR]' + err);
             });
             console.log('[WRAN]user cookie expired');
+            req.session.error = "登入資訊已過期，請重新登入。";
+            res.redirect('/admin/login');
             next();
-            // return;
         }
         console.log(result);
         console.log(result.admin_id);
@@ -39,7 +47,6 @@ router.all('*', function(req, res, next)
             if (err) console.log('[ERROR]' + err);
             if (!user) {
                 next();
-                // return;
             }
             if(result.keep == true) {
                 result.expire = new Date(Date.now() + 14*24*60*60*1000);
@@ -50,7 +57,6 @@ router.all('*', function(req, res, next)
             }
             req.user = user;
             next();
-            // return;
         });
     });
 });

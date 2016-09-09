@@ -79,11 +79,16 @@ router.post('/login', function (req, res)
         }
     });
 });
-/*
-router.all('*', function (req, res) {
 
+router.all('*', function (req, res, next) {
+    if(req.user.level == 0){
+        req.session.error = "請先登入！";
+        res.redirect('/admin/login');
+    } else {
+        next();
+    }
 });
-*/
+
 router.get('/admin', function (req, res) {
     if (req.user.level == 1) {
         Ann.find({ author: user._id }).sort('-update').populate('author').exec(annsfind);
@@ -118,6 +123,7 @@ router.get('/annnew', function (req, res) {
 
 router.post('/annnew', function (req, res) {
     if (req.user.level == 0) {
+        req.session.error = "請先登入！";
         res.redirect('/admin/login');
         return;
     }
@@ -204,7 +210,7 @@ router.get('/usrnew', function (req, res) {
         password: "",
         level: 1
     });
-    res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: empty, operator: user, lock: false });
+    res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: empty, operator: req.user, lock: false });
 });
 
 router.post('/usrnew', function (req, res) {
@@ -224,7 +230,7 @@ router.post('/usrnew', function (req, res) {
                 password: "",
                 level: req.body['level']
             });
-            res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: ldata, operator: user, lock: false });
+            res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: ldata, operator: req.user, lock: false });
         } else {
             new Admin({
                 name: req.body['name'],
@@ -261,7 +267,7 @@ router.get('/usredit/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
-        res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: req.user.level, usr: adm, operator: user, lock: true });
+        res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: req.user.level, usr: adm, operator: req.user, lock: true });
     });
 });
 
@@ -319,7 +325,7 @@ router.get('/usrdel/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
-        if (adm._id.equals(user._id)) {
+        if (adm._id.equals(req.user._id)) {
             req.session.error = "不可刪除自己";
             res.redirect('/admin/usradm');
             return;
@@ -350,7 +356,7 @@ router.get('/usrpwd/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
-        res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: req.user.level, usr: adm, operator: user });
+        res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: req.user.level, usr: adm, operator: req.user });
     });
 });
 
@@ -462,61 +468,6 @@ router.post('/chpwd', function (req, res) {
         });
     });
 });
-
-function levelfind(req, res, callback, refuse) {
-    Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
-        refuse = refuse || false;
-        if (err) {
-            callback(err, null);
-        }
-        if (!result) {
-            console.log('[INFO]user cookie not found');
-            if (refuse == true) {
-                req.session.error = "請先登入！";
-                res.redirect('/admin/login');
-                return;
-            }
-            callback(null, 0);
-            return;
-        }
-        if (result.expire < Date.now()) {
-            result.remove(function (err, result) {
-                if (err) console.log('[ERROR]' + err);
-            });
-            console.log('[WRAN]user cookie expired');
-            if (refuse == true) {
-                req.session.error = "登入資訊已過期，請重新登入。";
-                res.redirect('/admin/login');
-                return;
-            }
-            callback(null, 0);
-            return;
-        }
-        console.log(result.admin_id);
-        Admin.
-        findById(result.admin_id, function (err, user) {
-            if (err) console.log('[ERROR]' + err);
-            if (!user) {
-                if (refuse == true) {
-                    req.session.error = "使用者不存在。";
-                    res.redirect('/admin/login');
-                    return;
-                }
-                callback(null, 0);
-                return;
-            }
-            if(result.keep == true) {
-                result.expire = new Date(Date.now() + 14*24*60*60*1000);
-                result.save();
-            } else {
-                result.expire = new Date(Date.now() + 1*60*60*1000);
-                result.save();
-            }//Add Keeping
-            callback(err, user.level, user.name, user);
-            return;
-        });
-    });
-}
 
 function editper(req, res, id, callback) {
     Ann.findById(id, function (err, ann) {
