@@ -1,3 +1,3 @@
 #!/bin/bash
-DEBUG=inforann:* 
+export DEBUG=inforann:* 
 npm start
