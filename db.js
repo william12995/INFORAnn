@@ -41,6 +41,7 @@ var Session = new Schema(
 mongoose.model('Ann', Ann);
 mongoose.model('Admin', Admin);
 mongoose.model('Session', Session);
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/infor-ann', function (err) {
     if (!err) return;
     var start = new utils.run_cmd('net', ['start','mongodb'], function (me, buffer) {
