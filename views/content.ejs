@@ -10,7 +10,9 @@
         </ul>
         <div class="uniform">
             <% if(ann.istextcontent == true) { %>
-                <p><%- ann.content.replace(/\n/g, '<br />') %></p>
+                <% ann.content.split('\n').forEach(function(line) { %>
+                    <p class="text"><%= line.replace(/\r/g, '') %></p>
+                <% }); %>
             <% } else { %>
                 <%- ann.content %>
             <% } %>

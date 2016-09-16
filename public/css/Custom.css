@@ -24,6 +24,9 @@
 	.infolist li a {
 		color: inherit;
 	}
+.text{
+	margin: 0;
+}
 .pagelist{
     list-style-type: none;
     text-align: center;
