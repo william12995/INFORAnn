@@ -24,9 +24,11 @@ $ ./run.sh
 
 ###Changelog
  - **Beta 0.9**
+ 	 - add Ace Editor with announcement editing
  	 - improve console output
 	 - upgrade to express.js 4.x
 	 - add page function
+	 - fix bugs and make the code easy to read
  - **Beta 0.8**
  	 - basic function
  	 - first stable version
