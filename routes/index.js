@@ -29,7 +29,7 @@ router.all('*', function(req, res, next)
             console.log('[ERROR]'.red + err);
         }
         if (!result) {
-            console.log('[INFO]'.blue+'user cookie not found');
+            console.log('[INFO]'.cyan+'user cookie not found');
             next();
         }
         if (result.expire < Date.now()) {
@@ -93,7 +93,7 @@ router.get('/', function (req, res, next)
 });
 
 router.get('/content/:id', function (req, res) {
-    console.log('[INFO]'.blue+req.params.id);
+    console.log('[INFO]'.cyan+req.params.id);
     Ann.findById(req.params.id).populate('author').exec(function (err, ann) {
         if (err) console.log('[ERROR]'.red + err);
         ann.views++;

@@ -148,7 +148,7 @@ router.post('/annnew', function (req, res) {
 });
 
 router.get('/annedit/:id', function (req, res) {
-    console.log('[INFO]'.blue+req.params.id);
+    console.log('[INFO]'.cyan+req.params.id);
     editper(req, res, req.params.id, function (ann) {
         res.render('annform', { title: 'Edit Announcement', session: req.session, menu: req.user.level, ann: ann });
     });

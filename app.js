@@ -58,7 +58,7 @@ Admin.findOne({name : "root"}).exec(function(err,result)
 		{
 			if(err)console.log(err);
         });
-		console.log('[INFO]'.blue+'root account initialized!');
+		console.log('[INFO]'.cyan+'root account initialized!');
 	}
 });
 
