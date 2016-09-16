@@ -33,10 +33,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ 
-  secret: 'S4gznk%^MdGfxAEXT?N*WcD5tD!w@BC+' ,
-  resave:true,
-  saveUninitialized: true
-  //!!!!!IMPORTANT!!!!! *DO NOT* CHANGE THE STRING ABOVE!!!!! 
+    secret: 'S4gznk%^MdGfxAEXT?N*WcD5tD!w@BC+' ,
+    resave:true,
+    saveUninitialized: true
+    //!!!!!IMPORTANT!!!!! *DO NOT* CHANGE THE STRING ABOVE!!!!! 
 }));
 
 Admin.findOne({name : "root"}).exec(function(err,result)
@@ -58,7 +58,7 @@ Admin.findOne({name : "root"}).exec(function(err,result)
 		{
 			if(err)console.log(err);
         });
-		console.log('[INFO]'.blue+'root initialized!');
+		console.log('[INFO]'.blue+'root account initialized!');
 	}
 });
 
@@ -68,9 +68,9 @@ app.use('/admin', admin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
@@ -78,13 +78,13 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
     });
-  });
 }
 
 module.exports = app;

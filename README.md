@@ -24,7 +24,8 @@ $ ./run.sh
 
 ###Changelog
  - **Beta 0.9**
-	 - update to express.js 4
+ 	 - improve console output
+	 - upgrade to express.js 4.x
 	 - add page function
  - **Beta 0.8**
  	 - basic function

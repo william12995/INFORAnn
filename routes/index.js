@@ -39,12 +39,12 @@ router.all('*', function(req, res, next)
             console.log('[WRAN]'.yellow+'user cookie expired');
             req.session.error = "登入資訊已過期，請重新登入。";
             res.redirect('/admin/login');
-            next();
         }
         Admin.
         findById(result.admin_id, function (err, user) {
             if (err) console.log('[ERROR]'.red + err);
             if (!user) {
+                console.log('[WARN]'.yellow+'userid: ' + result.admin_id + ' is not exist!');
                 next();
             }
             if(result.keep === true) {
