@@ -1,6 +1,9 @@
 ﻿var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var utils = require('./utils');
+var debug = require('debug')('inforann:server');
+var colors = require('colors');
+var config = require('./config.json');
 
 var Ann = new Schema(
     {
@@ -15,7 +18,7 @@ var Ann = new Schema(
         views : Number,
         ontop : Boolean
     }
-)
+);
 
 var Admin = new Schema(
     {
@@ -27,7 +30,7 @@ var Admin = new Schema(
         password : String,
         level : Number
     }
-)
+);
 
 var Session = new Schema(
     {
@@ -36,18 +39,19 @@ var Session = new Schema(
         expire : Date,
         keep : Boolean
     }
-)
+);
 
 mongoose.model('Ann', Ann);
 mongoose.model('Admin', Admin);
 mongoose.model('Session', Session);
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/infor-ann', function (err) {
-    if (!err) return;
-    var start = new utils.run_cmd('net', ['start','mongodb'], function (me, buffer) {
-        me.stdout += buffer.toString();
-    }, function () {
-        console.log(start.stdout);
-        mongoose.connect('mongodb://localhost/infor-ann');
-    });
+mongoose.connect(config.mongodb, function (err) {
+    if (err) {
+        console.log("[ERROR]".red+"Couldn't connect to mongodb: " + config.mongodb + " .");
+        console.log("[ERROR]".red+"Please check if your setting in 'config.json' is right.");
+        console.log("[ERROR]".red+"Or, if the mongod is running.");
+        throw err;
+    } else {
+        debug('Connected to MongoDB server.');
+    }
 });

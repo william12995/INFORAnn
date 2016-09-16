@@ -14,6 +14,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var debug = require('debug')('inforann:server');
+var colors = require('colors');
 
 var index = require('./routes');
 var admin = require('./routes/admin');
@@ -42,8 +43,8 @@ Admin.findOne({name : "root"}).exec(function(err,result)
 {
 	if(!result)
     {
-        console.log("[WARN]can't find admin account \"root\"!");
-        console.log("[WARN]will auto create a passwordless root account.");
+        console.log("[WARN]".yellow+"can't find admin account \"root\"!");
+        console.log("[WARN]".yellow+"will auto create a passwordless root account.");
 		new Admin(
 		{
                 name : "root",
@@ -57,7 +58,7 @@ Admin.findOne({name : "root"}).exec(function(err,result)
 		{
 			if(err)console.log(err);
         });
-		console.log('[INFO]root initialized!');
+		console.log('[INFO]'.blue+'root initialized!');
 	}
 });
 
