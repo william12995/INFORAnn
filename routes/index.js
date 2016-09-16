@@ -31,6 +31,7 @@ router.all('*', function(req, res, next)
         if (!result) {
             console.log('[INFO]'.blue+'user cookie not found');
             next();
+            return;
         }
         if (result.expire < Date.now()) {
             result.remove(function (err, result) {
