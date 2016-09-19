@@ -1,4 +1,4 @@
-var textarea = document.getElementById('content');
+//var textarea = document.getElementById('content');
 var mode = document.getElementById('istextcontent');
 
 var editor = ace.edit("editor");
@@ -7,12 +7,6 @@ modeswitch();
 editor.getSession().setTabSize(4);
 editor.getSession().setUseSoftTabs(true);
 editor.getSession().setUseWorker(false);
-
-editor.getSession().on('change', function () {
-    textarea.value=editor.getSession().getValue();
-});
-textarea.value=editor.getSession().getValue();
-
 mode.onclick = modeswitch;
 
 function modeswitch() {
@@ -21,4 +15,13 @@ function modeswitch() {
 	} else {
 		editor.getSession().setMode("");
 	}
+}
+function send() {
+    var form = document.getElementById('editform');
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("name", "content");
+    hiddenField.setAttribute("value", editor.getSession().getValue());
+    form.appendChild(hiddenField);
+    form.submit();
 }

@@ -1,7 +1,7 @@
 ﻿<% layout( 'layout' ) -%>
 <div class="wrapper spotlight style3">
     <div class="inner" style="display:block; text-align:start">
-        <form class="form-ann" role="form" method="post">
+        <form class="form-ann" id="editform" role="form" method="post">
             <div class="row uniform">
                 <div class="12u$">
                     <label for="title">標題</label>
@@ -12,7 +12,6 @@
 
                     <label for="editor">內容</label>
                     <div name="editor" id="editor"><%= ann.content %></div>
-                    <textarea style="display:none" name="content" id="content"><%= ann.content %></textarea>
 
                     <input type="checkbox" name="visible" id="visible" <% if(ann.visible==true) { %> checked <% } %> />
                     <label for="visible">可視</label><br />
@@ -20,7 +19,7 @@
                     <input type="checkbox" name="ontop" id="ontop" <% if(ann.ontop==true) { %> checked <% } %> />
                     <label for="ontop">置頂</label><br />
 
-                    <input type="submit" name="ok" id="ok" value="完成" />
+                    <input type="submit" onclick="send()" name="ok" id="ok" value="完成" />
                 </div>
             </div>
         </form>
