@@ -74,3 +74,19 @@
 	#editor:focus {
 		border-color: #5b6ba6;
 	}
+
+.thmin-e {
+	min-width: 200px;
+}/*extra*/
+.thmin-x {
+	min-width: 160px;
+}/*max*/
+.thmin-m {
+	min-width: 100px;
+}/*medium*/
+.thmin-s {
+	min-width: 75px;
+}/*small*/
+.thmin-t {
+	min-width: 50px;
+}/*tiny*/

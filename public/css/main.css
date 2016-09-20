@@ -2435,6 +2435,11 @@
 		-webkit-overflow-scrolling: touch;
 		overflow-x: auto;
 	}
+		@media screen and (max-width: 640px) {
+			.table-wrapper table {
+				white-space: nowrap;
+			}
+		}
 
 	table {
 		margin: 0 0 2em 0;

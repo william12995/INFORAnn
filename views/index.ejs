@@ -1,26 +1,28 @@
 ﻿<% layout( 'layout' ) -%>
 <section class="wrapper spotlight style1">
     <div class="inner" style="display:block; text-align:start">
-        <table>
-        	<thead>
-        		<tr>
-                    <th>置頂</th>
-        			<th>標題</th>
-        			<th>日期</th>
-        			<th>發佈者</th>
-        			<th>觀看數</th>
-        		</tr>
-        	</thead>
-        	<% data.forEach( function(dt) {%>
-        		<tr <% if(dt.ontop == true){ %> style="background-color: rgba(255, 255, 255, 0.25);" <% } %> >
-                    <td><% if(dt.ontop == true){ %> <img src="/icons/up-arrow-filled-angle.svg" style="width: 19px" /> <% } %></td>
-        			<td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
-                    <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
-        			<td><%= dt.author.nick %></td>
-        			<td><%= dt.views %></td>
-        		</tr>
-        	<% }); %>
-        </table>
+        <div class="table-wrapper">
+            <table>
+            	<thead>
+            		<tr>
+                      <th class="thmin-t">置頂</th>
+            			<th class="thmin-x">標題</th>
+            			<th class="thmin-x">日期</th>
+            			<th class="thmin-x">發佈者</th>
+            			<th class="thmin-s">觀看數</th>
+            		</tr>
+            	</thead>
+            	<% data.forEach( function(dt) {%>
+            		<tr <% if(dt.ontop == true){ %> style="background-color: rgba(255, 255, 255, 0.25);" <% } %> >
+                      <td><% if(dt.ontop == true){ %> <img src="/icons/up-arrow-filled-angle.svg" style="width: 19px" /> <% } %></td>
+            			<td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
+                      <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
+            			<td><%= dt.author.nick %></td>
+            			<td><%= dt.views %></td>
+            		</tr>
+            	<% }); %>
+            </table>
+        </div>
     </div>
     <div class="inner" style="display:block; text-align:start">
         <ul class="pagelist">
