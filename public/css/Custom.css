@@ -60,6 +60,15 @@
 		background: rgba(255, 255, 255, 0.8);
 	}
 
+.icobtn {
+	padding:10px;
+	height:40px;
+}
+
+.noborder {
+	border: none;
+}
+
 #editor { 
     position: relative;
     height: 500px;

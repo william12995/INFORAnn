@@ -3,10 +3,7 @@
     <div class="inner" style="display:block; text-align:start">
         <section>
             <h1 class="major">公告管理</h1>
-            <!--<a href="/annnew" class="button"><img src="/icons/add-tool.svg" style="border-bottom: none" /></a>-->
-            <a href="/admin/annnew" style="border-bottom: none"><input class="button" type="image" src="/icons/add-tool.svg" name="add" id="add" style="padding:10px;height:40px" /></a>
-            <!--<button type="submit"><img src="/icons/add-tool.svg" style="border-bottom: none" /><br/>Add</button>-->
-            <!--<div class="table-wrapper">-->
+            <a href="/admin/annnew" class="noborder"><input class="button icobtn" type="image" src="/icons/add-tool.svg" name="add" id="add" /></a>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -20,14 +17,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% data.forEach( function(dt) {%>
+                        <% data.forEach( function(dt) { %>
                         <tr>
                             <td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
                             <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
                             <td><%= dt.author.nick %></td>
                             <td><%= dt.views %></td>
-                            <td><a href="/admin/annedit/<%= dt._id %>" style="border-bottom: none"><input class="button" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" style="padding:10px;height:40px" /></a></td>
-                            <td><a href="/admin/anndelete/<%= dt._id %>" onclick="return confirm('你確定要刪除此公告嗎？')" style="border-bottom: none"><input class="button" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" style="padding:10px;height:40px" /></a></td>
+                            <td><a href="/admin/annedit/<%= dt._id %>" class="noborder"><input class="button icobtn" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" /></a></td>
+                            <td><a href="/admin/anndelete/<%= dt._id %>" onclick="return confirm('你確定要刪除此公告嗎？')" class="noborder"><input class="button icobtn" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" /></a></td>
                         </tr>
                         <% }); %>
                     </tbody>
