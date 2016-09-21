@@ -7,7 +7,7 @@ var config = require('./config.json');
 
 var Ann = new Schema(
     {
-        author: { type: Schema.Types.ObjectId, ref: 'Admin' },
+        author: { type : Schema.Types.ObjectId, ref : 'Admin' },
         authorcache : String,
         title : String,
         istextcontent : Boolean,
@@ -16,14 +16,16 @@ var Ann = new Schema(
         update : Date,
         visible : Boolean,
         views : Number,
-        ontop : Boolean
+        ontop : Boolean,
+        public : Boolean,
+        lists : [{type : Schema.Types.ObjectId, ref : 'List' }]
     }
 );
 
 var Admin = new Schema(
     {
-        name: String,
-        nick: String,
+        name : String,
+        nick : String,
         LastLogin : Date,
         enable : Boolean,
         system : Boolean,
@@ -41,9 +43,21 @@ var Session = new Schema(
     }
 );
 
+var List = new Schema(
+    {
+        name : String,
+        introduce : String,
+        public : Boolean,
+        create : Date,
+        creator : { type : Schema.Types.ObjectId, ref : 'Admin' },
+        anns : [{type : Schema.Types.ObjectId, ref : 'Ann' }]
+    }
+);
+
 mongoose.model('Ann', Ann);
 mongoose.model('Admin', Admin);
 mongoose.model('Session', Session);
+mongoose.model('List', List);
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb, function (err) {
     if (err) {

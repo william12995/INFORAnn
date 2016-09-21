@@ -6,6 +6,7 @@ var moment = require('moment');
 var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
 var Ann = mongoose.model('Ann');
+var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
 
@@ -123,12 +124,6 @@ router.get('/annnew', function (req, res) {
 });
 
 router.post('/annnew', function (req, res) {
-    if (req.user.level === 0) {
-        req.session.error = "請先登入！";
-        res.redirect('/admin/login');
-        return;
-    }
-
     new Ann({
         author: req.user._id,
         authorcache: "",
@@ -180,8 +175,10 @@ router.get('/anndelete/:id', function (req, res) {
     });
 });
 
+
 router.get('/usradm', function (req, res) {
     if (req.user.level <= 2) {
+        req.session.error = "權限不足";
         res.redirect('/admin/admin');
     }
     if (req.user.level == 3) {
@@ -397,6 +394,21 @@ router.post('/usrpwd/:id', function (req, res) {
         });
     });
 });
+
+
+router.get('/listadm', function (req, res) {
+    if (req.user.level <= 1) {
+        req.session.error = "權限不足";
+        res.redirect('/admin/admin');
+    }
+    List.find({}, listshow).populate('creator').populate('anns');
+    return;
+    function listshow(err, lists) {
+        if (err) console.log('[ERROR]'.red + err);
+        res.render('listadm', { moment: moment, title: 'ListManage', session: req.session, menu: req.user.level, data: lists });
+    }
+});
+//TODO:uncompleted
 
 
 router.get('/logout', function (req, res) {
