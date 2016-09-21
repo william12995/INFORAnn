@@ -1,0 +1,39 @@
+<% layout( 'layout' ) -%>
+<div class="wrapper">
+    <div class="inner">
+        <section>
+            <h1 class="major">列表管理</h1>
+            <a href="/admin/listnew" class="noborder" ><input class="button icobtn" type="image" src="/icons/add-tool.svg" /></a>
+            <div class="table-wrapper">
+            		<table>
+                    <thead>
+                        <tr>
+                            <th class="thmin-m">名稱</th>
+                            <th>公開</th>
+                            <th class="thmin-x">建立日期</th>
+                            <th class="thmin-m">建立者</th>
+                            <th>編輯</th>
+                            <th>刪除</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% data.forEach( function(dt) { %>
+                        <tr>
+                            <td><%= dt.name %></td>
+                            <% if(dt.public == true){ %>
+                                <td style="color:lightgreen">是</td>
+                            <% }else{ %>
+                                <td style="color:red">否</td>
+                            <% } %>
+                            <td><%= moment(dt.create).format('YYYY-MM-DD HH:mm:ss') %></td>
+                            <td><%= dt.creator.name %></td>
+                            <td><a href="/admin/listedit/<%= dt._id %>" class="noborder" ><input class="button icobtn" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" /></a></td>
+                            <td><a href="/admin/listdel/<%= dt._id %>" class="noborder" onclick="return confirm('你確定要刪除此列表嗎？')" ><input class="button icobtn" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" /></a></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
