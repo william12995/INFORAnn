@@ -30,6 +30,7 @@ router.all('*', function(req, res, next)
         }
         if (!result) {
             console.log('[INFO]'.cyan+'user cookie not found');
+            res.clearCookie('session');
             next();
             return;
         }
@@ -47,7 +48,19 @@ router.all('*', function(req, res, next)
             if (err) console.log('[ERROR]'.red + err);
             if (!user) {
                 console.log('[WARN]'.yellow+'userid: ' + result.admin_id + ' is not exist!');
-                next();
+                result.remove(function (err, result) {
+                    if (err) console.log('[ERROR]'.red + err);
+                    next();
+                });
+                return;
+            }
+            if (user.enable === false) {
+                req.session.error = '使用者被停用';
+                console.log('[WARN]'.yellow+'user ' + username + ' is disabled!');
+                result.remove(function (err, result) {
+                    if (err) console.log('[ERROR]'.red + err);
+                    next();
+                });
                 return;
             }
             if(result.keep === true) {

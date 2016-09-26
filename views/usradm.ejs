@@ -22,7 +22,7 @@
                         <% data.forEach( function(dt) { %>
                         <tr>
                             <td><%= dt.name %></td>
-                            <td><%= dt.nick %></td>
+                            <td><%= dt.nick ? dt.nick : '' %></td>
                             <td><%= dt.level %></td>
                             <% if(dt.enable == true){ %>
                                 <td style="color:lightgreen">是</td>

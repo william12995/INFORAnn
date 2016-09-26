@@ -17,7 +17,7 @@
                       <td><% if(dt.ontop == true){ %> <img src="/icons/up-arrow-filled-angle.svg" style="width: 19px" /> <% } %></td>
             			<td><a href="/content/<%= dt._id %>"><%= dt.title %></a></td>
                       <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
-            			<td><%= dt.author.nick %></td>
+            			<td><% if(dt.author){ %><%= dt.author.nick ? dt.author.nick : dt.author.name %><% } %></td>
             			<td><%= dt.views %></td>
             		</tr>
             	<% }); %>

@@ -94,7 +94,7 @@ router.all('*', function (req, res, next) {
 
 router.get('/admin', function (req, res) {
     if (req.user.level == 1) {
-        Ann.find({ author: user._id }).sort('-update').populate('author').exec(annsfind);
+        Ann.find({ author: req.user._id }).sort('-update').populate('author').exec(annsfind);
     }
     else if (req.user.level >= 2) {
         //TODO:Hide Edit&Del Button to ann can't edit.
@@ -217,6 +217,12 @@ router.post('/usrnew', function (req, res) {
         req.session.error = "權限不足";
         res.redirect('/admin/admin');
     }
+    if (req.body.level > 4) req.body.level = 4;
+    if (req.user.level <= 3) { 
+        if(req.body.level > 3) req.body.level = 3;
+    }
+    if (req.body.level < 1) req.body.level = 1;
+
     Admin.findOne({ name: req.body.name }, function (err, same) {
         if (same) {
             req.session.error = "重複的使用者名稱";
@@ -233,7 +239,7 @@ router.post('/usrnew', function (req, res) {
         } else {
             new Admin({
                 name: req.body.name,
-                nick: req.body.nick,
+                nick: req.body.nick !== '' ? req.body.nick : null,
                 LastLogin: Date.now(),
                 enable: req.body.enable == 'on',
                 system: false,
@@ -262,11 +268,12 @@ router.get('/usredit/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
-        if (req.user.level < adm.level) {
+        if (req.user.level < adm.level && !req.user.system) {
             req.session.error = "權限不足";
             res.redirect('/admin/usradm');
             return;
         }
+        adm.nick = req.body.nick ? req.body.nick : '';
         res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: req.user.level, usr: adm, operator: req.user});
     });
 });
@@ -284,18 +291,22 @@ router.post('/usredit/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
-        if (req.user.level < adm.level) {
+        if (req.user.level < adm.level && !req.user.system) {
             req.session.error = "權限不足";
             res.redirect('/admin/usradm');
             return;
         }
-        //TODO:Found secure bug for level3 admin to create level4 admin
+        if (req.body.level > 4) req.body.level = 4;
+        if (req.user.level <= 3) {
+            if(req.body.level > 3) req.body.level = 3;
+        }
+        if (req.body.level < 1) req.body.level = 1;
         if (adm.system === false) {
             adm.enable = req.body.enable == 'on';
             adm.level = req.body.level;
             adm.name = req.body.name;
         }
-        adm.nick = req.body.nick;
+        adm.nick = req.body.nick !== '' ? req.body.nick : null;
         adm.save(function (err, ls, count) {
             if (err) console.log('[ERROR]'.red + err);
             else req.session.info = "儲存成功";
@@ -317,7 +328,7 @@ router.get('/usrdel/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
-        if (req.user.level < adm.level) {
+        if (req.user.level < adm.level && !req.user.system) {
             req.session.error = "權限不足";
             res.redirect('/admin/usradm');
             return;
@@ -335,8 +346,8 @@ router.get('/usrdel/:id', function (req, res) {
         adm.remove(function (err, result) {
             if (err) console.log('[ERROR]'.red + err);
             else req.session.info = "刪除成功";
+            res.redirect('/admin/usradm');
         });
-        res.redirect('/admin/usradm');
     });
 });
 
@@ -547,6 +558,10 @@ function editper(req, res, id, callback) {
             return;
         }
         ann.populate('author', function (err, annp) {
+            if (!annp.author) {
+                callback(ann);
+                return;
+            }
             if (annp.author.level > req.user.level) {
                 req.session.error = "權限不足";
                 res.redirect('/admin/admin');
