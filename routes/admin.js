@@ -10,6 +10,7 @@ var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
 
+//TODO:Split each admin feature to separate routes
 router.get('/login', function (req, res) {
     if (req.user.level > 0) {
         res.redirect('/admin/admin');
@@ -208,7 +209,7 @@ router.get('/usrnew', function (req, res) {
         password: "",
         level: 1
     });
-    res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: empty, operator: req.user, lock: false });
+    res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: empty, operator: req.user});
 });
 
 router.post('/usrnew', function (req, res) {
@@ -228,7 +229,7 @@ router.post('/usrnew', function (req, res) {
                 password: "",
                 level: req.body.level
             });
-            res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: ldata, operator: req.user, lock: false });
+            res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: ldata, operator: req.user});
         } else {
             new Admin({
                 name: req.body.name,
@@ -244,6 +245,7 @@ router.post('/usrnew', function (req, res) {
                 res.redirect('/admin/usradm');
             });
         }
+        //TODO:Found secure bug for level3 admin to create level4 admin
     });
 });
 
@@ -265,7 +267,7 @@ router.get('/usredit/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
-        res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: req.user.level, usr: adm, operator: req.user, lock: true });
+        res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: req.user.level, usr: adm, operator: req.user});
     });
 });
 
@@ -287,9 +289,11 @@ router.post('/usredit/:id', function (req, res) {
             res.redirect('/admin/usradm');
             return;
         }
+        //TODO:Found secure bug for level3 admin to create level4 admin
         if (adm.system === false) {
             adm.enable = req.body.enable == 'on';
             adm.level = req.body.level;
+            adm.name = req.body.name;
         }
         adm.nick = req.body.nick;
         adm.save(function (err, ls, count) {
@@ -407,6 +411,57 @@ router.get('/listadm', function (req, res) {
         if (err) console.log('[ERROR]'.red + err);
         res.render('listadm', { moment: moment, title: 'ListManage', session: req.session, menu: req.user.level, data: lists });
     }
+});
+
+router.get('/listnew', function (req, res) {
+    if (req.user.level <= 1) {
+        req.session.error = "權限不足";
+        res.redirect('/admin/admin');
+    }
+    var empty = new List({
+        name : '',
+        introduce : '',
+        public : true,
+        create : null,
+        creator : null,
+        anns : []
+    });
+    res.render('listform', { title: 'ListManage', session: req.session, head: "新增列表", menu: req.user.level, list: empty});
+});
+
+router.post('/listnew', function (req, res) {
+    if (req.user.level <= 1) {
+        req.session.error = "權限不足";
+        res.redirect('/admin/admin');
+    }
+    List.findOne({ name : req.body.name }, function (err, same) {
+        if(err) console.log('[ERROR]'.red + err);
+        if(same) {
+            req.session.error = "重複的列表名稱";
+            var ldata = new List({
+                name : req.body.name,
+                introduce : req.body.introduce,
+                public : req.body.public,
+                create : null,
+                creator : null,
+                anns : []
+            });
+            res.render('listform', { title: 'ListManage', session: req.session, head: "新增列表", menu: req.user.level, list: ldata});
+        } else {
+            new List({
+                name : req.body.name,
+                introduce : req.body.introduce,
+                public : req.body.public,
+                create : Date.now(),
+                creator : req.user._id,
+                anns : []
+            }).save(function (err, ls, count) {
+                if (err) console.log('[ERROR]'.red + err);
+                else req.session.info = "新增成功";
+                res.redirect('/admin/listadm');
+            });
+        }
+    });
 });
 //TODO:uncompleted
 

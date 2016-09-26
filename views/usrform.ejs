@@ -3,11 +3,11 @@
     <div class="inner">
         <section>
             <h1 class="major"><%= head %></h1>
-            <form class="form-ann" role="form" method="post">
+            <form class="form-usr" role="form" method="post">
                 <div class="row uniform">
                     <div class="6u 12u$(small)">
                         <label for="name">帳號名稱</label>
-                        <input type="text" name="name" id="name" value="<%= usr.name %>" required <% if(usr.system == true || lock == true){ %> readonly <% } %> />
+                        <input type="text" name="name" id="name" value="<%= usr.name %>" required <% if(usr.system == true){ %> readonly <% } %> />
                     </div>
                     <div class="6u$ 12u$(small)">
                         <label for="nick">帳號暱稱</label>

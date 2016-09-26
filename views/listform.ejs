@@ -1,0 +1,28 @@
+<% layout( 'layout' ) -%>
+<div class="wrapper spotlight style4">
+    <div class="inner" style="display:block; text-align:start">
+        <section>
+        	<h1 class="major"><%= head %></h1>
+			<form class="form-list" role="form" method="post">
+				<div class="row uniform">
+					<div class="6u$ 12u$(small)">
+						<label for="name">列表名稱</label>
+						<input type="text" name="name" id="name" value="<%= list.name %>" required />
+					</div>
+					<div class="12u$">
+						<label for="introduce">簡介</label>
+						<textarea name="introduce" id="introduce" rows="5"><%= list.introduce %></textarea>
+					</div>
+					<div class="6u$ 12u$(small)">
+						<input type="checkbox" name="public" id="public" <% if(list.public == true){ %> checked <% } %> />
+						<label for="public">公開</label>
+					</div>
+					<!-- Handle Check Anns -->
+					<div class="6u$ 12u$(small)">
+						<input type="submit" name="ok" id="ok" value="儲存" />
+					</div>
+				</div>
+			</form>
+        </section>
+    </div>
+</div>
