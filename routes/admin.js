@@ -9,72 +9,81 @@ var Ann = mongoose.model('Ann');
 var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
+//Sub routers
+var R_ann = require('./admin-ann');
+var R_user = require('./admin-user');
+var R_list = require('./admin-list');
 
-//TODO:Split each admin feature to separate routes
-router.get('/login', function (req, res) {
+
+router.get('/login', function(req, res) {
     if (req.user.level > 0) {
         res.redirect('/admin/admin');
     }
-    res.render('login', { title: 'Admin Login', menu: req.user.level, session: req.session });
+    res.render('login', {
+        title: 'Admin Login',
+        menu: req.user.level,
+        session: req.session
+    });
 });
 
-router.post('/login', function (req, res) 
-{
+router.post('/login', function(req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var remember = req.body.remember;
     var passwdhash = pwdhash(password);
     Admin.
-    findOne({ name : username}).
-    exec( function( err, user )
-    {
-        if(err){console.log('[ERROR]'.red + err);}
-        if(!user)
-        {
+    findOne({
+        name: username
+    }).
+    exec(function(err, user) {
+        if (err) {
+            console.log('[ERROR]'.red + err);
+        }
+        if (!user) {
             req.session.error = '使用者不存在';
-            console.log('[WARN]'.yellow+'user '+username+' is not exist!');
+            console.log('[WARN]'.yellow + 'user ' + username + ' is not exist!');
             res.redirect('/admin/login');
             return;
         }
         if (user.enable === false) {
             req.session.error = '使用者被停用';
-            console.log('[WARN]'.yellow+'user ' + username + ' is disabled!');
+            console.log('[WARN]'.yellow + 'user ' + username + ' is disabled!');
             res.redirect('/admin/login');
             return;
         }
-        if(passwdhash != user.password && user.password !== "")
-        {
+        if (passwdhash != user.password && user.password !== "") {
             req.session.error = '密碼錯誤';
-            console.log('[WARN]'.yellow+'password for '+username+' error!');
+            console.log('[WARN]'.yellow + 'password for ' + username + ' error!');
             res.redirect('/admin/login');
             return;
         }
         var sessionid = utils.uid(32);
         user.LastLogin = Date.now();
         user.save();
-        if(remember == 'on')
-        {
-            res.cookie('session',sessionid,{ expires: new Date(Date.now() + 14*24*60*60*1000)});
-            new Session ({
-                cookie_id : sessionid,
-                admin_id : user._id,
-                expire : new Date(Date.now() + 14*24*60*60*1000),
-                keep : true
-            }).save(function ( err, ls, count ){
+        if (remember == 'on') {
+            res.cookie('session', sessionid, {
+                expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+            });
+            new Session({
+                cookie_id: sessionid,
+                admin_id: user._id,
+                expire: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+                keep: true
+            }).save(function(err, ls, count) {
                 if (err) console.log('[ERROR]'.red + err);
                 else req.session.info = "登入成功";
                 res.redirect('/admin/admin');
             });
-        }
-        else
-        {
-            res.cookie('session',sessionid,{ expires: 0});
-            new Session ({
-                cookie_id : sessionid,
-                admin_id : user._id,
-                expire : new Date(Date.now() + 1*60*60*1000),
-                keep : false
-            }).save(function ( err, ls, count ){
+        } else {
+            res.cookie('session', sessionid, {
+                expires: 0
+            });
+            new Session({
+                cookie_id: sessionid,
+                admin_id: user._id,
+                expire: new Date(Date.now() + 1 * 60 * 60 * 1000),
+                keep: false
+            }).save(function(err, ls, count) {
                 if (err) console.log('[ERROR]'.red + err);
                 else req.session.info = "登入成功";
                 res.redirect('/admin/admin');
@@ -83,8 +92,8 @@ router.post('/login', function (req, res)
     });
 });
 
-router.all('*', function (req, res, next) {
-    if(req.user.level === 0){
+router.all('*', function(req, res, next) {
+    if (req.user.level === 0) {
         req.session.error = "請先登入！";
         res.redirect('/admin/login');
     } else {
@@ -92,400 +101,26 @@ router.all('*', function (req, res, next) {
     }
 });
 
-router.get('/admin', function (req, res) {
-    if (req.user.level == 1) {
-        Ann.find({ author: req.user._id }).sort('-update').populate('author').exec(annsfind);
-    }
-    else if (req.user.level >= 2) {
-        //TODO:Hide Edit&Del Button to ann can't edit.
-        Ann.find().sort('-update').populate('author').exec(annsfind);
-    }
-    return;
-    function annsfind(err, anns) {
-        if (err) console.log('[ERROR]'.red + err);
-        res.render('admin', { moment: moment, title: 'Admin', session: req.session, menu: req.user.level, data: anns });
-    }
+//TODO:Add a admin overview page
+router.get('/admin', function(req, res) {
+    res.redirect('/admin/ann/admin');
 });
 
-router.get('/annnew', function (req, res) {
-    var empty = new Ann(
-        {
-            author: null,
-            title: '',
-            istextcontent: true,
-            content: '',
-            create: Date.now(),
-            update: Date.now(),
-            visible: true,
-            views: 0,
-            ontop: false
-        });
-    res.render('annform', { title: 'Add New Announcement', session: req.session, menu: req.user.level, ann: empty });
-    return;
-});
+router.use('/ann', R_ann);
+router.use('/user', R_user);
+router.use('/list', R_list);
 
-router.post('/annnew', function (req, res) {
-    new Ann({
-        author: req.user._id,
-        authorcache: "",
-        title: req.body.title,
-        istextcontent: req.body.istextcontent != 'on',
-        content: req.body.content,
-        create: Date.now(),
-        update: Date.now(),
-        visible: req.body.visible == 'on',
-        views: 0,
-        ontop: req.body.ontop == 'on'
-    }).save(function (err, ls, count) {
-        if (err) console.log('[ERROR]'.red + err);
-        else req.session.info = "新增成功";
-        res.redirect('/admin/admin');
-    });
-});
-
-router.get('/annedit/:id', function (req, res) {
-    console.log('[INFO]'.cyan+req.params.id);
-    editper(req, res, req.params.id, function (ann) {
-        res.render('annform', { title: 'Edit Announcement', session: req.session, menu: req.user.level, ann: ann });
-    });
-});
-
-router.post('/annedit/:id', function (req, res) {
-    editper(req, res, req.params.id, function (ann) {
-        ann.title = req.body.title;
-        ann.istextcontent = req.body.istextcontent != 'on';
-        ann.content = req.body.content;
-        ann.update = Date.now();
-        ann.visible = req.body.visible == 'on';
-        ann.ontop = req.body.ontop == 'on';
-        ann.save(function (err, ls, count) {
-            if (err) console.log('[ERROR]'.red + err);
-            else req.session.info = "儲存成功";
-            res.redirect('/admin/admin');
-        });
-    });
-});
-
-router.get('/anndelete/:id', function (req, res) {
-    editper(req, res, req.params.id, function (ann) {
-        ann.remove(function (err, ann) {
-            if (err) console.log('[ERROR]'.red + err);
-            else req.session.info = "刪除成功";
-            res.redirect('/admin/admin');
-        });
-    });
-});
-
-
-router.get('/usradm', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    if (req.user.level == 3) {
-        Admin.find({
-            level: { $lte: 3 }
-        }, admfind);
-    } else if (req.user.level >= 4) {
-        Admin.find({}, admfind);
-    }
-    function admfind(err, users) {
-        if (err) console.log('[ERROR]'.red + err);
-        res.render('usradm', { moment: moment, title: 'UserManage', session: req.session, menu: req.user.level, data: users });
-    }
-});
-
-router.get('/usrnew', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    var empty = new Admin({
-        name: "",
-        nick: "",
-        LastLogin: null,
-        enable: true,
-        system: false,
-        password: "",
-        level: 1
-    });
-    res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: empty, operator: req.user});
-});
-
-router.post('/usrnew', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    if (req.body.level > 4) req.body.level = 4;
-    if (req.user.level <= 3) { 
-        if(req.body.level > 3) req.body.level = 3;
-    }
-    if (req.body.level < 1) req.body.level = 1;
-
-    Admin.findOne({ name: req.body.name }, function (err, same) {
-        if (same) {
-            req.session.error = "重複的使用者名稱";
-            var ldata = new Admin({
-                name: req.body.name,
-                nick: req.body.nick,
-                LastLogin: null,
-                enable: req.body.enable == 'on',
-                system: false,
-                password: "",
-                level: req.body.level
-            });
-            res.render('usrform', { title: 'UserManage', session: req.session, head: "新增使用者", menu: req.user.level, usr: ldata, operator: req.user});
-        } else {
-            new Admin({
-                name: req.body.name,
-                nick: req.body.nick !== '' ? req.body.nick : null,
-                LastLogin: Date.now(),
-                enable: req.body.enable == 'on',
-                system: false,
-                password: "",
-                level: req.body.level
-            }).save(function (err, ls, count) {
-                if (err) console.log('[ERROR]'.red + err);
-                else req.session.info = "新增成功";
-                res.redirect('/admin/usradm');
-            });
-        }
-        //TODO:Found secure bug for level3 admin to create level4 admin
-    });
-});
-
-router.get('/usredit/:id', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    Admin.findById(req.params.id, function (err, adm) {
-        if (!adm)
-        {
-            req.session.error = '使用者不存在';
-            console.log('[WARN]'.yellow+'user ID: '+req.params.id+' is not exist!');
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (req.user.level < adm.level && !req.user.system) {
-            req.session.error = "權限不足";
-            res.redirect('/admin/usradm');
-            return;
-        }
-        adm.nick = req.body.nick ? req.body.nick : '';
-        res.render('usrform', { title: 'UserManage', session: req.session, head: "編輯使用者", menu: req.user.level, usr: adm, operator: req.user});
-    });
-});
-
-router.post('/usredit/:id', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    Admin.findById(req.params.id, function (err, adm) {
-        if (!adm)
-        {
-            req.session.error = '使用者不存在';
-            console.log('[WARN]'.yellow+'user ID: '+req.params.id+' is not exist!');
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (req.user.level < adm.level && !req.user.system) {
-            req.session.error = "權限不足";
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (req.body.level > 4) req.body.level = 4;
-        if (req.user.level <= 3) {
-            if(req.body.level > 3) req.body.level = 3;
-        }
-        if (req.body.level < 1) req.body.level = 1;
-        if (adm.system === false) {
-            adm.enable = req.body.enable == 'on';
-            adm.level = req.body.level;
-            adm.name = req.body.name;
-        }
-        adm.nick = req.body.nick !== '' ? req.body.nick : null;
-        adm.save(function (err, ls, count) {
-            if (err) console.log('[ERROR]'.red + err);
-            else req.session.info = "儲存成功";
-            res.redirect('/admin/usradm');
-        });
-    });
-});
-
-router.get('/usrdel/:id', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    Admin.findById(req.params.id, function (err, adm) {
-        if (!adm)
-        {
-            req.session.error = '使用者不存在';
-            console.log('[WARN]'.yellow+'user ID: '+req.params.id+' is not exist!');
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (req.user.level < adm.level && !req.user.system) {
-            req.session.error = "權限不足";
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (adm.system === true) {
-            req.session.error = "不可刪除系統帳戶";
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (adm._id.equals(req.user._id)) {
-            req.session.error = "不可刪除自己";
-            res.redirect('/admin/usradm');
-            return;
-        }
-        adm.remove(function (err, result) {
-            if (err) console.log('[ERROR]'.red + err);
-            else req.session.info = "刪除成功";
-            res.redirect('/admin/usradm');
-        });
-    });
-});
-
-router.get('/usrpwd/:id', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    Admin.findById(req.params.id, function (err, adm) {
-        if (!adm)
-        {
-            req.session.error = '使用者不存在';
-            console.log('[WARN]'.yellow+'user ID: '+req.params.id+' is not exist!');
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (req.user.level < adm.level) {
-            req.session.error = "權限不足";
-            res.redirect('/admin/usradm');
-            return;
-        }
-        res.render('usrpwd', { title: 'ChangeUserPassword', session: req.session, head: "設定使用者密碼", menu: req.user.level, usr: adm, operator: req.user });
-    });
-});
-
-router.post('/usrpwd/:id', function (req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    Admin.findById(req.params.id, function (err, adm) {
-        if (!adm)
-        {
-            req.session.error = '使用者不存在';
-            console.log('[WARN]'.yellow+'user ID: '+req.params.id+' is not exist!');
-            res.redirect('/admin/usradm');
-            return;
-        }
-        if (req.user.level < adm.level) {
-            req.session.error = "權限不足";
-            res.redirect('/admin/usradm');
-            return;
-        }
-        var newpwd = req.body.newpwd;
-        var comfirmpwd = req.body.comfirmpwd;
-        var newhash = pwdhash(newpwd);
-
-        if (newpwd != comfirmpwd) {
-            req.session.error = '密碼不一致';
-            console.log('[WARN]'.yellow+'passwords for ' + req.user.name + ' are not same!');
-            res.redirect('/admin/usrpwd/'+req.params.id);
-            return;
-        }
-        adm.password = newhash;
-        adm.save(function (err, user, count) {
-            if (err) console.log('[ERROR]'.red + err);
-            else req.session.info = "密碼變更完成";
-            res.redirect('/admin/usradm');
-        });
-    });
-});
-
-
-router.get('/listadm', function (req, res) {
-    if (req.user.level <= 1) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    List.find({}, listshow).populate('creator').populate('anns');
-    return;
-    function listshow(err, lists) {
-        if (err) console.log('[ERROR]'.red + err);
-        res.render('listadm', { moment: moment, title: 'ListManage', session: req.session, menu: req.user.level, data: lists });
-    }
-});
-
-router.get('/listnew', function (req, res) {
-    if (req.user.level <= 1) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    var empty = new List({
-        name : '',
-        introduce : '',
-        public : true,
-        create : null,
-        creator : null,
-        anns : []
-    });
-    res.render('listform', { title: 'ListManage', session: req.session, head: "新增列表", menu: req.user.level, list: empty});
-});
-
-router.post('/listnew', function (req, res) {
-    if (req.user.level <= 1) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
-    List.findOne({ name : req.body.name }, function (err, same) {
-        if(err) console.log('[ERROR]'.red + err);
-        if(same) {
-            req.session.error = "重複的列表名稱";
-            var ldata = new List({
-                name : req.body.name,
-                introduce : req.body.introduce,
-                public : req.body.public,
-                create : null,
-                creator : null,
-                anns : []
-            });
-            res.render('listform', { title: 'ListManage', session: req.session, head: "新增列表", menu: req.user.level, list: ldata});
-        } else {
-            new List({
-                name : req.body.name,
-                introduce : req.body.introduce,
-                public : req.body.public,
-                create : Date.now(),
-                creator : req.user._id,
-                anns : []
-            }).save(function (err, ls, count) {
-                if (err) console.log('[ERROR]'.red + err);
-                else req.session.info = "新增成功";
-                res.redirect('/admin/listadm');
-            });
-        }
-    });
-});
-//TODO:uncompleted
-
-
-router.get('/logout', function (req, res) {
-    Session.findOne({ cookie_id: req.cookies.session }).exec(function (err, result) {
+router.get('/logout', function(req, res) {
+    Session.findOne({
+        cookie_id: req.cookies.session
+    }).exec(function(err, result) {
         if (err) {
             next(err);
         }
         if (!result) {
-            console.log('[WARN]'.yellow+'user cookie not found');
+            console.log('[WARN]'.yellow + 'user cookie not found');
         } else {
-            result.remove(function (err, result) {
+            result.remove(function(err, result) {
                 if (err) console.log('[ERROR]'.red + err);
                 else req.session.info = "登出成功";
             });
@@ -495,14 +130,18 @@ router.get('/logout', function (req, res) {
     });
 });
 
-router.get('/chpwd', function (req, res) {
+router.get('/chpwd', function(req, res) {
     if (req.user.level === 0) {
         res.redirect('/admin/login');
     }
-    res.render('chpwd', { title: 'Change Admin Password', menu: req.user.level, session: req.session });
+    res.render('chpwd', {
+        title: 'Change Admin Password',
+        menu: req.user.level,
+        session: req.session
+    });
 });
 
-router.post('/chpwd', function (req, res) {
+router.post('/chpwd', function(req, res) {
     var oldpwd = req.body.oldpwd;
     var newpwd = req.body.newpwd;
     var comfirmpwd = req.body.comfirmpwd;
@@ -514,33 +153,35 @@ router.post('/chpwd', function (req, res) {
     }
 
     Admin.
-    findOne({ name: req.user.name }).
-    exec(function (err, user) {
-        if (err){console.log('[ERROR]'.red + err);}
-        if (!user)
-        {
+    findOne({
+        name: req.user.name
+    }).
+    exec(function(err, user) {
+        if (err) {
+            console.log('[ERROR]'.red + err);
+        }
+        if (!user) {
             req.session.error = '使用者不存在';
-            console.log('[WARN]'.yellow+'user '+req.user.name+' is not exist!');
+            console.log('[WARN]'.yellow + 'user ' + req.user.name + ' is not exist!');
             res.redirect('/admin/login');
             return;
         }
-        if (oldhash != user.password && user.password !== "")
-        {
+        if (oldhash != user.password && user.password !== "") {
             req.session.error = '密碼錯誤';
-            console.log('[WARN]'.yellow+'password for ' + req.user.name + ' error!');
+            console.log('[WARN]'.yellow + 'password for ' + req.user.name + ' error!');
             res.redirect('/admin/chpwd');
             return;
         }
 
         if (newpwd != comfirmpwd) {
             req.session.error = '密碼不一致';
-            console.log('[WARN]'.yellow+'passwords for ' + req.user.name + ' are not same!');
+            console.log('[WARN]'.yellow + 'passwords for ' + req.user.name + ' are not same!');
             res.redirect('/admin/chpwd');
             return;
         }
 
         user.password = newhash;
-        user.save(function (err, user, count) {
+        user.save(function(err, user, count) {
             if (err) console.log('[ERROR]'.red + err);
             else req.session.info = "密碼變更完成";
             res.redirect('/');
@@ -548,36 +189,8 @@ router.post('/chpwd', function (req, res) {
     });
 });
 
-function editper(req, res, id, callback) {
-    Ann.findById(id, function (err, ann) {
-        if (!ann)
-        {
-            req.session.error = '公告不存在';
-            console.log('[WARN]'.yellow+'ann ID: ' + id + ' is not exist!');
-            res.redirect('/admin/admin');
-            return;
-        }
-        ann.populate('author', function (err, annp) {
-            if (!annp.author) {
-                callback(ann);
-                return;
-            }
-            if (annp.author.level > req.user.level) {
-                req.session.error = "權限不足";
-                res.redirect('/admin/admin');
-                return;
-            }
-            if (req.user.level == 1 && req.user.name != annp.author.name) {
-                req.session.error = "權限不足";
-                res.redirect('/admin/admin');
-                return;
-            }
-            callback(ann);
-        });
-    });
-}
 
-function pwdhash(password){
+function pwdhash(password) {
     var sha512 = crypto.createHash('sha512');
     var hash = sha512.update(password).digest('hex');
     return hash;

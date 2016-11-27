@@ -3,7 +3,7 @@
     <div class="inner" style="display:block; text-align:start">
         <section>
             <h1 class="major">公告管理</h1>
-            <a href="/admin/annnew" class="noborder"><input class="button icobtn" type="image" src="/icons/add-tool.svg" name="add" id="add" /></a>
+            <a href="/admin/ann/new" class="noborder"><input class="button icobtn" type="image" src="/icons/add-tool.svg" name="add" id="add" /></a>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -23,8 +23,8 @@
                             <td><%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></td>
                             <td><% if(dt.author){ %><%= dt.author.nick ? dt.author.nick : dt.author.name %><% } %></td>
                             <td><%= dt.views %></td>
-                            <td><a href="/admin/annedit/<%= dt._id %>" class="noborder"><input class="button icobtn" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" /></a></td>
-                            <td><a href="/admin/anndelete/<%= dt._id %>" onclick="return confirm('你確定要刪除此公告嗎？')" class="noborder"><input class="button icobtn" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" /></a></td>
+                            <td><a href="/admin/ann/edit/<%= dt._id %>" class="noborder"><input class="button icobtn" type="image" src="/icons/note-interface-symbol.svg" name="edit" id="edit" /></a></td>
+                            <td><a href="/admin/ann/del/<%= dt._id %>" onclick="return confirm('你確定要刪除此公告嗎？')" class="noborder"><input class="button icobtn" type="image" src="/icons/rubbish-bin.svg" name="del" id="del" /></a></td>
                         </tr>
                         <% }); %>
                     </tbody>
