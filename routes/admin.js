@@ -18,7 +18,7 @@ router.get('/login', function (req, res) {
     res.render('login', { title: 'Admin Login', menu: req.user.level, session: req.session });
 });
 
-router.post('/login', function (req, res) 
+router.post('/login', function (req, res)
 {
     var username = req.body.username;
     var password = req.body.password;
@@ -218,7 +218,7 @@ router.post('/usrnew', function (req, res) {
         res.redirect('/admin/admin');
     }
     if (req.body.level > 4) req.body.level = 4;
-    if (req.user.level <= 3) { 
+    if (req.user.level <= 3) {
         if(req.body.level > 3) req.body.level = 3;
     }
     if (req.body.level < 1) req.body.level = 1;
@@ -434,8 +434,7 @@ router.get('/listnew', function (req, res) {
         introduce : '',
         public : true,
         create : null,
-        creator : null,
-        anns : []
+        creator : null
     });
     res.render('listform', { title: 'ListManage', session: req.session, head: "新增列表", menu: req.user.level, list: empty});
 });
@@ -454,8 +453,7 @@ router.post('/listnew', function (req, res) {
                 introduce : req.body.introduce,
                 public : req.body.public,
                 create : null,
-                creator : null,
-                anns : []
+                creator : null
             });
             res.render('listform', { title: 'ListManage', session: req.session, head: "新增列表", menu: req.user.level, list: ldata});
         } else {
@@ -464,8 +462,7 @@ router.post('/listnew', function (req, res) {
                 introduce : req.body.introduce,
                 public : req.body.public,
                 create : Date.now(),
-                creator : req.user._id,
-                anns : []
+                creator : req.user._id
             }).save(function (err, ls, count) {
                 if (err) console.log('[ERROR]'.red + err);
                 else req.session.info = "新增成功";

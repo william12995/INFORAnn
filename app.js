@@ -32,11 +32,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ 
+app.use(session({
     secret: 'S4gznk%^MdGfxAEXT?N*WcD5tD!w@BC+' ,
     resave:true,
     saveUninitialized: true
-    //!!!!!IMPORTANT!!!!! *DO NOT* CHANGE THE STRING ABOVE!!!!! 
+    //!!!!!IMPORTANT!!!!! CHANGE SECRET ABOVE BEFORE YOU USE THE SYSTEM!!!!!
 }));
 
 Admin.findOne({name : "root"}).exec(function(err,result)

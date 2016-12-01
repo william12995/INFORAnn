@@ -49,8 +49,7 @@ var List = new Schema(
         introduce : String,
         public : Boolean,
         create : Date,
-        creator : { type : Schema.Types.ObjectId, ref : 'Admin' },
-        anns : [{type : Schema.Types.ObjectId, ref : 'Ann' }]
+        creator : { type : Schema.Types.ObjectId, ref : 'Admin' }
     }
 );
 
