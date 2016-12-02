@@ -9,11 +9,16 @@ var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
 
-router.get('/admin', function(req, res) {
+router.all('*', function(req, res, next) {
     if (req.user.level <= 1) {
         req.session.error = "權限不足";
         res.redirect('/admin/admin');
+    } else {
+        next();
     }
+});
+
+router.get('/admin', function(req, res) {
     List.find({}, listshow).populate('creator').populate('anns');
     return;
 
@@ -30,10 +35,6 @@ router.get('/admin', function(req, res) {
 });
 
 router.get('/new', function(req, res) {
-    if (req.user.level <= 1) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     var empty = new List({
         name: '',
         introduce: '',
@@ -51,10 +52,6 @@ router.get('/new', function(req, res) {
 });
 
 router.post('/new', function(req, res) {
-    if (req.user.level <= 1) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     List.findOne({
         name: req.body.name
     }, function(err, same) {
@@ -79,7 +76,7 @@ router.post('/new', function(req, res) {
             new List({
                 name: req.body.name,
                 introduce: req.body.introduce,
-                public: req.body.public,
+                public: req.body.public == 'on',
                 create: Date.now(),
                 creator: req.user._id
             }).save(function(err, ls, count) {
@@ -90,6 +87,58 @@ router.post('/new', function(req, res) {
         }
     });
 });
-//TODO:uncompleted
+
+router.param('id', function(req, res, next, id) {
+    List.findById(id).populate('creator').exec(function(err, ls) {
+        if (!ls) {
+            req.session.error = '列表不存在';
+            console.log('[WARN]'.yellow + 'list ID: ' + id + ' is not exist!');
+            res.redirect('/admin/list/admin');
+            return;
+        }
+        if (req.user.level == 2 && req.user.name != ls.creator.name) {
+            req.session.error = "權限不足";
+            res.redirect('/admin/list/admin');
+            return;
+        }
+        next();
+    });
+});
+
+router.get('/edit/:id', function(req, res) {
+    List.findById(req.params.id).populate('creator').exec(function(err, ls) {
+        if (err) console.log('[ERROR]'.red + err);
+        res.render('listform', {
+            title: 'ListManage',
+            session: req.session,
+            head: "編輯列表",
+            menu: req.user.level,
+            list: ls
+        });
+    });
+});
+
+router.post('/edit/:id', function(req, res) {
+    List.findById(req.params.id).populate('creator').exec(function(err, ls) {
+        ls.name = req.body.name;
+        ls.introduce = req.body.introduce;
+        ls.public = req.body.public == 'on';
+        ls.save(function(err, ls, count) {
+            if (err) console.log('[ERROR]'.red + err);
+            else req.session.info = "儲存成功";
+            res.redirect('/admin/list/admin');
+        });
+    });
+});
+
+router.get('/del/:id', function(req, res) {
+    List.findById(req.params.id, function(err, ls) {
+        ls.remove(function(err, ls) {
+            if (err) console.log('[ERROR]'.red + err);
+            else req.session.info = "刪除成功";
+            res.redirect('/admin/list/admin');
+        });
+    });
+});
 
 module.exports = router;

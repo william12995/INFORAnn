@@ -73,7 +73,6 @@ router.post('/new', function(req, res) {
 });
 
 router.get('/edit/:id', function(req, res) {
-    console.log('[INFO]'.cyan + req.params.id);
     editper(req, res, req.params.id, function(ann) {
         res.render('annform', {
             title: 'Edit Announcement',
@@ -120,6 +119,7 @@ function editper(req, res, id, callback) {
         }
         ann.populate('author', function(err, annp) {
             if (!annp.author) {
+                console.log('[WARN]'.yellow + 'ann ID: ' + id + ' does\'t have author!');
                 callback(ann);
                 return;
             }

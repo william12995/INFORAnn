@@ -82,6 +82,9 @@ if (app.get('env') === 'development') {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
+            title: 'Error Occurred',
+            session: req.session,
+            menu: req.user.level,
             error: err
         });
     });
