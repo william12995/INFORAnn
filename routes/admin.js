@@ -1,8 +1,8 @@
-﻿var express = require('express');
+﻿
+var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
 var mongoose = require('mongoose');
-var moment = require('moment');
 var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
 var Ann = mongoose.model('Ann');
@@ -20,9 +20,7 @@ router.get('/login', function(req, res) {
         res.redirect('/admin/admin');
     }
     res.render('login', {
-        title: 'Admin Login',
-        menu: req.user.level,
-        session: req.session
+        title: 'Admin Login'
     });
 });
 
@@ -71,8 +69,11 @@ router.post('/login', function(req, res) {
                 keep: true
             }).save(function(err, ls, count) {
                 if (err) console.log('[ERROR]'.red + err);
-                else req.session.info = "登入成功";
-                res.redirect('/admin/admin');
+                else {
+                    console.log('[INFO]'.cyan + 'User ' + user.name + ' logined with "remember me".');
+                    req.session.info = "登入成功";
+                    res.redirect('/admin/admin');
+                }
             });
         } else {
             res.cookie('session', sessionid, {
@@ -85,8 +86,11 @@ router.post('/login', function(req, res) {
                 keep: false
             }).save(function(err, ls, count) {
                 if (err) console.log('[ERROR]'.red + err);
-                else req.session.info = "登入成功";
-                res.redirect('/admin/admin');
+                else {
+                    console.log('[INFO]'.cyan + 'User ' + user.name + ' logined temporary.');
+                    req.session.info = "登入成功";
+                    res.redirect('/admin/admin');
+                }
             });
         }
     });
@@ -97,7 +101,7 @@ router.all('*', function(req, res, next) {
         req.session.error = "請先登入！";
         res.redirect('/admin/login');
     } else {
-        next();
+        return next();
     }
 });
 
@@ -135,9 +139,7 @@ router.get('/chpwd', function(req, res) {
         res.redirect('/admin/login');
     }
     res.render('chpwd', {
-        title: 'Change Admin Password',
-        menu: req.user.level,
-        session: req.session
+        title: 'Change Admin Password'
     });
 });
 

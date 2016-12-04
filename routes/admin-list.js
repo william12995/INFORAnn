@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var moment = require('moment');
 var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
 var Ann = mongoose.model('Ann');
@@ -14,7 +13,7 @@ router.all('*', function(req, res, next) {
         req.session.error = "權限不足";
         res.redirect('/admin/admin');
     } else {
-        next();
+        return next();
     }
 });
 
@@ -25,10 +24,7 @@ router.get('/admin', function(req, res) {
     function listshow(err, lists) {
         if (err) console.log('[ERROR]'.red + err);
         res.render('listadm', {
-            moment: moment,
             title: 'ListManage',
-            session: req.session,
-            menu: req.user.level,
             data: lists
         });
     }
@@ -44,9 +40,7 @@ router.get('/new', function(req, res) {
     });
     res.render('listform', {
         title: 'ListManage',
-        session: req.session,
         head: "新增列表",
-        menu: req.user.level,
         list: empty
     });
 });
@@ -67,9 +61,7 @@ router.post('/new', function(req, res) {
             });
             res.render('listform', {
                 title: 'ListManage',
-                session: req.session,
                 head: "新增列表",
-                menu: req.user.level,
                 list: ldata
             });
         } else {
@@ -84,7 +76,7 @@ router.post('/new', function(req, res) {
                 else req.session.info = "新增成功";
                 res.redirect('/admin/list/admin');
             });
-        }
+        }return next();
     });
 });
 
@@ -110,9 +102,7 @@ router.get('/edit/:id', function(req, res) {
         if (err) console.log('[ERROR]'.red + err);
         res.render('listform', {
             title: 'ListManage',
-            session: req.session,
             head: "編輯列表",
-            menu: req.user.level,
             list: ls
         });
     });

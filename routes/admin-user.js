@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var moment = require('moment');
 var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
 var Ann = mongoose.model('Ann');
@@ -9,11 +8,16 @@ var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
 
-router.get('/admin', function(req, res) {
+router.all('*', function(req, res, next) {
     if (req.user.level <= 2) {
         req.session.error = "權限不足";
         res.redirect('/admin/admin');
+    } else {
+        return next();
     }
+});
+
+router.get('/admin', function(req, res) {
     if (req.user.level == 3) {
         Admin.find({
             level: {
@@ -27,20 +31,13 @@ router.get('/admin', function(req, res) {
     function admfind(err, users) {
         if (err) console.log('[ERROR]'.red + err);
         res.render('usradm', {
-            moment: moment,
             title: 'UserManage',
-            session: req.session,
-            menu: req.user.level,
             data: users
         });
     }
 });
 
 router.get('/new', function(req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     var empty = new Admin({
         name: "",
         nick: "",
@@ -52,19 +49,13 @@ router.get('/new', function(req, res) {
     });
     res.render('usrform', {
         title: 'UserManage',
-        session: req.session,
         head: "新增使用者",
-        menu: req.user.level,
         usr: empty,
         operator: req.user
     });
 });
 
 router.post('/new', function(req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     if (req.body.level > 4) req.body.level = 4;
     if (req.user.level <= 3) {
         if (req.body.level > 3) req.body.level = 3;
@@ -87,9 +78,7 @@ router.post('/new', function(req, res) {
             });
             res.render('usrform', {
                 title: 'UserManage',
-                session: req.session,
                 head: "新增使用者",
-                menu: req.user.level,
                 usr: ldata,
                 operator: req.user
             });
@@ -108,15 +97,10 @@ router.post('/new', function(req, res) {
                 res.redirect('/admin/user/admin');
             });
         }
-        //TODO:Found secure bug for level3 admin to create level4 admin
     });
 });
 
 router.get('/edit/:id', function(req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     Admin.findById(req.params.id, function(err, adm) {
         if (!adm) {
             req.session.error = '使用者不存在';
@@ -132,9 +116,7 @@ router.get('/edit/:id', function(req, res) {
         adm.nick = req.body.nick ? req.body.nick : '';
         res.render('usrform', {
             title: 'UserManage',
-            session: req.session,
             head: "編輯使用者",
-            menu: req.user.level,
             usr: adm,
             operator: req.user
         });
@@ -142,10 +124,6 @@ router.get('/edit/:id', function(req, res) {
 });
 
 router.post('/edit/:id', function(req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     Admin.findById(req.params.id, function(err, adm) {
         if (!adm) {
             req.session.error = '使用者不存在';
@@ -178,10 +156,6 @@ router.post('/edit/:id', function(req, res) {
 });
 
 router.get('/del/:id', function(req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     Admin.findById(req.params.id, function(err, adm) {
         if (!adm) {
             req.session.error = '使用者不存在';
@@ -213,10 +187,6 @@ router.get('/del/:id', function(req, res) {
 });
 
 router.get('/pwd/:id', function(req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     Admin.findById(req.params.id, function(err, adm) {
         if (!adm) {
             req.session.error = '使用者不存在';
@@ -231,9 +201,7 @@ router.get('/pwd/:id', function(req, res) {
         }
         res.render('usrpwd', {
             title: 'ChangeUserPassword',
-            session: req.session,
             head: "設定使用者密碼",
-            menu: req.user.level,
             usr: adm,
             operator: req.user
         });
@@ -241,10 +209,6 @@ router.get('/pwd/:id', function(req, res) {
 });
 
 router.post('/pwd/:id', function(req, res) {
-    if (req.user.level <= 2) {
-        req.session.error = "權限不足";
-        res.redirect('/admin/admin');
-    }
     Admin.findById(req.params.id, function(err, adm) {
         if (!adm) {
             req.session.error = '使用者不存在';

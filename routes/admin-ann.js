@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var moment = require('moment');
 var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
 var Ann = mongoose.model('Ann');
@@ -23,10 +22,7 @@ router.get('/admin', function(req, res) {
     function annsfind(err, anns) {
         if (err) console.log('[ERROR]'.red + err);
         res.render('admin', {
-            moment: moment,
             title: 'Admin',
-            session: req.session,
-            menu: req.user.level,
             data: anns
         });
     }
@@ -46,11 +42,8 @@ router.get('/new', function(req, res) {
     });
     res.render('annform', {
         title: 'Add New Announcement',
-        session: req.session,
-        menu: req.user.level,
         ann: empty
     });
-    return;
 });
 
 router.post('/new', function(req, res) {
@@ -68,74 +61,68 @@ router.post('/new', function(req, res) {
     }).save(function(err, ls, count) {
         if (err) console.log('[ERROR]'.red + err);
         else req.session.info = "新增成功";
-        res.redirect('/admin/admin');
+        res.redirect('/admin/ann/admin');
     });
 });
 
-router.get('/edit/:id', function(req, res) {
-    editper(req, res, req.params.id, function(ann) {
-        res.render('annform', {
-            title: 'Edit Announcement',
-            session: req.session,
-            menu: req.user.level,
-            ann: ann
-        });
-    });
-});
-
-router.post('/edit/:id', function(req, res) {
-    editper(req, res, req.params.id, function(ann) {
-        ann.title = req.body.title;
-        ann.istextcontent = req.body.istextcontent != 'on';
-        ann.content = req.body.content;
-        ann.update = Date.now();
-        ann.visible = req.body.visible == 'on';
-        ann.ontop = req.body.ontop == 'on';
-        ann.save(function(err, ls, count) {
-            if (err) console.log('[ERROR]'.red + err);
-            else req.session.info = "儲存成功";
-            res.redirect('/admin/admin');
-        });
-    });
-});
-
-router.get('/del/:id', function(req, res) {
-    editper(req, res, req.params.id, function(ann) {
-        ann.remove(function(err, ann) {
-            if (err) console.log('[ERROR]'.red + err);
-            else req.session.info = "刪除成功";
-            res.redirect('/admin/admin');
-        });
-    });
-});
-
-function editper(req, res, id, callback) {
+router.param('id', function(req, res, next, id) {
     Ann.findById(id, function(err, ann) {
         if (!ann) {
             req.session.error = '公告不存在';
             console.log('[WARN]'.yellow + 'ann ID: ' + id + ' is not exist!');
-            res.redirect('/admin/admin');
+            res.redirect('/admin/ann/admin');
             return;
         }
         ann.populate('author', function(err, annp) {
             if (!annp.author) {
                 console.log('[WARN]'.yellow + 'ann ID: ' + id + ' does\'t have author!');
-                callback(ann);
-                return;
+                req.ann = ann;
+                return next();
             }
             if (annp.author.level > req.user.level) {
                 req.session.error = "權限不足";
-                res.redirect('/admin/admin');
+                res.redirect('/admin/ann/admin');
                 return;
             }
             if (req.user.level == 1 && req.user.name != annp.author.name) {
                 req.session.error = "權限不足";
-                res.redirect('/admin/admin');
+                res.redirect('/admin/ann/admin');
                 return;
             }
-            callback(ann);
+            req.ann = ann;
+            return next();
         });
     });
-}
+});
+
+router.get('/edit/:id', function(req, res) {
+    res.render('annform', {
+        title: 'Edit Announcement',
+        ann: req.ann
+    });
+});
+
+router.post('/edit/:id', function(req, res) {
+    var ann = req.ann;
+    ann.title = req.body.title;
+    ann.istextcontent = req.body.istextcontent != 'on';
+    ann.content = req.body.content;
+    ann.update = Date.now();
+    ann.visible = req.body.visible == 'on';
+    ann.ontop = req.body.ontop == 'on';
+    ann.save(function(err, ls, count) {
+        if (err) console.log('[ERROR]'.red + err);
+        else req.session.info = "儲存成功";
+        res.redirect('/admin/ann/admin');
+    });
+});
+
+router.get('/del/:id', function(req, res) {
+    req.ann.remove(function(err, ann) {
+        if (err) console.log('[ERROR]'.red + err);
+        else req.session.info = "刪除成功";
+        res.redirect('/admin/ann/admin');
+    });
+});
 
 module.exports = router;
