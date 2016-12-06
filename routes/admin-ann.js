@@ -104,10 +104,22 @@ router.get('/edit/:id', function(req, res) {
 
 router.post('/edit/:id', function(req, res) {
     var ann = req.ann;
-    ann.title = req.body.title;
-    ann.istextcontent = req.body.istextcontent != 'on';
-    ann.content = req.body.content;
-    ann.update = Date.now();
+    var updateDate = false;
+    if (ann.title != req.body.title) {
+        ann.title = req.body.title;
+        updateDate = true;
+    }
+    if (ann.istextcontent != (req.body.istextcontent != 'on')) {
+        ann.istextcontent = req.body.istextcontent != 'on';
+        updateDate = true;
+    }
+    if (ann.content != req.body.content) {
+        ann.content = req.body.content;
+        updateDate = true;
+    }
+    if (updateDate === true) {
+        ann.update = Date.now();
+    }
     ann.visible = req.body.visible == 'on';
     ann.ontop = req.body.ontop == 'on';
     ann.save(function(err, ls, count) {
