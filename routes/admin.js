@@ -96,7 +96,7 @@ router.post('/login', function(req, res) {
     });
 });
 
-router.all('*', function(req, res, next) {
+router.use(function(req, res, next) {
     if (req.user.level === 0) {
         req.session.error = "請先登入！";
         res.redirect('/admin/login');

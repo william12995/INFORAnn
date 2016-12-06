@@ -8,7 +8,7 @@ var Session = mongoose.model('Session');
 var Admin = mongoose.model('Admin');
 var colors = require('colors');
 
-router.all('*', function(req, res, next) {
+router.use(function(req, res, next) {
     /** init views engine variable && middleware variable **/
     req.user = {
         name: '',
