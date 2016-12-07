@@ -26,9 +26,8 @@ router.get('/login', function(req, res) {
 
 router.post('/login', function(req, res) {
     var username = req.body.username;
-    var password = req.body.password;
+    var passwdhash = pwdhash(req.body.password);
     var remember = req.body.remember;
-    var passwdhash = pwdhash(password);
     Admin.
     findOne({
         name: username
