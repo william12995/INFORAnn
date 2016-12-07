@@ -13,6 +13,16 @@
                     <label for="editor">內容</label>
                     <div name="editor" id="editor"><%= ann.content %></div>
 
+                    <label for="lists">列表：</label>
+                    <div id="lists" class="box">
+                        <% var c = 0; %>
+                        <% lists.forEach(function(ls) { %>
+                            <input type="checkbox" name= <%= "lists[" + ls.name + "]" %>  id= <%= "ch" + c %>  <% if(ann.lsname.indexOf(ls.name) != -1) { %> checked <% } %> />
+                            <label for= <%= "ch" + c %> ><%= ls.name %></label>
+                            <% c++; %>
+                        <% }); %>
+                    </div>
+
                     <input type="checkbox" name="visible" id="visible" <% if(ann.visible==true) { %> checked <% } %> />
                     <label for="visible">可視</label><br />
 

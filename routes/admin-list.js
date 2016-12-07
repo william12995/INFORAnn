@@ -76,7 +76,7 @@ router.post('/new', function(req, res) {
                 else req.session.info = "新增成功";
                 res.redirect('/admin/list/admin');
             });
-        }return next();
+        }
     });
 });
 

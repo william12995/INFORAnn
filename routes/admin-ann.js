@@ -28,6 +28,13 @@ router.get('/admin', function(req, res) {
     }
 });
 
+router.use(function(req, res, next) {
+    List.find().exec(function(err, ls) {
+        res.locals.lists = ls;
+        next();
+    });
+});
+
 router.get('/new', function(req, res) {
     var empty = new Ann({
         author: null,
@@ -38,11 +45,26 @@ router.get('/new', function(req, res) {
         update: Date.now(),
         visible: true,
         views: 0,
-        ontop: false
+        ontop: false,
+        lists: []
     });
+    empty.lsname = [];
     res.render('annform', {
         title: 'Add New Announcement',
         ann: empty
+    });
+});
+
+router.post('*', function(req, res, next) {
+    var arr = [];
+    List.find().exec(function(err, ls) {
+        for (var i = 0; i < ls.length; i++) {
+            if (req.body.lists[ls[i].name] == 'on') {
+                arr.push(ls[i]._id);
+            }
+        }
+        req.body.lists = arr;
+        next();
     });
 });
 
@@ -57,7 +79,8 @@ router.post('/new', function(req, res) {
         update: Date.now(),
         visible: req.body.visible == 'on',
         views: 0,
-        ontop: req.body.ontop == 'on'
+        ontop: req.body.ontop == 'on',
+        lists: req.body.lists
     }).save(function(err, ls, count) {
         if (err) console.log('[ERROR]'.red + err);
         else req.session.info = "新增成功";
@@ -73,7 +96,7 @@ router.param('id', function(req, res, next, id) {
             res.redirect('/admin/ann/admin');
             return;
         }
-        ann.populate('author', function(err, annp) {
+        ann.populate('author lists', function(err, annp) {
             if (!annp.author) {
                 console.log('[WARN]'.yellow + 'ann ID: ' + id + ' does\'t have author!');
                 req.ann = ann;
@@ -96,9 +119,14 @@ router.param('id', function(req, res, next, id) {
 });
 
 router.get('/edit/:id', function(req, res) {
+    var ann = req.ann;
+    ann.lsname = [];
+    for (var i = 0; i < req.ann.lists.length; i++) {
+        ann.lsname.push(req.ann.lists[i].name);
+    }
     res.render('annform', {
         title: 'Edit Announcement',
-        ann: req.ann
+        ann: ann,
     });
 });
 
@@ -122,6 +150,7 @@ router.post('/edit/:id', function(req, res) {
     }
     ann.visible = req.body.visible == 'on';
     ann.ontop = req.body.ontop == 'on';
+    ann.lists = req.body.lists;
     ann.save(function(err, ls, count) {
         if (err) console.log('[ERROR]'.red + err);
         else req.session.info = "儲存成功";
