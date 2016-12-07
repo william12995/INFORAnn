@@ -94,7 +94,7 @@ router.get('/', function(req, res, next) {
             return;
         }
 
-        que.skip((page - 1) * 10).limit(10).sort('-ontop').sort('-update').populate('author').exec(function(err,sanns){
+        que.skip((page - 1) * 10).limit(10).sort('-ontop').sort('-update').populate('author').exec(function(err, sanns) {
             res.render('index', {
                 title: 'INFOR Ann System',
                 data: sanns,
@@ -105,14 +105,28 @@ router.get('/', function(req, res, next) {
     });
 });
 
+router.param('id', function(req, res, next, id) {
+    if (!req.session.viewed) {
+        req.session.viewed = [];
+    }
+    if (req.session.viewed.indexOf(id) == -1) {
+        req.session.viewed.push(id);
+        req.viewed = false;
+    } else {
+        req.viewed = true;
+    }
+    return next();
+});
+
 router.get('/content/:id', function(req, res) {
-    console.log('[INFO]'.cyan + req.params.id);
     Ann.findById(req.params.id).populate('author').exec(function(err, ann) {
         if (err) console.log('[ERROR]'.red + err);
-        ann.views++;
-        ann.save(function(err, ann, count) {
-            if (err) console.log('[ERROR]'.red + err);
-        });
+        if (!req.viewed) {
+            ann.views++;
+            ann.save(function(err, ann, count) {
+                if (err) console.log('[ERROR]'.red + err);
+            });
+        }
         res.render('content', {
             title: ann.title + ' - INFOR Ann System',
             ann: ann
