@@ -1,0 +1,23 @@
+<% layout( 'embeddedlayout' ) -%>
+<section class="featurelist">
+    <div class="round-button">
+        <a href="/embed<%= listurl %>">←</a>
+    </div>
+    <article>
+        <h1 class="major"><%= ann.title %></h2>
+        <ul class="infolist">
+            <li>發布者：<% if(ann.author){ %><%= ann.author.nick ? ann.author.nick : ann.author.name %><% } %></li>
+            <li>更新時間：<%= moment(ann.update).format('YYYY-MM-DD HH:mm:ss') %></li>
+            <li>觀看數：<%= ann.views %></li>
+        </ul>
+        <div class="uniform">
+            <% if(ann.istextcontent == true) { %>
+                <% ann.content.split('\n').forEach(function(line) { %>
+                    <p class="text"><%= line.replace(/\r/g, '') %></p>
+                <% }); %>
+            <% } else { %>
+                <%- ann.content %>
+            <% } %>
+        </div>
+    </article>
+</section>

@@ -19,6 +19,7 @@ var moment = require('moment');
 
 var index = require('./routes');
 var admin = require('./routes/admin');
+var embed = require('./routes/embed');
 var Admin = mongoose.model('Admin');
 
 var app = express();
@@ -68,6 +69,7 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.use('/embed', embed);
 app.use('/', index);
 app.use('/index', index);
 app.use('/admin', admin);

@@ -1,0 +1,19 @@
+<% layout( 'embeddedlayout' ) -%>
+<section class="featurelist">
+    <h1 style="font-size: 1.5em;" class="major"><%= list.name %></h1>
+    <% list.introduce.split('\n').forEach(function(line) { %>
+        <p class="text"><%= line.replace(/\r/g, '') %></p>
+    <% }); %>
+    <% data.forEach( function(dt) { %>
+        <a href="/embed/ann/<%= dt._id %>">
+            <article>
+                <h2 <% if(dt.ontop) { %> style="color:#84eed5;" <% } %> class="major"><%= dt.title %></h2>
+                <ul class="infolist nobottom">
+                    <li>發布者：<% if(dt.author){ %><%= dt.author.nick ? dt.author.nick : dt.author.name %><% } %></li>
+                    <li>更新時間：<%= moment(dt.update).format('YYYY-MM-DD HH:mm:ss') %></li>
+                    <li>觀看數：<%= dt.views %></li>
+                </ul>
+            </article>
+        </a>
+    <% }) %>
+</section>

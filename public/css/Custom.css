@@ -69,7 +69,7 @@
 	border: none;
 }
 
-#editor { 
+#editor {
     position: relative;
     height: 500px;
     width: 100%;
@@ -99,3 +99,118 @@
 .thmin-t {
 	min-width: 50px;
 }/*tiny*/
+
+
+.round-button {
+	width: 48px;
+	height: 48px;
+	/*padding-bottom: 100%;*/
+    border-radius: 50%;
+	box-shadow: 0px 0px 5px 1px #cfdcec;
+    overflow:hidden;
+
+    background: #2bb577;
+}
+.round-button:hover {
+	background:#019065;
+}
+.round-button a {
+    display:block;
+	float:left;
+	width:100%;
+	padding-top:50%;
+    padding-bottom:50%;
+	line-height:100%;
+	margin-top:-0.5em;
+
+	text-align:center;
+	color:#ffffff;
+    font-size:1.5em;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+
+.featurelist {
+    margin: 5.5em 0 2em 0;
+    padding: 1.5em 3em 1.5em 3em
+}
+
+    .featurelist article {
+        padding: 1.75em 1.75em 1.75em 1.75em ;
+        background-color: #353849;
+        border-radius: 5px;
+        margin-top: 1em;
+    }
+
+    .featurelist article:hover {
+        box-shadow: 0px 0px 5px 1px #777777;
+    }
+
+        .featurelist article .infolist li{
+            border-left: solid 2px rgba(192, 192, 192, 0.9);
+        	color: rgba(192, 192, 192, 0.9);
+        }
+
+        .featurelist article .infolist li:first-child {
+    		border-left: 0;
+    	}
+
+        .featurelist article .nobottom {
+            border-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .featurelist article .image {
+            border-radius: 5px 5px 0 0;
+            display: block;
+            margin-bottom: 1.75em;
+            margin-left: -1.75em;
+            margin-top: -1.75em;
+            position: relative;
+        }
+
+            .featurelist article .image img {
+                border-radius: 5px 5px 0 0;
+                width: 100%;
+            }
+
+    @media screen and (max-width: 980px) {
+
+        .featurelist {
+            padding: 1em 2em 1em 2em;
+        }
+
+    }
+
+    @media screen and (max-width: 736px) {
+
+        .featurelist {
+            padding: 0.875em 1.75em 0.875em 1.75em;
+        }
+
+        .featurelist article {
+            padding: 1.5em 1.5em 1.5em 1.5em ;
+        }
+
+            .featurelist article .image {
+                margin-bottom: 1.5em;
+                margin-left: -1.5em;
+                margin-top: -1.5em;
+                width: calc(100% + 3em);
+            }
+
+    }
+
+    @media screen and (max-width: 640px) {
+
+        .featurelist {
+            display: block;
+            padding: 0 0 2em 0 !important;
+        }
+
+            .featurelist article {
+                width: 100%;
+            }
+
+    }
