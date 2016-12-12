@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var crypto = require('crypto');
 var mongoose = require('mongoose');
 var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
@@ -228,7 +229,7 @@ router.post('/pwd/:id', function(req, res) {
         if (newpwd != comfirmpwd) {
             req.session.error = '密碼不一致';
             console.log('[WARN]'.yellow + 'passwords for ' + req.user.name + ' are not same!');
-            res.redirect('/admin/uesr/pwd/' + req.params.id);
+            res.redirect('/admin/user/pwd/' + req.params.id);
             return;
         }
         adm.password = newhash;
