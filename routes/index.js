@@ -6,6 +6,7 @@ var Ann = mongoose.model('Ann');
 var admin = require('./admin');
 var Session = mongoose.model('Session');
 var Admin = mongoose.model('Admin');
+var List = mongoose.model('List');
 var colors = require('colors');
 
 router.use(function(req, res, next) {
@@ -78,7 +79,7 @@ router.use(function(req, res, next) {
     });
 });
 
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     var qudata = querystring.parse(req.url.query);
     var page = parseInt(req.query.p) || 1;
 
@@ -98,6 +99,73 @@ router.get('/', function(req, res, next) {
             res.render('index', {
                 title: 'INFOR Ann System',
                 data: sanns,
+                list: {
+                    name: '最新消息',
+                    introduce: ''
+                },
+                page: page,
+                tpage: totalpage
+            });
+        });
+    });
+});
+
+router.param('lsid', function(req, res, next, id) {
+    List.findById(id).populate('creator').exec(function(err, ls) {
+        if (!ls) {
+            console.log('[WARN]'.yellow + 'list ID: ' + id + ' is not exist!');
+            res.render('index', {
+                title: 'INFOR Ann System',
+                data: [],
+                list: {
+                    name: '查無列表',
+                    introduce: '無此列表'
+                },
+                page: 0,
+                tpage: 0
+            });
+            return;
+        }
+        if (ls.public != true) {
+            res.render('index', {
+                title: 'INFOR Ann System',
+                data: [],
+                list: {
+                    name: '存取被拒',
+                    introduce: '此清單尚未被公開'
+                },
+                page: 0,
+                tpage: 0
+            });
+            return;
+        }
+        req.list = ls;
+        return next();
+    });
+});
+
+router.get('/list/:lsid', function(req, res) {
+    var qudata = querystring.parse(req.url.query);
+    var page = parseInt(req.query.p) || 1;
+
+    var que = Ann.find({
+        visible: true,
+        lists: req.params.lsid
+    }, function(err, anns) {
+        if (err) console.log('[ERROR]'.red + err);
+
+        var totalpage = Math.ceil(anns.length / 10);
+        if (totalpage === 0) totalpage = 1;
+        if (page < 1 || page > totalpage) {
+            res.redirect("?p=1");
+            return;
+        }
+
+        que.skip((page - 1) * 10).limit(10).sort('-ontop').sort('-update').populate('author').exec(function(err, sanns) {
+            res.render('index', {
+                title: 'INFOR Ann System',
+                data: sanns,
+                list: req.list,
                 page: page,
                 tpage: totalpage
             });

@@ -1,6 +1,10 @@
 ﻿<% layout( 'layout' ) -%>
 <section class="wrapper spotlight style1">
     <div class="inner" style="display:block; text-align:start">
+        <h1 style="font-size: 1.5em;" class="major"><%= list.name %></h1>
+        <% list.introduce.split('\n').forEach(function(line) { %>
+            <p class="text"><%= line.replace(/\r/g, '') %></p>
+        <% }); %>
         <div class="table-wrapper">
             <table>
             	<thead>
@@ -36,4 +40,3 @@
         </ul>
     </div>
 </section>
-

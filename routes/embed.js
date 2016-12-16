@@ -61,7 +61,23 @@ router.param('lsid', function(req, res, next, id) {
     List.findById(id).populate('creator').exec(function(err, ls) {
         if (!ls) {
             console.log('[WARN]'.yellow + 'list ID: ' + id + ' is not exist!');
-            res.end();
+            res.render('embeddedlist', {
+                data: [],
+                list: {
+                    name: '查無列表',
+                    introduce: '無此列表'
+                }
+            });
+            return;
+        }
+        if (ls.public != true) {
+            res.render('embeddedlist', {
+                data: [],
+                list: {
+                    name: '存取被拒',
+                    introduce: '此列表尚未被公開'
+                }
+            });
             return;
         }
         req.list = ls;
