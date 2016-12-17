@@ -1,0 +1,40 @@
+<% layout( 'layout' ) -%>
+<div class="wrapper spotlight style3">
+    <div class="inner" style="display:block; text-align:start">
+        <h1 class="major">管理總覽</h1>
+        <section class="featurelist" style="margin-top: 2em;">
+            <% if( menu >= 3 ) { %>
+            <a href="/admin/user/admin">
+                <article>
+                    <h2 class="major">使用者管理</h2>
+                    <p class="text">新增、管理、刪除其他管理者</p>
+                </article>
+            </a>
+            <% } %>
+            <a href="/admin/ann/admin">
+                <article>
+                    <h2 class="major">公告管理</h2>
+                    <p class="text">從此頁面發布公告，並修改他們</p>
+                </article>
+            </a>
+            <% if( menu >= 2 ) { %>
+            <a href="/admin/list/admin">
+                <article>
+                    <h2 class="major">列表管理</h2>
+                    <p class="text">列表功能可用於分類所建立的公告，並可產生專屬的列表頁面</p>
+                </article>
+            </a>
+            <% } %>
+            <a href="/admin/chpwd">
+                <article>
+                    <h2 class="major">變更密碼</h2>
+                    <p class="text">變更你的密碼</p>
+                </article>
+            </a>
+            <!--<li><a href="/admin/user/admin">使用者管理</a></li>
+            <li><a href="/admin/ann/admin">公告管理</a></li>
+            <li><a href="/admin/list/admin">列表管理</a></li>
+            <li><a href="/admin/chpwd">變更密碼</a></li>-->
+        </section>
+    </div>
+</div>

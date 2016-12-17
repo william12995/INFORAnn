@@ -12,7 +12,7 @@ var colors = require('colors');
 router.use(function(req, res, next) {
     if (req.user.level <= 2) {
         req.session.error = "權限不足";
-        res.redirect('/admin/admin');
+        res.redirect('/admin');
     } else {
         return next();
     }

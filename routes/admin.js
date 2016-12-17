@@ -17,7 +17,7 @@ var R_list = require('./admin-list');
 
 router.get('/login', function(req, res) {
     if (req.user.level > 0) {
-        res.redirect('/admin/admin');
+        res.redirect('/admin');
     }
     res.render('login', {
         title: 'Admin Login'
@@ -71,7 +71,7 @@ router.post('/login', function(req, res) {
                 else {
                     console.log('[INFO]'.cyan + 'User ' + user.name + ' logined with "remember me".');
                     req.session.info = "登入成功";
-                    res.redirect('/admin/admin');
+                    res.redirect('/admin');
                 }
             });
         } else {
@@ -88,7 +88,7 @@ router.post('/login', function(req, res) {
                 else {
                     console.log('[INFO]'.cyan + 'User ' + user.name + ' logined temporary.');
                     req.session.info = "登入成功";
-                    res.redirect('/admin/admin');
+                    res.redirect('/admin');
                 }
             });
         }
@@ -104,9 +104,10 @@ router.use(function(req, res, next) {
     }
 });
 
-//TODO:Add a admin overview page
-router.get('/admin', function(req, res) {
-    res.redirect('/admin/ann/admin');
+router.get('/', function(req, res) {
+    res.render('admin', {
+        title: 'Admin'
+    });
 });
 
 router.use('/ann', R_ann);
