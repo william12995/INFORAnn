@@ -41,7 +41,21 @@ router.get('/ann/:id', function(req, res) {
         if (err) console.log('[ERROR]'.red + err);
         if (!ann) {
             console.log('[WARN]'.yellow + 'ann ID: ' + req.params.id + ' is not exist!');
-            res.end();
+            res.render('embeddedview', {
+                listurl: req.session.listurl || '',
+                ann: {
+                    author: null,
+                    title: '無此公告',
+                    istextcontent: true,
+                    content: '',
+                    create: Date.now(),
+                    update: Date.now(),
+                    visible: true,
+                    views: 0,
+                    ontop: false,
+                    lists: []
+                }
+            });
             return;
         }
         if (!req.viewed) {

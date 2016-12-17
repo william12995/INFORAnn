@@ -189,6 +189,12 @@ router.param('id', function(req, res, next, id) {
 router.get('/content/:id', function(req, res) {
     Ann.findById(req.params.id).populate('author').exec(function(err, ann) {
         if (err) console.log('[ERROR]'.red + err);
+        if (!ann) {
+            req.session.error = '公告不存在';
+            console.log('[WARN]'.yellow + 'ann ID: ' + req.params.id + ' is not exist!');
+            res.redirect('/');
+            return;
+        }
         if (!req.viewed) {
             ann.views++;
             ann.save(function(err, ann, count) {
