@@ -21,7 +21,7 @@ router.get('/admin', function(req, res) {
 
     function annsfind(err, anns) {
         if (err) console.log('[ERROR]'.red + err);
-        res.render('admin', {
+        res.render('annadmin', {
             title: 'Admin',
             data: anns
         });
