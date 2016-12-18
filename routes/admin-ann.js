@@ -59,7 +59,7 @@ router.post('*', function(req, res, next) {
     var arr = [];
     List.find().exec(function(err, ls) {
         for (var i = 0; i < ls.length; i++) {
-            if (req.body.lists[ls[i].name] == 'on') {
+            if (req.body.lists && req.body.lists[ls[i].name] == 'on') {
                 arr.push(ls[i]._id);
             }
         }
