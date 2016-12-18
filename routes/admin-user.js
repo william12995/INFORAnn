@@ -114,7 +114,7 @@ router.get('/edit/:id', function(req, res) {
             res.redirect('/admin/user/admin');
             return;
         }
-        adm.nick = req.body.nick ? req.body.nick : '';
+        adm.nick = adm.nick ? adm.nick : '';
         res.render('usrform', {
             title: 'UserManage',
             head: "編輯使用者",
