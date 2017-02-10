@@ -66,7 +66,10 @@ Admin.findOne({
 });
 
 app.linebot = {};
-fs.readFile('linebot.json', 'utf-8', function(err, data) {
+fs.readFile('linebot.json', {
+    encoding: 'utf-8',
+    flag: 'r+'
+}, function(err, data) {
     if (err) {
         disable();
         return;
