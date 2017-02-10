@@ -65,12 +65,12 @@ Admin.findOne({
     }
 });
 
-app.linebot = {};
+linebot = {};
 
 function disable() {
     console.log('[WARN]'.yellow + 'unable to read linebot config');
     console.log('[WARN]'.yellow + 'will disable linbot function');
-    app.linebot.cfg = {
+    linebot.cfg = {
         enable: false,
         token: "",
         secret: ""
@@ -81,10 +81,10 @@ try {
         encoding: 'utf-8',
         flag: 'r+'
     });
-    app.linebot.cfg = JSON.parse(data);
-    if (app.linebot.cfg.token && app.linebot.cfg.secret) {
-        app.linebot.cfg.enable = true;
-        if (!app.linebot.cfg.debug) app.linebot.cfg.debug = false;
+    linebot.cfg = JSON.parse(data);
+    if (linebot.cfg.token && linebot.cfg.secret) {
+        linebot.cfg.enable = true;
+        if (!linebot.cfg.debug) linebot.cfg.debug = false;
         console.log('[INFO]'.cyan + 'Linebot config had successfully loaded!');
     } else {
         disable();
@@ -108,10 +108,10 @@ function getSign(event) {
     var hash = crypto.createHmac('sha256', secret).update(body).digest('base64');
     return hash
 }
-if (app.linebot.cfg.enable === true) {
+if (linebot.cfg.enable === true) {
     app.post('/callback', function(req, res) {
         var data = req.body;
-        if (app.linebot.cfg.debug === true) {
+        if (linebot.cfg.debug === true) {
             console.log(data);
         }
         if (getSign(req) == req.get("X-LINE-ChannelSignature")) {
