@@ -66,14 +66,21 @@ Admin.findOne({
 });
 
 app.linebot = {};
-fs.readFile('linebot.json', {
-    encoding: 'utf-8',
-    flag: 'r+'
-}, function(err, data) {
-    if (err) {
-        disable();
-        return;
-    }
+
+function disable() {
+    console.log('[WARN]'.yellow + 'unable to read linebot config');
+    console.log('[WARN]'.yellow + 'will disable linbot function');
+    app.linebot.cfg = {
+        enable: false,
+        token: "",
+        secret: ""
+    };
+}
+try {
+    var data = fs.readFileSync('linebot.json', {
+        encoding: 'utf-8',
+        flag: 'r+'
+    });
     app.linebot.cfg = JSON.parse(data);
     if (app.linebot.cfg.token && app.linebot.cfg.secret) {
         app.linebot.cfg.enable = true;
@@ -83,17 +90,10 @@ fs.readFile('linebot.json', {
         disable();
         return;
     }
-
-    function disable() {
-        console.log('[WARN]'.yellow + 'unable to read linebot config');
-        console.log('[WARN]'.yellow + 'will disable linbot function');
-        app.linebot.cfg = {
-            enable: false,
-            token: "",
-            secret: ""
-        };
-    }
-});
+} catch (err) {
+    disable();
+    return;
+}
 
 app.use(function(req, res, next) {
     app.locals.moment = moment;
