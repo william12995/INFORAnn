@@ -23,6 +23,9 @@
                         <% }); %>
                     </div>
 
+                    <input type="checkbox" name="notify" id="notify" <% if(ann.notify==true) { %> checked <% } %> />
+                    <label for="notify">社群推播通知</label><br />
+
                     <input type="checkbox" name="visible" id="visible" <% if(ann.visible==true) { %> checked <% } %> />
                     <label for="visible">可視</label><br />
 

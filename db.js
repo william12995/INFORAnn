@@ -17,7 +17,8 @@ var Ann = new Schema(
         visible : Boolean,
         views : Number,
         ontop : Boolean,
-        public : Boolean,
+        public : {type: Boolean, default: true},
+        notify : {type: Boolean, default: false},
         lists : [{type : Schema.Types.ObjectId, ref : 'List' }]
     }
 );

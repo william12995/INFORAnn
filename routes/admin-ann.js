@@ -46,6 +46,7 @@ router.get('/new', function(req, res) {
         visible: true,
         views: 0,
         ontop: false,
+        notify: false,
         lists: []
     });
     empty.lsname = [];
@@ -80,12 +81,13 @@ router.post('/new', function(req, res) {
         visible: req.body.visible == 'on',
         views: 0,
         ontop: req.body.ontop == 'on',
+        notify: req.body.notify == 'on',
         lists: req.body.lists
     }).save(function(err, ls, count) {
         if (err) console.log('[ERROR]'.red + err);
         else req.session.info = "新增成功";
         res.redirect('/admin/ann/admin');
-        if (ls.visible == true) {
+        if (ls.notify == true) {
             linebot.fun.sendmes('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
         }
     });
@@ -150,12 +152,13 @@ router.post('/edit/:id', function(req, res) {
     }
     if (updateDate === true) {
         ann.update = Date.now();
-        if (ann.visible == true) {
+        if (ann.notify == true) {
             linebot.fun.sendmes('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
         }
     }
     ann.visible = req.body.visible == 'on';
     ann.ontop = req.body.ontop == 'on';
+    ann.notify = req.body.notify == 'on';
     ann.lists = req.body.lists;
     ann.save(function(err, ls, count) {
         if (err) console.log('[ERROR]'.red + err);
