@@ -150,7 +150,7 @@ router.post('/edit/:id', function(req, res) {
     }
     if (updateDate === true) {
         ann.update = Date.now();
-        if (ls.visible == true) {
+        if (ann.visible == true) {
             linebot.fun.sendmes('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
         }
     }
