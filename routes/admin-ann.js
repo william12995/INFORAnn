@@ -85,6 +85,7 @@ router.post('/new', function(req, res) {
         if (err) console.log('[ERROR]'.red + err);
         else req.session.info = "新增成功";
         res.redirect('/admin/ann/admin');
+        linebot.fun.sendmes('新消息！：' + ls.title);
     });
 });
 

@@ -17,6 +17,7 @@ var session = require('express-session');
 var debug = require('debug')('inforann:server');
 var colors = require('colors');
 var moment = require('moment');
+var request = require('request');
 
 var index = require('./routes');
 var admin = require('./routes/admin');
@@ -107,11 +108,12 @@ function getSign(data) {
     var hash = crypto.createHmac('sha256', linebot.cfg.secret).update(body).digest('base64');
     return hash;
 }
+
 function adduser(lineid) {
     Line.findOne({
         id: lineid
     }).exec(function(err, result) {
-        if(result){
+        if (result) {
             console.log('[ERROR]'.yellow + '[LINEBot]'.green + 'Line id ' + lineid + ' has already existed.');
             return;
         }
@@ -122,11 +124,12 @@ function adduser(lineid) {
         });
     });
 }
+
 function rmuser(lineid) {
     Line.findOne({
         id: lineid
     }).exec(function(err, result) {
-        if(!result){
+        if (!result) {
             console.log('[ERROR]'.yellow + '[LINEBot]'.green + 'Line id ' + lineid + ' doesn\'t exist.');
             return;
         }
@@ -135,21 +138,68 @@ function rmuser(lineid) {
         });
     });
 }
+
+function multicast(messageData) {
+    request({
+            uri: 'https://api.line.me/v2/bot/message/multicast',
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": "Bearer {" + linebot.cfg.token + "}"
+            },
+            method: 'POST',
+            json: messageData
+        },
+        function(error, response, body) {
+            //Check for error
+            if (error) {
+                return console.log('[ERROR]'.red, error);
+            }
+            //Check for right status code
+            if (response.statusCode !== 200) {
+                return console.log('[ERROR]'.red + 'Invalid Status Code Returned:', response.statusCode, response.statusMessage);
+            }
+            //All is good. Print the body
+            if (linebot.cfg.debug === true) {
+                console.log('[DEBUG]'.cyan + '[LINEBot]'.green + 'req.body'); // Show the HTML for the Modulus homepage.
+                console.log(body);
+            }
+        }
+    );
+}
+
+function sendmes(message) {
+    var data = {
+        to: [],
+        messages: []
+    };
+    Line.find().select('id').exec(function(err, lineid) {
+        var ids = lineid.map(function(res) {
+            return res.id;
+        });
+        data.to = ids;
+        data.messages.push({
+            "type": "text",
+            "text": message
+        });
+        multicast(data);
+    });
+}
 if (linebot.cfg.enable === true) {
     app.post('/callback', function(req, res) {
         var data = req.body;
         if (linebot.cfg.debug === true) {
             console.log('[DEBUG]'.cyan + '[LINEBot]'.green + req.get("x-line-signature"));
             console.log('[DEBUG]'.cyan + '[LINEBot]'.green + getSign(req));
-            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + data);
+            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + 'req.body');
+            console.log(data);
         }
         if (getSign(req) == req.get("x-line-signature")) {
             // ChannelSignature 正確，處理訊息
             data.events.forEach(function(result) {
                 var type = result.type;
-                if (type == 'follow') {
+                if (type == 'follow' && result.source.type == 'user') {
                     adduser(result.source.userId);
-                } else if (type == 'unfollow') {
+                } else if (type == 'unfollow' && result.source.type == 'user') {
                     rmuser(result.source.userId);
                 } else if (type == 'message') {
 
@@ -160,6 +210,9 @@ if (linebot.cfg.enable === true) {
             res.sendStatus(403); //ChannelSignature錯誤，回傳403
     });
 }
+
+linebot.fun = {};
+linebot.fun.sendmes = sendmes;
 
 app.use('/embed', embed);
 app.use('/', index);
