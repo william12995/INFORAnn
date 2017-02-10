@@ -134,6 +134,45 @@ router.get('/logout', function(req, res) {
     });
 });
 
+router.get('/nick', function(req, res) {
+    if (req.user.level === 0) {
+        res.redirect('/admin/login');
+    }
+    res.render('nick', {
+        title: 'Change Nick Name',
+        nickname: req.user.nick
+    });
+});
+
+router.post('/nick', function(req, res) {
+    if (req.user.level === 0) {
+        res.redirect('/admin/login');
+    }
+
+    Admin.
+    findOne({
+        name: req.user.name
+    }).
+    exec(function(err, user) {
+        if (err) {
+            console.log('[ERROR]'.red + err);
+        }
+        if (!user) {
+            req.session.error = '使用者不存在';
+            console.log('[WARN]'.yellow + 'user ' + req.user.name + ' is not exist!');
+            res.redirect('/admin/login');
+            return;
+        }
+
+        user.nick = req.body.nick;
+        user.save(function(err, user, count) {
+            if (err) console.log('[ERROR]'.red + err);
+            else req.session.info = "暱稱變更完成";
+            res.redirect('/admin');
+        });
+    });
+});
+
 router.get('/chpwd', function(req, res) {
     if (req.user.level === 0) {
         res.redirect('/admin/login');
