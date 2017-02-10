@@ -22,6 +22,7 @@ var index = require('./routes');
 var admin = require('./routes/admin');
 var embed = require('./routes/embed');
 var Admin = mongoose.model('Admin');
+var Line = mongoose.model('Line');
 
 var app = express();
 
@@ -88,11 +89,9 @@ try {
         console.log('[INFO]'.cyan + 'Linebot config had successfully loaded!');
     } else {
         disable();
-        return;
     }
 } catch (err) {
     disable();
-    return;
 }
 
 app.use(function(req, res, next) {
@@ -101,12 +100,40 @@ app.use(function(req, res, next) {
 });
 
 //linebot callback
-function getSign(event) {
+function getSign(data) {
     var crypto = require('crypto');
-    var body = new Buffer(JSON.stringify(event.body), 'utf8');
+    var body = new Buffer(JSON.stringify(data.body), 'utf8');
     // secret 為您的 Channel secret
-    var hash = crypto.createHmac('sha256', secret).update(body).digest('base64');
+    var hash = crypto.createHmac('sha256', linebot.cfg.secret).update(body).digest('base64');
     return hash
+}
+function adduser(lineid) {
+    Line.findOne({
+        id: lineid
+    }).exec(function(err, result) {
+        if(result){
+            console.log('[ERROR]'.yellow + '[LINEBot]'.green + 'Line id ' + lineid + ' has already existed.');
+            return;
+        }
+        new Line({
+            id: lineid
+        }).save(function(err, r) {
+            if (err) console.log(err);
+        });
+    });
+}
+function rmuser(lineid) {
+    Line.findOne({
+        id: lineid
+    }).exec(function(err, result) {
+        if(!result){
+            console.log('[ERROR]'.yellow + '[LINEBot]'.green + 'Line id ' + lineid + ' doesn\'t exist.');
+            return;
+        }
+        result.remove(function(err, r) {
+            if (err) console.log(err);
+        });
+    });
 }
 if (linebot.cfg.enable === true) {
     app.post('/callback', function(req, res) {
@@ -116,10 +143,14 @@ if (linebot.cfg.enable === true) {
         }
         if (getSign(req) == req.get("X-LINE-ChannelSignature")) {
             // ChannelSignature 正確，處理訊息
-            data.result.forEach(function(result) {
-                var type = result.content.contentType;
-                if (type == "1") {
-                    sendTextMessage(result.content.from, "傳送您的位置來獲得天氣訊息");
+            data.events.forEach(function(result) {
+                var type = result.type;
+                if (type == 'follow') {
+                    adduser(result.source.userId);
+                } else if (type == 'unfollow') {
+                    rmuser(result.source.userId);
+                } else if (type == 'message') {
+
                 }
             });
             res.sendStatus(200);
