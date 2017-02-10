@@ -53,10 +53,17 @@ var List = new Schema(
     }
 );
 
+var Line = new Schema(
+    {
+        id : String
+    }
+);
+
 mongoose.model('Ann', Ann);
 mongoose.model('Admin', Admin);
 mongoose.model('Session', Session);
 mongoose.model('List', List);
+mongoose.model('Line', Line);
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb, function (err) {
     if (err) {

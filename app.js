@@ -3,6 +3,7 @@
  * Module dependencies.
  */
 require('./db');
+var fs = require('fs');
 var express = require('express');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -40,7 +41,7 @@ app.use(session({
     secret: 'S4gznk%^MdGfxAEXT?N*WcD5tD!w@BC+',
     resave: true,
     saveUninitialized: true
-        //!!!!!IMPORTANT!!!!! CHANGE SECRET ABOVE BEFORE YOU USE THE SYSTEM!!!!!
+    //!!!!!IMPORTANT!!!!! CHANGE SECRET ABOVE BEFORE YOU USE THE SYSTEM!!!!!
 }));
 
 Admin.findOne({
@@ -64,10 +65,65 @@ Admin.findOne({
     }
 });
 
+app.linebot = {};
+fs.readFile('linebot.json', 'utf-8', function(err, data) {
+    if (err) {
+        disable();
+        return;
+    }
+    app.linebot.cfg = JSON.parse(data);
+    if (app.linebot.cfg.token && app.linebot.cfg.secret) {
+        app.linebot.cfg.enable = true;
+        if (!app.linebot.cfg.debug) app.linebot.cfg.debug = false;
+        console.log('[INFO]'.cyan + 'Linebot config had successfully loaded!');
+    } else {
+        disable();
+        return;
+    }
+
+    function disable() {
+        console.log('[WARN]'.yellow + 'unable to read linebot config');
+        console.log('[WARN]'.yellow + 'will disable linbot function');
+        app.linebot.cfg = {
+            enable: false,
+            token: "",
+            secret: ""
+        };
+    }
+});
+
 app.use(function(req, res, next) {
     app.locals.moment = moment;
     next();
 });
+
+//linebot callback
+function getSign(event) {
+    var crypto = require('crypto');
+    var body = new Buffer(JSON.stringify(event.body), 'utf8');
+    // secret 為您的 Channel secret
+    var hash = crypto.createHmac('sha256', secret).update(body).digest('base64');
+    return hash
+}
+if (app.linebot.cfg.enable === true) {
+    app.post('/callback', function(req, res) {
+        var data = req.body;
+        if (app.linebot.cfg.debug === true) {
+            console.log(data);
+        }
+        if (getSign(req) == req.get("X-LINE-ChannelSignature")) {
+            // ChannelSignature 正確，處理訊息
+            data.result.forEach(function(result) {
+                var type = result.content.contentType;
+                if (type == "1") {
+                    sendTextMessage(result.content.from, "傳送您的位置來獲得天氣訊息");
+                }
+            });
+            res.sendStatus(200);
+        } else
+            res.sendStatus(403); //ChannelSignature錯誤，回傳403
+    });
+}
 
 app.use('/embed', embed);
 app.use('/', index);
