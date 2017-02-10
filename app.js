@@ -139,7 +139,9 @@ if (linebot.cfg.enable === true) {
     app.post('/callback', function(req, res) {
         var data = req.body;
         if (linebot.cfg.debug === true) {
-            console.log(data);
+            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + req.get("X-LINE-ChannelSignature"));
+            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + getSign(req));
+            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + data);
         }
         if (getSign(req) == req.get("X-LINE-ChannelSignature")) {
             // ChannelSignature 正確，處理訊息
