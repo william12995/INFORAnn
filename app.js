@@ -65,7 +65,7 @@ Admin.findOne({
     }
 });
 
-linebot = {};
+global.linebot = {};
 
 function disable() {
     console.log('[WARN]'.yellow + 'unable to read linebot config');
