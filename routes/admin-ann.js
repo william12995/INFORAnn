@@ -85,7 +85,9 @@ router.post('/new', function(req, res) {
         if (err) console.log('[ERROR]'.red + err);
         else req.session.info = "新增成功";
         res.redirect('/admin/ann/admin');
-        linebot.fun.sendmes('新消息！：' + ls.title);
+        if (ls.visible == true) {
+            linebot.fun.sendmes('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
+        }
     });
 });
 
@@ -148,6 +150,9 @@ router.post('/edit/:id', function(req, res) {
     }
     if (updateDate === true) {
         ann.update = Date.now();
+        if (ls.visible == true) {
+            linebot.fun.sendmes('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
+        }
     }
     ann.visible = req.body.visible == 'on';
     ann.ontop = req.body.ontop == 'on';
