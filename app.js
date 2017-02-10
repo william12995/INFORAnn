@@ -105,7 +105,7 @@ function getSign(data) {
     var body = new Buffer(JSON.stringify(data.body), 'utf8');
     // secret 為您的 Channel secret
     var hash = crypto.createHmac('sha256', linebot.cfg.secret).update(body).digest('base64');
-    return hash
+    return hash;
 }
 function adduser(lineid) {
     Line.findOne({
@@ -139,11 +139,11 @@ if (linebot.cfg.enable === true) {
     app.post('/callback', function(req, res) {
         var data = req.body;
         if (linebot.cfg.debug === true) {
-            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + req.get("X-LINE-ChannelSignature"));
+            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + req.get("x-line-signature"));
             console.log('[DEBUG]'.cyan + '[LINEBot]'.green + getSign(req));
             console.log('[DEBUG]'.cyan + '[LINEBot]'.green + data);
         }
-        if (getSign(req) == req.get("X-LINE-ChannelSignature")) {
+        if (getSign(req) == req.get("x-line-signature")) {
             // ChannelSignature 正確，處理訊息
             data.events.forEach(function(result) {
                 var type = result.type;
