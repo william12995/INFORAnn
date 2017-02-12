@@ -18,12 +18,14 @@ var debug = require('debug')('inforann:server');
 var colors = require('colors');
 var moment = require('moment');
 var request = require('request');
+var CronJob = require('cron').CronJob;
 
 var index = require('./routes');
 var admin = require('./routes/admin');
 var embed = require('./routes/embed');
 var Admin = mongoose.model('Admin');
 var Line = mongoose.model('Line');
+var Session = mongoose.model('Session');
 
 var app = express();
 
@@ -67,11 +69,23 @@ Admin.findOne({
     }
 });
 
+var dbclean = new CronJob({
+    cronTime: '00 */30 * * * *',
+    onTick: function(){
+    Session.remove({expire: {$lt: new Date() }}, function(err, count){
+        if (err) console.log('[ERROR]'.red + err);
+        if (count.result.n > 0)
+            console.log('[INFO]'.cyan + 'Cleaned expired ' + count.result.n + ' sessions.');
+    });},
+    runOnInit: true
+});
+dbclean.start();
+
 global.linebot = {};
 
 function disable() {
     console.log('[WARN]'.yellow + 'unable to read linebot config');
-    console.log('[WARN]'.yellow + 'will disable linbot function');
+    console.log('[WARN]'.yellow + 'will disable linebot function');
     linebot.cfg = {
         enable: false,
         token: "",
