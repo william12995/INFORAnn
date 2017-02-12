@@ -1,8 +1,10 @@
 ------Main Features------
+Add session DB auto cleanup
+Change CSS to Materializecss
 Add Search Box
 Add pagination to admin
-Add nickname edit
+Add about page
+Improve Linebot function
 ----Optional Features----
-Change CSS to Bootstrap
+Add Messenger API
 Avoid Crawler Attack
-Add session DB auto cleanup

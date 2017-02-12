@@ -23,6 +23,16 @@ $ ./run.sh
 ----
 
 ###Changelog
+ - **Beta 0.9.2**
+     - start testing LINEbot function
+     - NOTE! The function is still under development. May not work as expected.
+ - **Beta 0.9.1**
+     - users can change their nickname my themselves
+     - add an admin overview
+     - add list function
+     - , and embbed view
+     - admin codes are splitted into different files
+     - fix bugs
  - **Beta 0.9**
  	 - add Ace Editor with announcement editing
  	 - improve console output
