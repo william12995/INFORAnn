@@ -4,6 +4,7 @@ Add Search Box
 Add pagination to admin
 Add about page
 Improve Linebot function
+Rewrite Linebot as a module
 ----Optional Features----
 Add Messenger API
 Avoid Crawler Attack

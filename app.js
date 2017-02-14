@@ -95,11 +95,12 @@ function disable() {
 try {
     var data = fs.readFileSync('linebot.json', {
         encoding: 'utf-8',
-        flag: 'r+'
+        flag: 'r'
     });
     linebot.cfg = JSON.parse(data);
     if (linebot.cfg.token && linebot.cfg.secret) {
-        linebot.cfg.enable = true;
+        if(!linebot.cfg.enable)
+            linebot.cfg.enable = true;
         if (!linebot.cfg.debug) linebot.cfg.debug = false;
         console.log('[INFO]'.cyan + 'Linebot config had successfully loaded!');
     } else {
