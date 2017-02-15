@@ -9,10 +9,12 @@ var ex = {
     adduser: adduser,
     rmuser: rmuser,
     broadcast: broadcast,
+    init: init,
     enable: false,
     token: '',
     secret: ''
 };
+exports = module.exports = ex;
 
 function disable() {
     console.log('[WARN]'.yellow + 'unable to read linebot config');
@@ -24,9 +26,9 @@ function disable() {
     // };
 }
 
-function multicast(messageData) {
+function reqsend(target, messageData) {
     request({
-            uri: 'https://api.line.me/v2/bot/message/multicast',
+            uri: target,
             headers: {
                 "Content-type": "application/json",
                 "Authorization": "Bearer {" + ex.token + "}"
@@ -50,7 +52,7 @@ function multicast(messageData) {
     );
 }
 
-exports.init = function() {
+function init() {
     try {
         var data = fs.readFileSync('linebot.json', {
             encoding: 'utf-8',
@@ -68,16 +70,19 @@ exports.init = function() {
     } catch (err) {
         disable();
     }
-    return ex;
 };
 
 function verify(req, onSucceed, onFailed) {
     var body = new Buffer(JSON.stringify(req.body), 'utf8');
     var hash = crypto.createHmac('sha256', ex.secret).update(body).digest('base64');
+    debug('[LINEBot]'.green + 'Signature:' + req.get("x-line-signature"));
+    debug('[LINEBot]'.green + 'Hash:' + hash);
+    debug('[LINEBot]'.green + 'req.body');
+    debug(body);
     if (hash == req.get("x-line-signature")) {
         onSucceed();
     } else {
-        if(onFailed)
+        if (onFailed)
             onFailed();
     }
 }
@@ -126,6 +131,6 @@ function broadcast(message) {
             "type": "text",
             "text": message
         });
-        multicast(data);
+        reqsend('https://api.line.me/v2/bot/message/multicast', data);
     });
 }

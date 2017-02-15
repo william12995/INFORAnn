@@ -7,6 +7,7 @@ var Ann = mongoose.model('Ann');
 var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
+var linebot = require('../linebot');
 
 router.get('/admin', function(req, res) {
     if (req.user.level == 1) {
@@ -88,7 +89,7 @@ router.post('/new', function(req, res) {
         else req.session.info = "新增成功";
         res.redirect('/admin/ann/admin');
         if (ls.notify == true) {
-            linebot.fun.sendmes('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
+            linebot.broadcast('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
         }
     });
 });
@@ -153,7 +154,7 @@ router.post('/edit/:id', function(req, res) {
     if (updateDate === true) {
         ann.update = Date.now();
         if (ann.notify == true) {
-            linebot.fun.sendmes('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
+            linebot.broadcast('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
         }
     }
     ann.visible = req.body.visible == 'on';

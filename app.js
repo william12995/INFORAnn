@@ -18,6 +18,7 @@ var debug = require('debug')('inforann:server');
 var colors = require('colors');
 var moment = require('moment');
 var CronJob = require('cron').CronJob;
+var linebot = require('./linebot');
 
 var index = require('./routes');
 var admin = require('./routes/admin');
@@ -69,15 +70,22 @@ Admin.findOne({
 
 var dbclean = new CronJob({
     cronTime: '00 */30 * * * *',
-    onTick: function(){
-    Session.remove({expire: {$lt: new Date() }}, function(err, count){
-        if (err) console.log('[ERROR]'.red + err);
-        if (count.result.n > 0)
-            console.log('[INFO]'.cyan + 'Cleaned expired ' + count.result.n + ' sessions.');
-    });},
+    onTick: function() {
+        Session.remove({
+            expire: {
+                $lt: new Date()
+            }
+        }, function(err, count) {
+            if (err) console.log('[ERROR]'.red + err);
+            if (count.result.n > 0)
+                console.log('[INFO]'.cyan + 'Cleaned expired ' + count.result.n + ' sessions.');
+        });
+    },
     runOnInit: true
 });
 dbclean.start();
+
+linebot.init();
 
 app.use(function(req, res, next) {
     app.locals.moment = moment;
@@ -85,32 +93,27 @@ app.use(function(req, res, next) {
 });
 
 //linebot callback
-if (linebot.cfg.enable === true) {
-    app.post('/callback', function(req, res) {
+app.post('/callback', function(req, res, next) {
+    if (linebot.enable !== true) next();
+    linebot.verify(req, function() {
         var data = req.body;
-        if (linebot.cfg.debug === true) {
-            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + req.get("x-line-signature"));
-            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + getSign(req));
-            console.log('[DEBUG]'.cyan + '[LINEBot]'.green + 'req.body');
-            console.log(data);
-        }
-        if (getSign(req) == req.get("x-line-signature")) {
-            // ChannelSignature 正確，處理訊息
-            data.events.forEach(function(result) {
-                var type = result.type;
-                if (type == 'follow' && result.source.type == 'user') {
-                    adduser(result.source.userId);
-                } else if (type == 'unfollow' && result.source.type == 'user') {
-                    rmuser(result.source.userId);
-                } else if (type == 'message') {
+        // ChannelSignature 正確，處理訊息
+        data.events.forEach(function(result) {
+            var type = result.type;
+            if (type == 'follow' && result.source.type == 'user') {
+                linebot.adduser(result.source.userId);
+            } else if (type == 'unfollow' && result.source.type == 'user') {
+                linebot.rmuser(result.source.userId);
+            } else if (type == 'message') {
 
-                }
-            });
-            res.sendStatus(200);
-        } else
-            res.sendStatus(403); //ChannelSignature錯誤，回傳403
+            }
+        });
+        res.sendStatus(200);
+    }, function() {
+        res.sendStatus(403); //ChannelSignature錯誤，回傳403
     });
-}
+});
+
 
 app.use('/embed', embed);
 app.use('/', index);
