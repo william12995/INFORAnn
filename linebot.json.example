@@ -1,6 +1,5 @@
 {
     "enable": true,
     "token": "",
-    "secret": "",
-    "debug": false
+    "secret": ""
 }
