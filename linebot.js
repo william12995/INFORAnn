@@ -1,3 +1,4 @@
+var fs = require('fs');
 var request = require('request');
 var mongoose = require('mongoose');
 var crypto = require('crypto');
@@ -19,11 +20,6 @@ exports = module.exports = ex;
 function disable() {
     console.log('[WARN]'.yellow + 'unable to read linebot config');
     console.log('[WARN]'.yellow + 'will disable linebot function');
-    // linebot.cfg = {
-    //     enable: false,
-    //     token: "",
-    //     secret: ""
-    // };
 }
 
 function reqsend(target, messageData) {
