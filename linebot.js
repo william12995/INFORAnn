@@ -65,9 +65,12 @@ function init() {
             ex.secret = cfg.secret;
             console.log('[INFO]'.cyan + 'Linebot config had successfully loaded!');
         } else {
+            debug('[LINEBot]'.green + 'The token or the secret is not found.');
             disable();
         }
     } catch (err) {
+        debug('[LINEBot]'.green + 'Error occurred:');
+        debug(err);
         disable();
     }
 };
@@ -78,7 +81,7 @@ function verify(req, onSucceed, onFailed) {
     debug('[LINEBot]'.green + 'Signature:' + req.get("x-line-signature"));
     debug('[LINEBot]'.green + 'Hash:' + hash);
     debug('[LINEBot]'.green + 'req.body');
-    debug(body);
+    debug(req.body);
     if (hash == req.get("x-line-signature")) {
         onSucceed();
     } else {
@@ -98,6 +101,7 @@ function adduser(lineid) {
         new Line({
             id: lineid
         }).save(function(err, r) {
+            debug('LINEUser: ' + lineid + ' had been added.');
             if (err) console.log(err);
         });
     });
@@ -112,6 +116,7 @@ function rmuser(lineid) {
             return;
         }
         result.remove(function(err, r) {
+            debug('LINEUser: ' + lineid + ' had been removed.');
             if (err) console.log(err);
         });
     });

@@ -94,7 +94,10 @@ app.use(function(req, res, next) {
 
 //linebot callback
 app.post('/callback', function(req, res, next) {
-    if (linebot.enable !== true) next();
+    if (linebot.enable !== true) {
+        res.sendStatus(404);
+        return;
+    };
     linebot.verify(req, function() {
         var data = req.body;
         // ChannelSignature 正確，處理訊息
