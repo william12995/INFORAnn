@@ -19,9 +19,8 @@ var colors = require('colors');
 var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var linebot = require('./linebot');
-var fbbot = require('./fbbot');
-console.log(linebot);
-console.log(fbbot);
+var fb_bot = require('./fbbot');
+
 var index = require('./routes');
 var admin = require('./routes/admin');
 var embed = require('./routes/embed');
@@ -89,7 +88,7 @@ var dbclean = new CronJob({
 dbclean.start();
 
 linebot.init();
-fbbot.init();
+fb_bot.init();
 
 app.use(function(req, res, next) {
     app.locals.moment = moment;
