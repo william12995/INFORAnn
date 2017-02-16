@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var fs = require('fs');
 var fb_bot = mongoose.model('fb_bot');
 var debug = require('debug')('inforann:server');
+var crypto = require('crypto');
 
 
 var set = {
@@ -10,8 +11,11 @@ var set = {
 	sendTextMessage: sendTextMessage,
 	sendGenericMessage: sendGenericMessage,
 	adduser: adduser,
+	verifyRequestSignature: verifyRequestSignature,
 	page_token:'',
-	verify_token:''
+	verify_token:'',
+	appSecret:'',
+	serverURL:''
 };
 
 exports = module.exports = set;
@@ -27,6 +31,8 @@ function init(){
         if (cfg.page_token && cfg.verify_token) {
             set.token = cfg.page_token;
             set.verify = cfg.verify_token;
+            set.appSecret = cfg.appSecret;
+            set.serverURL = cfg.serverURL;
             console.log('[INFO]'.cyan + 'FBbot config had successfully loaded!');
         } else {
             debug('[FB_Bot]'.green + 'The token or the secret is not found.');
@@ -136,4 +142,26 @@ function adduser(sender) {
             if (err) console.log(err);
         });
     });
+}
+
+function verifyRequestSignature(req, res, buf) {
+  var signature = req.headers["x-hub-signature"];
+
+  if (!signature) {
+    // For testing, let's log an error. In production, you should throw an 
+    // error.
+    console.error("Couldn't validate the signature.");
+  } else {
+    var elements = signature.split('=');
+    var method = elements[0];
+    var signatureHash = elements[1];
+
+    var expectedHash = crypto.createHmac('sha1', set.appSecret)
+                        .update(buf)
+                        .digest('hex');
+
+    if (signatureHash != expectedHash) {
+      throw new Error("Couldn't validate the request signature.");
+    }
+  }
 }
