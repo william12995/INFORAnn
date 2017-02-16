@@ -30,7 +30,7 @@ function init() {
         }
 
 
-	}catch{
+	}catch(err){
 		debug('[LINEBot]'.green + 'Error occurred:');
         debug(err);
 	}
