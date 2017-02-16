@@ -137,12 +137,12 @@ app.get('/webhook/', function (req, res) {
 // to post data
 app.post('/webhook/', function (req, res) {
     let messaging_events = req.body.entry[0].messaging;
-    //console.log(messaging_events);
+    console.log(req.body);
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id 
 
-        if (sender == "575623689313399") continue;
+        
         if (event.message && event.message.text) {
             let text = event.message.text
             if (text === 'Generic'){ 
