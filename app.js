@@ -19,7 +19,7 @@ var colors = require('colors');
 var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var linebot = require('./linebot');
-var fb_bot = require('./fb_bot');
+var fb_bot = require('./fbbot');
 
 var index = require('./routes');
 var admin = require('./routes/admin');
