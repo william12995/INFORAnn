@@ -12,7 +12,7 @@ var set = {
 
 exports = module.exports = set;
 
-function start() {
+function init(){
 	try{
 		var data = fs.readFileSync('fb_bot.json', {
             encoding: 'utf-8',
@@ -31,7 +31,7 @@ function start() {
 
 
 	}catch(err){
-		debug('[LINEBot]'.green + 'Error occurred:');
+		debug('[FBBot]'.green + 'Error occurred:');
         debug(err);
 	}
 

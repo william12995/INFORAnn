@@ -88,7 +88,7 @@ var dbclean = new CronJob({
 dbclean.start();
 
 linebot.init();
-fbbot.start();
+fbbot.init();
 
 app.use(function(req, res, next) {
     app.locals.moment = moment;
