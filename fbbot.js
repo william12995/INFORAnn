@@ -69,8 +69,8 @@ function sendTextMessage(text) {
 
       //console.log(options)
 
-      request(options, (error, response, body) => {
-        console.log(body); // Print the shortened url.
+      request(options, (error, response, req) => {
+        console.log(req.body); // Print the shortened url.
         console.log(error);
       });
 
