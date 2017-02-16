@@ -29,16 +29,16 @@ var Session = mongoose.model('Session');
 
 var app = express();
 
-fb_bot.init();
+
 // all environments
 app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.json({ verify: fb_bot.verifyRequestSignature() }));
+//app.use(bodyParser.json({ verify: fb_bot.verifyRequestSignature() }));
 app.use(express.static('public'));
 
-//app.use(bodyParser.json());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -91,7 +91,7 @@ var dbclean = new CronJob({
 dbclean.start();
 
 //linebot.init();
-
+fb_bot.init();
 
 app.use(function(req, res, next) {
     app.locals.moment = moment;
