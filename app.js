@@ -29,7 +29,7 @@ var Session = mongoose.model('Session');
 
 var app = express();
 
-
+fb_bot.init();
 // all environments
 app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
@@ -91,7 +91,7 @@ var dbclean = new CronJob({
 dbclean.start();
 
 //linebot.init();
-fb_bot.init();
+
 
 app.use(function(req, res, next) {
     app.locals.moment = moment;
