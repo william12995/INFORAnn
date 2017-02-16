@@ -90,8 +90,8 @@ router.post('/new', function(req, res) {
         else req.session.info = "新增成功";
         res.redirect('/admin/ann/admin');
         if (ls.notify == true) {
-            linebot.broadcast('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
-            fb_bot.sendTextMessage('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id); 
+            //linebot.broadcast('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
+            fb_bot.sendTextMessage('新消息！：' + ls.title + '\nhttps://william.infor.org/content/' + ls._id); 
 
         }
     });
