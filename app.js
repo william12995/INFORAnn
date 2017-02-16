@@ -133,7 +133,7 @@ app.get('/webhook/', function (req, res) {
 // to post data
 app.post('/webhook/', function (req, res) {
     let messaging_events = req.body.entry[0].messaging;
-    console.log(messaging_events);
+    //console.log(messaging_events);
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id 
@@ -146,9 +146,9 @@ app.post('/webhook/', function (req, res) {
                 fb_bot.sendGenericMessage(sender)
                 continue
             }
-            console.log("=="+sender);
+            //console.log("=="+sender);
             fb_bot.adduser(sender);
-            fb_bot.sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+            //fb_bot.sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
