@@ -60,11 +60,19 @@ var Line = new Schema(
     }
 );
 
+var fb_bot = new mongoose.Schema({
+    id : String
+  }, 
+  {collection: "fb_bot"}
+  );
+
 mongoose.model('Ann', Ann);
 mongoose.model('Admin', Admin);
 mongoose.model('Session', Session);
 mongoose.model('List', List);
 mongoose.model('Line', Line);
+mongoose.model('fb_bot', fb_bot);
+
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb, function (err) {
     if (err) {

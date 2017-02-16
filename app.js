@@ -19,6 +19,7 @@ var colors = require('colors');
 var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var linebot = require('./linebot');
+var fb_bot = require('./fb_bot');
 
 var index = require('./routes');
 var admin = require('./routes/admin');
@@ -27,6 +28,7 @@ var Admin = mongoose.model('Admin');
 var Session = mongoose.model('Session');
 
 var app = express();
+
 
 // all environments
 app.engine('ejs', engine);
@@ -86,6 +88,7 @@ var dbclean = new CronJob({
 dbclean.start();
 
 linebot.init();
+fb_bot.init();
 
 app.use(function(req, res, next) {
     app.locals.moment = moment;
@@ -116,6 +119,43 @@ app.post('/callback', function(req, res, next) {
         res.sendStatus(403); //ChannelSignature錯誤，回傳403
     });
 });
+
+
+// for facebook verification
+app.get('/webhook/', function (req, res) {
+    if (req.query['hub.verify_token'] === fb_bot.set.verify_token) {
+        res.send(req.query['hub.challenge'])
+    } else {
+        res.send('Error, wrong token')
+    }
+})
+
+// to post data
+app.post('/webhook/', function (req, res) {
+    let messaging_events = req.body.entry[0].messaging;
+    console.log(messaging_events);
+    for (let i = 0; i < messaging_events.length; i++) {
+        let event = req.body.entry[0].messaging[i]
+        let sender = event.sender.id 
+        if (event.message && event.message.text) {
+            let text = event.message.text
+            if (text === 'Generic'){ 
+                console.log("welcome to chatbot")
+                fb_bot.sendGenericMessage(sender)
+                continue
+            }
+            console.log("=="+sender);
+            fb_bot.adduser(sender);
+            fb_bot.sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+        }
+        if (event.postback) {
+            let text = JSON.stringify(event.postback)
+            fb_bot.sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+            continue
+        }
+    }
+    res.sendStatus(200)
+})
 
 
 app.use('/embed', embed);

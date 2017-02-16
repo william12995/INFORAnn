@@ -8,6 +8,7 @@ var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
 var linebot = require('../linebot');
+var fb_bot = require('../fb_bot');
 
 router.get('/admin', function(req, res) {
     if (req.user.level == 1) {
@@ -90,6 +91,8 @@ router.post('/new', function(req, res) {
         res.redirect('/admin/ann/admin');
         if (ls.notify == true) {
             linebot.broadcast('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
+            fb_bot.sendTextMessage('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id); 
+
         }
     });
 });
