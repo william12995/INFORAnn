@@ -50,7 +50,7 @@ function init(){
 function sendTextMessage(text) {
 	
 
-	let messageData = { text:text }
+	let messageData = { "text":text }
 	console.log(messageData);
 	fb_bot.find({}, (err, data) => {
     if(err) console.log(err)
