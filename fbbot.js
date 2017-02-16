@@ -56,6 +56,7 @@ function sendTextMessage(text) {
     if(err) console.log(err)
 
     data.forEach((i) => {
+      if(i.id == "575623689313399") continue;
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
 	 	qs: {access_token:set.token},
@@ -66,10 +67,11 @@ function sendTextMessage(text) {
 	 	}
       }
 
-      console.log(options)
+      //console.log(options)
 
       request(options, (error, response, body) => {
-        console.log(body) // Print the shortened url.
+        console.log(body); // Print the shortened url.
+        console.log(error);
       });
 
     })
