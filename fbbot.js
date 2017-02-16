@@ -12,7 +12,7 @@ var set = {
 
 exports = module.exports = set;
 
-function init() {
+function start() {
 	try{
 		var data = fs.readFileSync('fb_bot.json', {
             encoding: 'utf-8',
