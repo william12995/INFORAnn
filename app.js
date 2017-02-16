@@ -20,7 +20,8 @@ var moment = require('moment');
 var CronJob = require('cron').CronJob;
 var linebot = require('./linebot');
 var fbbot = require('./fbbot');
-
+console.log(linebot);
+console.log(fbbot);
 var index = require('./routes');
 var admin = require('./routes/admin');
 var embed = require('./routes/embed');
