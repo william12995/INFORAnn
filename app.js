@@ -87,7 +87,7 @@ var dbclean = new CronJob({
 });
 dbclean.start();
 
-linebot.init();
+//linebot.init();
 fb_bot.init();
 
 app.use(function(req, res, next) {
