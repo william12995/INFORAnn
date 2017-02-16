@@ -35,7 +35,7 @@ app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.json({ verify: fb_bot.verifyRequestSignature }));
+app.use(bodyParser.json({ verify: fb_bot.verifyRequestSignature() }));
 app.use(express.static('public'));
 
 //app.use(bodyParser.json());
@@ -128,6 +128,7 @@ app.post('/callback', function(req, res, next) {
 app.get('/webhook/', function (req, res) {
     if (req.query['hub.verify_token'] === fb_bot.set.verify_token) {
         res.send(req.query['hub.challenge'])
+        console.log("HEY! NICE");
     } else {
         res.send('Error, wrong token')
     }
@@ -172,6 +173,7 @@ app.get('/authorize', function(req, res) {
 
   // Redirect users to this URI on successful login
   var redirectURISuccess = redirectURI + "&authorization_code=" + authCode;
+
 
   res.render('authorize', {
     accountLinkingToken: accountLinkingToken,
