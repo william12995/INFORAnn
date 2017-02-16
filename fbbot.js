@@ -6,6 +6,10 @@ var debug = require('debug')('inforann:server');
 
 
 var set = {
+	init: init,
+	sendTextMessage: sendTextMessage,
+	sendGenericMessage: sendGenericMessage,
+	adduser: adduser,
 	page_token:'',
 	verify_token:''
 };
