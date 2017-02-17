@@ -149,55 +149,25 @@ app.post('/webhook/', function (req, res) {
             let text = event.message.text
             if (text === 'Generic'){ 
                 console.log("welcome to chatbot");
-                fb_bot.sendGenericMessage(sender);
+                fb_bot.SingleSendTextMessage(sender,text);
                 continue;
             }
             //console.log(text);
-            fb_bot.sendTextMessage(true, text.substring(0, 200)) ;            
+            fb_bot.sendTextMessage(sender,text.substring(0, 200)) ;            
             fb_bot.adduser(sender);
                 
             
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
-            fb_bot.sendTextMessage(true, "Postback received: "+text.substring(0, 200), token)
+            fb_bot.SingleSendTextMessage( sender,"Postback received: "+text.substring(0, 200), token)
             continue
         }
     }
     res.sendStatus(200)
 })
 
-// app.post('/webhook', function (req, res) {
-//   var data = req.body;
-  
-//   // Make sure this is a page subscription
-//   if (data.object == 'page') {
-//     // Iterate over each entry
-//     // There may be multiple if batched
-//     data.entry.forEach(function(pageEntry) {
-//       var pageID = pageEntry.id;
-//       var timeOfEvent = pageEntry.time;
 
-//       // Iterate over each messaging event
-//       pageEntry.messaging.forEach(function(messagingEvent) {
-//         console.log(messagingEvent.message);
-//         if (messagingEvent.message&& messagingEvent.message.text) {
-//           fb_bot.sendTextMessage(true,messagingEvent.message.text);
-//           fb_bot.adduser(messagingEvent.sender.id );
-//       }
-         
-
-        
-//       });
-//     });
-
-    // Assume all went well.
-    //
-    // You must send back a 200, within 20 seconds, to let us know you've 
-    // successfully received the callback. Otherwise, the request will time out.
-//     res.sendStatus(200);
-//   }
-// });
 
 
 

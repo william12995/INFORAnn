@@ -8,7 +8,8 @@ var crypto = require('crypto');
 
 var set = {
 	init: init,
-	sendTextMessage: sendTextMessage,
+	MutipleSendTextMessage: MutipleSendTextMessage,
+	SingleSendTextMessage: SingleSendTextMessage,
 	sendGenericMessage: sendGenericMessage,
 	adduser: adduser,
 	page_token:'',
@@ -45,36 +46,60 @@ function init(){
 	}
 
 };
-var count = 0 ;
-function sendTextMessage(status,text) {
-	var status = status;
+
+function SingleSendTextMessage(sender, text) {
+	let messageData = { text:text }
+	const count = 0 ;
+	switch(count % 3){
+		case 0 :
+			text = "垃圾 1"+ text ;				
+			count += 1 ;
+			console.log("dd 1");
+			break;
+		case 1 :
+			text = "垃圾 2"+ text ;				
+			count += 1 ;
+			console.log("dd 2");
+			break;
+		case 2 :
+			text = "垃圾 3"+ text ;				
+			count += 1 ;
+			console.log("dd 3");
+			break;
+		default:
+			console.log("Count Error");
+	} 
+	
+	messageData = {text:  text };
+	//console.log(sender);
+	//console.log("");
+	request({
+		url: 'https://graph.facebook.com/v2.6/me/messages',
+		qs: {access_token:token},
+		method: 'POST',
+		json: {
+			recipient: {id:sender},
+			message: messageData,
+		}
+	}, function(error, response, body) {
+		if (error) {
+			console.log('Error sending messages: ', error)
+		} else if (response.body.error) {
+			
+			console.log('Error: ', response.body.error);
+
+		}
+	})
+
+}
+
+
+
+function MutipleSendTextMessage(text) {
+	
 	
 	let messageData = {text:  text };
-	// if (status){
-	// 	switch(count % 3){
-	// 		case 0 :
-	// 			text = "垃圾 1"+ text ;				
-	// 			count += 1 ;
-	// 			console.log("dd 1");
-	// 			break;
-	// 		case 1 :
-	// 			text = "垃圾 2"+ text ;				
-	// 			count += 1 ;
-	// 			console.log("dd 2");
-	// 			break;
-	// 		case 2 :
-	// 			text = "垃圾 3"+ text ;				
-	// 			count += 1 ;
-	// 			console.log("dd 3");
-	// 			break;
-	// 		default:
-	// 			console.log("Count Error");
-	// 	} 
-	// 	 messageData = {text:  text };
-	// }
-	// else{
-	// 	 messageData = {text: text };
-	// }
+	
 	
 	
 	//console.log(messageData);
@@ -82,7 +107,7 @@ function sendTextMessage(status,text) {
     if(err) console.log(err)
     //console.log(data);
     data.forEach((i) => {
-    
+
       if(i.id == "575623689313399") return;
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
