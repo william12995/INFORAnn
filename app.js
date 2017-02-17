@@ -155,7 +155,7 @@ app.post('/webhook/', function (req, res) {
             if (sender == "575623689313399"){ continue;}
             else {
                 console.log(text);
-                fb_bot.sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200)) 
+                fb_bot.sendTextMessage("垃圾訊息: " + text.substring(0, 200)) 
                 fb_bot.adduser(sender);
                 
             }
