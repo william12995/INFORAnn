@@ -165,6 +165,9 @@ app.post('/webhook/', function (req, res) {
                     fb_bot.sendTextMessage("您的垃圾訊息 3:  " + text.substring(0, 200)) ;
                     count ++ ;
                     break;
+                default :
+                    console.log("Error count");
+                    break;
                 
             }
             
