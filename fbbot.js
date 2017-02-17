@@ -82,11 +82,12 @@ function sendTextMessage(status,text) {
     if(err) console.log(err)
     //console.log(data);
     data.forEach((i) => {
+    	console.log(i);
       if(i.id == "575623689313399") return;
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
 	 	qs: {access_token:set.token},
-	 	method: 'GET',
+	 	method: 'POST',
 	 	json: {
 	 		recipient: {id:i.id},
 	 		message: messageData,
