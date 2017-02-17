@@ -52,15 +52,18 @@ function sendTextMessage(status,text) {
 	if (status){
 		switch(count % 3){
 			case 0 :
-				let messageData = {text: "垃圾 1"+text };
+				text = "垃圾 1"+ text ;
+				let messageData = {text:  text };
 				count += 1 ;
 				break;
 			case 1 :
-				let messageData = {text: "垃圾 2"+text };
+				text = "垃圾 2"+ text ;
+				let messageData = {text: text };
 				count += 1 ;
 				break;
 			case 2 :
-				let messageData = {text: "垃圾 3"+text };
+				text = "垃圾 3"+ text ;
+				let messageData = {text: text };
 				count += 1 ;
 				break;
 			default:
