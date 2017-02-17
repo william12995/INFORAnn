@@ -49,6 +49,7 @@ function init(){
 function sendTextMessage(status,text) {
 	var status = status;
 	var count = 0 ;
+	let messageData = {text:  text };
 	if (status){
 		switch(count % 3){
 			case 0 :
@@ -66,10 +67,10 @@ function sendTextMessage(status,text) {
 			default:
 				console.log("Count Error");
 		} 
-		let messageData = {text:  text };
+		 messageData = {text:  text };
 	}
 	else{
-		let messageData = {text: text };
+		 messageData = {text: text };
 	}
 	
 	
