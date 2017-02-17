@@ -165,7 +165,7 @@ router.post('/edit/:id', function(req, res) {
     ann.notify = req.body.notify == 'on';
     ann.lists = req.body.lists;
     ann.save(function(err, ls, count) {
-        if (err) console.log('[ERROR]'.red + err);
+        if (err) console.log('[ERROR]'.red + err +"幹");
         else req.session.info = "儲存成功";
         res.redirect('/admin/ann/admin');
     });
