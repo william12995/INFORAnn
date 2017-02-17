@@ -50,31 +50,31 @@ function sendTextMessage(status,text) {
 	var status = status;
 	var count = 0 ;
 	let messageData = {text:  text };
-	if (status){
-		switch(count % 3){
-			case 0 :
-				text = "垃圾 1"+ text ;				
-				count += 1 ;
-				console.log("dd 1");
-				break;
-			case 1 :
-				text = "垃圾 2"+ text ;				
-				count += 1 ;
-				console.log("dd 2");
-				break;
-			case 2 :
-				text = "垃圾 3"+ text ;				
-				count += 1 ;
-				console.log("dd 3");
-				break;
-			default:
-				console.log("Count Error");
-		} 
-		 messageData = {text:  text };
-	}
-	else{
-		 messageData = {text: text };
-	}
+	// if (status){
+	// 	switch(count % 3){
+	// 		case 0 :
+	// 			text = "垃圾 1"+ text ;				
+	// 			count += 1 ;
+	// 			console.log("dd 1");
+	// 			break;
+	// 		case 1 :
+	// 			text = "垃圾 2"+ text ;				
+	// 			count += 1 ;
+	// 			console.log("dd 2");
+	// 			break;
+	// 		case 2 :
+	// 			text = "垃圾 3"+ text ;				
+	// 			count += 1 ;
+	// 			console.log("dd 3");
+	// 			break;
+	// 		default:
+	// 			console.log("Count Error");
+	// 	} 
+	// 	 messageData = {text:  text };
+	// }
+	// else{
+	// 	 messageData = {text: text };
+	// }
 	
 	
 	//console.log(messageData);
