@@ -151,8 +151,12 @@ app.post('/webhook/', function (req, res) {
                 continue
             }
             console.log(text);
-            fb_bot.adduser(sender);
-            //fb_bot.sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+            
+            if (sender == "575623689313399"){ continue;}
+            else {
+                fb_bot.adduser(sender);
+                fb_bot.sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200)) 
+            }
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
