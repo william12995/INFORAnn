@@ -8,7 +8,7 @@ var List = mongoose.model('List');
 var utils = require('../utils');
 var colors = require('colors');
 var linebot = require('../linebot');
-var fb_bot = require('../fb_bot');
+var fb_bot = require('../fbbot');
 
 router.get('/admin', function(req, res) {
     if (req.user.level == 1) {
@@ -157,7 +157,7 @@ router.post('/edit/:id', function(req, res) {
     if (updateDate === true) {
         ann.update = Date.now();
         if (ann.notify == true) {
-            linebot.broadcast('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
+            //linebot.broadcast('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
         }
     }
     ann.visible = req.body.visible == 'on';
