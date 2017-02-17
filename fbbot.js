@@ -49,20 +49,20 @@ function init(){
 var count = 0 ;
 function SingleSendTextMessage(sender, text) {
 	let messageData = { text:text }
-	
+	if (sender == "575623689313399") return;
 	switch(count % 3){
 		case 0 :
-			text = "垃圾 1"+ text ;				
+			text = "您的垃圾訊息: "+ text ;				
 			count += 1 ;
 			console.log("dd 1");
 			break;
 		case 1 :
-			text = "垃圾 2"+ text ;				
+			text = "別再傳: "+ text ;				
 			count += 1 ;
 			console.log("dd 2");
 			break;
 		case 2 :
-			text = "垃圾 3"+ text ;				
+			text = "傳屁: "+ text ;				
 			count += 1 ;
 			console.log("dd 3");
 			break;
