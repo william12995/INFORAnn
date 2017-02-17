@@ -50,7 +50,7 @@ function sendTextMessage(text) {
 	
 
 	let messageData = { "text":text }
-	console.log(text);
+	//console.log(text);
 	fb_bot.find({}, (err, data) => {
     if(err) console.log(err)
 
@@ -70,7 +70,7 @@ function sendTextMessage(text) {
 
       request(options, (error, response, req) => {
         console.log(req.body); // Print the shortened url.
-        console.log(error);
+        //console.log(error);
       });
 
     })
