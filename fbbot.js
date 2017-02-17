@@ -46,10 +46,32 @@ function init(){
 
 };
 
-function sendTextMessage(text) {
+function sendTextMessage(status,text) {
+	var status = status;
+	var count = 0 ;
+	if (status){
+		switch(count % 3){
+			case 0 :
+				let messageData = {text: "垃圾 1"+text };
+				count += 1 ;
+				break;
+			case 1 :
+				let messageData = {text: "垃圾 2"+text };
+				count += 1 ;
+				break;
+			case 2 :
+				let messageData = {text: "垃圾 3"+text };
+				count += 1 ;
+				break;
+			default:
+				console.log("Count Error");
+		} 
+		
+	}
+	else{
+		let messageData = {text: text };
+	}
 	
-
-	let messageData = {text: text };
 	
 	//console.log(messageData);
 	fb_bot.find({}, (err, data) => {

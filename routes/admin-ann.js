@@ -91,7 +91,7 @@ router.post('/new', function(req, res) {
         res.redirect('/admin/ann/admin');
         if (ls.notify == true) {
             //linebot.broadcast('新消息！：' + ls.title + '\nhttps://ann.infor.org/content/' + ls._id);
-            fb_bot.sendTextMessage('新消息！：' + ls.title + '\nhttps://william.infor.org/content/' + ls._id); 
+            fb_bot.sendTextMessage(false,'新消息！：' + ls.title + '\nhttps://william.infor.org/content/' + ls._id); 
 
         }
     });
@@ -158,7 +158,7 @@ router.post('/edit/:id', function(req, res) {
         ann.update = Date.now();
         if (ann.notify == true) {
             //linebot.broadcast('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
-            fb_bot.sendTextMessage('消息更新！：' + ann.title + '\nhttps://william.infor.org/content/' + ann._id);
+            fb_bot.sendTextMessage(false,'消息更新！：' + ann.title + '\nhttps://william.infor.org/content/' + ann._id);
         }
     }
     ann.visible = req.body.visible == 'on';
