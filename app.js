@@ -150,7 +150,7 @@ app.post('/webhook/', function (req, res) {
                 fb_bot.sendGenericMessage(sender)
                 continue
             }
-            //console.log("=="+sender);
+            console.log(text);
             fb_bot.adduser(sender);
             //fb_bot.sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
         }
