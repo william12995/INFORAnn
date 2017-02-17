@@ -158,6 +158,7 @@ router.post('/edit/:id', function(req, res) {
         ann.update = Date.now();
         if (ann.notify == true) {
             //linebot.broadcast('消息更新！：' + ann.title + '\nhttps://ann.infor.org/content/' + ann._id);
+            fb_bot.sendTextMessage('新消息！：' + ls.title + '\nhttps://william.infor.org/content/' + ls._id);
         }
     }
     ann.visible = req.body.visible == 'on';
