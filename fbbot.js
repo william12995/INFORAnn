@@ -45,10 +45,10 @@ function init(){
 	}
 
 };
-
+var count = 0 ;
 function sendTextMessage(status,text) {
 	var status = status;
-	var count = 0 ;
+	
 	let messageData = {text:  text };
 	// if (status){
 	// 	switch(count % 3){
@@ -82,7 +82,7 @@ function sendTextMessage(status,text) {
     if(err) console.log(err)
     //console.log(data);
     data.forEach((i) => {
-    	console.log(i);
+    
       if(i.id == "575623689313399") return;
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
