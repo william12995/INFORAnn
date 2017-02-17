@@ -11,7 +11,6 @@ var set = {
 	sendTextMessage: sendTextMessage,
 	sendGenericMessage: sendGenericMessage,
 	adduser: adduser,
-	verifyRequestSignature: verifyRequestSignature,
 	page_token:'',
 	verify_token:'',
 	appSecret:'',
