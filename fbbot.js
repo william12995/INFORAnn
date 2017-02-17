@@ -49,7 +49,7 @@ function init(){
 
 function SingleSendTextMessage(sender, text) {
 	let messageData = { text:text }
-	const count = 0 ;
+	var count = 0 ;
 	switch(count % 3){
 		case 0 :
 			text = "垃圾 1"+ text ;				
