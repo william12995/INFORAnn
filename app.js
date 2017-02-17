@@ -137,7 +137,8 @@ app.get('/webhook/', function (req, res) {
 // to post data
 app.post('/webhook/', function (req, res) {
     let messaging_events = req.body.entry[0].messaging;
-    console.log(req.body.object);
+    //console.log(req.body.object);
+    var count = 0 ;
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
         let sender = event.sender.id 
@@ -150,15 +151,26 @@ app.post('/webhook/', function (req, res) {
                 fb_bot.sendGenericMessage(sender)
                 continue
             }
-            
-            
-            if (sender == "575623689313399"){ continue;}
-            else {
-                console.log(text);
-                fb_bot.sendTextMessage("垃圾訊息: " + text.substring(0, 200)) 
-                fb_bot.adduser(sender);
+            //console.log(text);
+            switch(count % 3){
+                case 0 :
+                    fb_bot.sendTextMessage("您的垃圾訊息 1:  " + text.substring(0, 200)) ;
+                    count ++ ;
+                    break;
+                case 1 :
+                    fb_bot.sendTextMessage("您的垃圾訊息 2:  " + text.substring(0, 200)) ;
+                    count ++ ;
+                    break;
+                case 2 :
+                    fb_bot.sendTextMessage("您的垃圾訊息 3:  " + text.substring(0, 200)) ;
+                    count ++ ;
+                    break;
                 
             }
+            
+            fb_bot.adduser(sender);
+                
+            
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)

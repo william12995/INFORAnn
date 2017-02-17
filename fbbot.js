@@ -50,8 +50,8 @@ function sendTextMessage(text) {
 	
 
 	let messageData = {text: text };
-	console.log(text+"top");
-	console.log(messageData);
+	
+	//console.log(messageData);
 	fb_bot.find({}, (err, data) => {
     if(err) console.log(err)
 
