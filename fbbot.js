@@ -78,7 +78,7 @@ function SingleSendTextMessage(sender, text) {
 		qs: {access_token:token},
 		method: 'POST',
 		json: {
-			recipient: {id:sender},
+			recipient: {id:set.sender},
 			message: messageData,
 		}
 	}, function(error, response, body) {
