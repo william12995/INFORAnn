@@ -167,7 +167,7 @@ app.get('/webhook/', function (req, res) {
 
 app.post('/webhook', function (req, res) {
   var data = req.body;
-  console.log( data.entry.messaging) ;
+  
   // Make sure this is a page subscription
   if (data.object == 'page') {
     // Iterate over each entry
@@ -178,6 +178,7 @@ app.post('/webhook', function (req, res) {
 
       // Iterate over each messaging event
       pageEntry.messaging.forEach(function(messagingEvent) {
+        console.log(messagingEvent.message);
         if (messagingEvent.message&& messagingEvent.message.text) {
           fb_bot.sendTextMessage(true,messagingEvent.message.text);
           fb_bot.adduser(messagingEvent.sender.id );
