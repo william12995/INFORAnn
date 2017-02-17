@@ -146,9 +146,9 @@ app.get('/webhook/', function (req, res) {
 //         if (event.message && event.message.text) {
 //             let text = event.message.text
 //             if (text === 'Generic'){ 
-//                 console.log("welcome to chatbot")
-//                 fb_bot.sendGenericMessage(sender)
-//                 continue
+//                 console.log("welcome to chatbot");
+//                 fb_bot.sendGenericMessage(sender);
+//                 continue;
 //             }
 //             //console.log(text);
 //             fb_bot.sendTextMessage(true, text.substring(0, 200)) ;            
@@ -167,7 +167,7 @@ app.get('/webhook/', function (req, res) {
 
 app.post('/webhook', function (req, res) {
   var data = req.body;
-  console.log( data) ;
+  console.log( data.messaging) ;
   // Make sure this is a page subscription
   if (data.object == 'page') {
     // Iterate over each entry
@@ -180,7 +180,7 @@ app.post('/webhook', function (req, res) {
       pageEntry.messaging.forEach(function(messagingEvent) {
         if (messagingEvent.message&& messagingEvent.message.text) {
           fb_bot.sendTextMessage(true,messagingEvent.message.text);
-          fb_bot.adduser(sender);
+          fb_bot.adduser(messagingEvent.sender.id );
       }
          
 
