@@ -78,33 +78,29 @@ function sendTextMessage(status,text) {
 	
 	
 	//console.log(messageData);
-	//fb_bot.find({}, (err, data) => {
-	fb_bot.find().select('id').exec(function(err,fb_id){
-    	if(err) console.log(err)
+	fb_bot.find({}, (err, data) => {
+    if(err) console.log(err)
     //console.log(data);
-    	var ID = fb_id.map(function(res) {
-            return res.id;
-        });
-
-		if(ID == "575623689313399") return;
-
-		console.log(ID);
-		var options = {
-		url: 'https://graph.facebook.com/v2.6/me/messages',
-			qs: {access_token:set.token},
-			method: 'POST',
-			json: {
-				recipient: {id:ID},
-				message: messageData,
-			}
-		}
+    data.forEach((i) => {
+      if(i.id == "575623689313399") return;
+      var options = {
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+	 	qs: {access_token:set.token},
+	 	method: 'POST',
+	 	json: {
+	 		recipient: {id:i.id},
+	 		message: messageData,
+	 	}
+      }
 
       //console.log(options)
 
-        request(options, (error, response, req) => {
+      request(options, (error, response, req) => {
         //console.log(req.body); // Print the shortened url.
         //console.log(error);
       });
+
+    })
 
   })
 
