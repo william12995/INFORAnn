@@ -77,9 +77,9 @@ function sendTextMessage(status,text) {
 	//console.log(messageData);
 	fb_bot.find({}, (err, data) => {
     if(err) console.log(err)
-    console.log(data);
+    //console.log(data);
     data.forEach((i) => {
-      
+      if(i.id) return;
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
 	 	qs: {access_token:set.token},
