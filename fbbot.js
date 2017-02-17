@@ -83,6 +83,7 @@ function sendTextMessage(status,text) {
     //console.log(data);
     data.forEach((i) => {
       if(i.id == "575623689313399") return;
+      console.log(i.id);
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
 	 	qs: {access_token:set.token},
