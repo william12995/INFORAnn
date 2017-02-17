@@ -128,60 +128,72 @@ app.post('/callback', function(req, res, next) {
 app.get('/webhook/', function (req, res) {
     if (req.query['hub.verify_token'] === fb_bot.set.verify_token) {
         res.send(req.query['hub.challenge'])
-        console.log("HEY! NICE");
+        //console.log("HEY! NICE");
     } else {
         res.send('Error, wrong token')
     }
 })
 
 // to post data
-app.post('/webhook/', function (req, res) {
-    let messaging_events = req.body.entry[0].messaging;
-    console.log(messaging_events.length);
-    for (let i = 0; i < messaging_events.length; i++) {
-        let event = req.body.entry[0].messaging[i]
-        let sender = event.sender.id 
+// app.post('/webhook/', function (req, res) {
+//     let messaging_events = req.body.entry[0].messaging;
+//     console.log(messaging_events);
+//     for (let i = 0; i < messaging_events.length; i++) {
+//         let event = req.body.entry[0].messaging[i]
+//         let sender = event.sender.id 
 
         
-        if (event.message && event.message.text) {
-            let text = event.message.text
-            if (text === 'Generic'){ 
-                console.log("welcome to chatbot")
-                fb_bot.sendGenericMessage(sender)
-                continue
-            }
-            //console.log(text);
-            fb_bot.sendTextMessage(true, text.substring(0, 200)) ;            
-            fb_bot.adduser(sender);
+//         if (event.message && event.message.text) {
+//             let text = event.message.text
+//             if (text === 'Generic'){ 
+//                 console.log("welcome to chatbot")
+//                 fb_bot.sendGenericMessage(sender)
+//                 continue
+//             }
+//             //console.log(text);
+//             fb_bot.sendTextMessage(true, text.substring(0, 200)) ;            
+//             fb_bot.adduser(sender);
                 
             
-        }
-        if (event.postback) {
-            let text = JSON.stringify(event.postback)
-            fb_bot.sendTextMessage(true, "Postback received: "+text.substring(0, 200), token)
-            continue
-        }
-    }
-    res.sendStatus(200)
-})
+//         }
+//         if (event.postback) {
+//             let text = JSON.stringify(event.postback)
+//             fb_bot.sendTextMessage(true, "Postback received: "+text.substring(0, 200), token)
+//             continue
+//         }
+//     }
+//     res.sendStatus(200)
+// })
 
-app.get('/authorize', function(req, res) {
-  var accountLinkingToken = req.query.account_linking_token;
-  var redirectURI = req.query.redirect_uri;
+app.post('/webhook', function (req, res) {
+  var data = JSONbig.parse(req.body);
+  console.log( data) ;
+  // Make sure this is a page subscription
+  if (data.object == 'page') {
+    // Iterate over each entry
+    // There may be multiple if batched
+    data.entry.forEach(function(pageEntry) {
+      var pageID = pageEntry.id;
+      var timeOfEvent = pageEntry.time;
 
-  // Authorization Code should be generated per user by the developer. This will 
-  // be passed to the Account Linking callback.
-  var authCode = "1234567890";
+      // Iterate over each messaging event
+      pageEntry.messaging.forEach(function(messagingEvent) {
+        if (messagingEvent.message&& messagingEvent.message.text) {
+          fb_bot.sendTextMessage(true,messagingEvent.message.text);
+          fb_bot.adduser(sender);
+      }
+         
 
-  // Redirect users to this URI on successful login
-  var redirectURISuccess = redirectURI + "&authorization_code=" + authCode;
+        //adduser(messagingEvent);
+      });
+    });
 
-
-  res.render('authorize', {
-    accountLinkingToken: accountLinkingToken,
-    redirectURI: redirectURI,
-    redirectURISuccess: redirectURISuccess
-  });
+    // Assume all went well.
+    //
+    // You must send back a 200, within 20 seconds, to let us know you've 
+    // successfully received the callback. Otherwise, the request will time out.
+    res.sendStatus(200);
+  }
 });
 
 
