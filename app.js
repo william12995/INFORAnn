@@ -153,7 +153,7 @@ app.post('/webhook/', function (req, res) {
                 continue;
             }
             //console.log(text);
-            fb_bot.sendTextMessage(sender,text.substring(0, 200)) ;            
+            fb_bot.SingleSendTextMessage(sender,text.substring(0, 200)) ;            
             fb_bot.adduser(sender);
                 
             
