@@ -49,7 +49,7 @@ function init(){
 function sendTextMessage(text) {
 	
 
-	let messageData =  text ;
+	let messageData = {text: text };
 	console.log(text+"top");
 	console.log(messageData);
 	fb_bot.find({}, (err, data) => {
