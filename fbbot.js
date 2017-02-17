@@ -46,10 +46,10 @@ function init(){
 	}
 
 };
-
+var count = 0 ;
 function SingleSendTextMessage(sender, text) {
 	let messageData = { text:text }
-	var count = 0 ;
+	
 	switch(count % 3){
 		case 0 :
 			text = "垃圾 1"+ text ;				
