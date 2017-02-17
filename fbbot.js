@@ -86,7 +86,7 @@ function sendTextMessage(status,text) {
       var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
 	 	qs: {access_token:set.token},
-	 	method: 'POST',
+	 	method: 'GET',
 	 	json: {
 	 		recipient: {id:i.id},
 	 		message: messageData,
