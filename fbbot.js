@@ -82,17 +82,19 @@ function sendTextMessage(status,text) {
 	fb_bot.find().select('id').exec(function(err,fb_id){
     	if(err) console.log(err)
     //console.log(data);
-    	var id = fb_id.map(function(res) {
+    	var ID = fb_id.map(function(res) {
             return res.id;
         });
-		if(i.id == "575623689313399") return;
-		console.log(i.id);
+
+		if(ID == "575623689313399") return;
+
+		console.log(ID);
 		var options = {
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 			qs: {access_token:set.token},
 			method: 'POST',
 			json: {
-				recipient: {id:i.id},
+				recipient: {id:ID},
 				message: messageData,
 			}
 		}
