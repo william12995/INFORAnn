@@ -149,7 +149,7 @@ app.post('/webhook/', function (req, res) {
             let text = event.message.text
             if (text === 'Generic'){ 
                 console.log("welcome to chatbot");
-                fb_bot.SingleSendTextMessage(sender,text);
+                fb_bot.sendGenericMessage(sender,text);
                 continue;
             }
             //console.log(text);
