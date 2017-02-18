@@ -52,24 +52,11 @@ function SingleSendTextMessage(sender, text) {
 
 	var jizz = ["您的垃圾訊息: ", "別再傳: " ,"傳屁: ","隨便","尤尤","01閔","大猥","妮妮","簡老大","嘻嘻"];
 
-	var count = Math.random() * 10
+	var count = Math.floor((Math.random() * 10))
 	if (sender == "575623689313399") return;
 	console.log(count);
 	text = jizz[count] + text ;
-	// switch(count % 3){
-	// 	case 0 :
-	// 		text = "您的垃圾訊息: "+ text ;
-	// 		break;
-	// 	case 1 :
-	// 		text = "別再傳: "+ text ;				
-	// 		break;
-	// 	case 2 :
-	// 		text = "傳屁: "+ text ;				
-	// 		break;
-	// 	default:
-	// 		text = "Jizz: "+ text ;
-	// 		console.log("Count Error");
-	// } 
+	
 	
 	messageData = {text:  text };
 	//console.log(sender);
