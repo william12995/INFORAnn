@@ -50,7 +50,7 @@ function init(){
 function SingleSendTextMessage(sender, text) {
 	let messageData = { text:text }
 
-	var jizz = ["您的垃圾訊息: ", "別再傳: " ,"傳屁: ","隨便","尤尤","01閔","大猥","妮妮","簡老大","嘻嘻"];
+	var jizz = ["MC", "星星" ,"廣廣","隨便","尤尤","01閔","大猥","妮妮","簡老大","嘻嘻"];
 
 	var count = Math.floor((Math.random() * 10))
 	if (sender == "575623689313399") return;
