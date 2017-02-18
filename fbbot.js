@@ -46,27 +46,26 @@ function init(){
 	}
 
 };
-var count = 0 ;
+
 function SingleSendTextMessage(sender, text) {
 	let messageData = { text:text }
+
+	var jizz = {"您的垃圾訊息: ","別再傳: ","傳屁: "}
+
+	var count = Math.random() * 10
 	if (sender == "575623689313399") return;
 	switch(count % 3){
 		case 0 :
-			text = "您的垃圾訊息: "+ text ;				
-			count += 1 ;
-			console.log("dd 1");
+			text = "您的垃圾訊息: "+ text ;
 			break;
 		case 1 :
 			text = "別再傳: "+ text ;				
-			count += 1 ;
-			console.log("dd 2");
 			break;
 		case 2 :
 			text = "傳屁: "+ text ;				
-			count += 1 ;
-			console.log("dd 3");
 			break;
 		default:
+			text = "Jizz: "+ text ;
 			console.log("Count Error");
 	} 
 	
